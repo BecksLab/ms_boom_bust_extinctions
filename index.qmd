@@ -31,13 +31,68 @@ number-sections: true
 ---
 
 # Introduction
-This is a simple placeholder for the manuscript's main document [@curtsdotterRobustnessSecondaryExtinctions2011].
+
+Extinction simulation in networks are useful because they can inform us as to the robustness [REF] or resilience [REF] of the system. Understanding community level extinctions is of particular interest for understanding community collapse and mass extinction events [REFs]. However the nature of the fossil record means that we are only able to do topological extinctions [REFs]
+
+Dynamic extinctions [*e.g.,* @curtsdotterRobustnessSecondaryExtinctions2011] can be useful because they are (probably) a better approximation of reality - or at least not as 'conservative'/best case scenario as what the topological extinctions are (insert a brief description of how these approaches are different). Something about how this is meaningful in paleo but also real-world settings. Maybe also point out that typically in dynamic context we are using species agnostic models *e.g.,* niche and atn which lack the real world tractability that we want.
+
+However in order to *correctly* match the philosophy of these dynamic networks we need a way in which to turn empirical metawebs into networks that are more representative of realised networks, *i.e.,* there is some form of link distribution constraint [@strydomScalingMetawebsRealised2026]. Although there has been some work on downsampling of paleo webs [@roopnarineExtinctionCascadesCatastrophe2006] we lack any ground truthing of what the implications are of embedding these ecological assumptions. Additionally this downsampling approach makes insidious assumptions as to what is driving the distribution of links in a network. Possibly also add a sentence here about how the other work has focused on the niche model [@curtsdotterRobustnessSecondaryExtinctions2011; @jonssonReliabilityR50Measure2015] which itself has its own sets of ecological assumptions/embeddings.
+
+Here we present a selection of downsampling approach that are built on different assumptions as to link constraints. Using these downsampling approaches we recreate the @curtsdotterRobustnessSecondaryExtinctions2011 approach and test if we see difference in topological and dynamic extinctions, as well as if the different input networks have different signals. We do this using the same dataset from @karapunarNoGlobalCollapse2026.
 
 # Methods
 
-# Results
+## Data
 
-# Discussion
+Seven locations [@karapunarNoGlobalCollapse2026]. Here we use the guild-level community data to keep the size of the networks manageable and well within the bounds used by @curtsdotterRobustnessSecondaryExtinctions2011. Additionally we added plankton and zooplankton data from EcoGenie models [REF] as a way to enlarge the 'base' of the network (again to better represent a realised network).
+
+## Network construction
+
+For the empirical networks we used the PFWIM model [@shawFrameworkReconstructingAncient2024]. *Insert brief description about trait assignments and mechanistic assumptions, mention we wanted to go as broad as possible so we used fully categorical rules*. This was then used as the base metaweb for each community. Each metaweb was then downsampled to a target connectance (see below for the different downsampling approaches). Additionally the target connectance and species richness was used to parameterise a niche model network [@Williams2000Simple]. We also constructed ATN networks [@broseConsumerResourceBodySize2006].
+
+## Downsampling approaches
+
+Maybe just a brief interlude about how a metaweb represents all feasible interactions (so capturing the entire diet breadth of a specific species). Idea here is to prime that this is all links but acknowledge that in reality species are rarely feeding across their entire diet breadth.
+
+*Niche:* Attempt to create a network that appears similar to a standard niche model network this is done by estimating a one-dimensional niche axis from the interaction matrix using the leading singular vectors of the Singular Value Decomposition (SVD). Species are then assigned positions along a common latent niche dimension, which is subsequently used to estimate consumer niche centres and niche breadths.
+
+*Power-law [@roopnarineExtinctionCascadesCatastrophe2006]:* Based around ideas of extinctions and which links/specie will be lost - with the idea that generalist species will be the most robust and as such will retain their links. Consumers with larger trophic breadth (higher generality) receive larger retention probabilities and are therefore less likely to lose interactions.
+
+*Degree-product:* Product of the out-degreee (generality) of the predator and the in-degree (vulnerability) of the consumer are used to assign a probability for each link. Links are then randomly removed based on that probability (note to self check if it is iterative each time so that the degrees are re-evaluated, it think this is the case). Here the ecological assumption is that generalist predators and vulnerable prey are probably not feeding/being fed on by everything, whereas for specialist species those links are probably occurring thus it makes sense to prune links from the most connected species pairs
+
+*Random:* Links randomly removed until target connectance is reached, with the exception if a species becomes isolated in which case a different link is target for removal. This is the 'null model'
+
+## Simulations
+
+For each community we create a network, sample a body size based on the categorical size classes, this is a truncated normal distribution. Body sizes are used to build the ATN (mention here that we vary the threshold value between 0.01-0.12 and select the network that has the closest connectance to the target one) We also select a target connectance between 0.05-0.15. Each network is then downsampled to the target connectance. This represents the 'creation' stage. At this point we run a set of topological cascading extinctions for the difference extinction scenarios. Using the END [@delmasSimulationsBiomassDynamics2017] each network is then run through a 'burn-in' period for 5000 time steps or until it has reached a steady state. Here we run another set of topological extinctions. For the dynamic extinctions primary extinctions are determined based on the rules of the different extinction scenarios and secondary extinctions occur when the biomass of a species falls below the threshold value of 1e-12. After every primary extinction event (where the biomass of the target species is set to 1e-12) we run 5000 timesteps before the next extinction event to allow for biomass simulations to occur.
+
+## Analyses
+
+For each extinction run we calculate the R50 robustness [@jonssonReliabilityR50Measure2015] as well as the primary and secondary extinction rates. Add breif description of how robustness is calculated. TBD the breakdown of the statistical approaches used to understand the effect of downsampling approach/network type on inferred network robustness and extinction dynamics.
+
+## Software
+
+Network construction and extinction simulations were run in Julia v1.12.6 [@bezansonJuliaFreshApproach2017], we used `EcologicalNetworksDynamics.jl` [@lajaaitiEcologicalNetworksDynamicsjlJuliaPackage2025] for dynamic simulations, `PFIM.jl` [REF] for construction of metawebs, `FoodWebTools.jl` [REF] for network downsampling, and Extinctions.jl [REF] for extinctions and robustness calculations. Statistical analyses were run in R v4.5.2 [REF]. All code can be found at *TODO*
+
+> Keep the narrative extinction centric for now but remember we also have the topology of each network before the various extinction simulations begin
+
+# Downsampling approach results in different network structure
+
+Here we can actually look at the topology and see if the different networks actually look different in multivariate space?
+
+# Differences in inferred robustness of topological and dynamic unaffected by network type
+
+Still see that topological robustness is more conservative than dynamic extinctions
+
+# Network types result in differences in dynamic extinctions
+
+Report here about the secondary extinction rates as well as the pairwise contrasts.
+
+## Relative to the niche model, niche downsampling is the closest match
+
+Most often the ones to not be different from each other. Worth pointing out that the ATN behaves very differently as well. So again we are back at are we modelling network or model behaviour [@strydomAreWeMapping2026]
+
+# Conclusion
 
 # References {.unnumbered}
 

@@ -7,8 +7,13 @@ format:
     number-sections: true
 ---
 
-## Section S1: Text Elements
-Write your supplementary text content here.
+## Network creation/simulation sanity checks
 
-## Section S2: Supplementary Figures
-Include your images cleanly like this
+Reaching of target connectance
+
+Species richness/retention
+
+Trophic level distributions and bodysize?
+
+## Reaching of target Connectance
+
