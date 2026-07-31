@@ -289,11 +289,13 @@ different assumptions as to link constraints. Using these downsampling
 approaches we recreate the Curtsdotter et al. (2011) approach and test
 if we see difference in topological and dynamic extinctions, as well as
 if the different input networks have different signals. We do this using
-the same dataset from Karapunar et al. (2026).
+the same dataset from Karapunar et al. (2026). If realised webs emerge
+through different ecological filters, do our conclusions about dynamic
+extinctions depend on which realisation process we assume?
 
 \section{Methods}\label{methods}
 
-\#\#~Data
+\subsection{Data}\label{data}
 
 Seven locations (Karapunar et al., 2026). Here we use the guild-level
 community data to keep the size of the networks manageable and well
@@ -314,66 +316,190 @@ Additionally the target connectance and species richness was used to
 parameterise a niche model network (Williams \& Martinez, 2000). We also
 constructed ATN networks (Brose et al., 2006).
 
-\subsection{Downsampling approaches}\label{downsampling-approaches}
+\subsection{\#\# Downsampling approaches}\label{downsampling-approaches}
 
-Maybe just a brief interlude about how a metaweb represents all feasible
-interactions (so capturing the entire diet breadth of a specific
-species). Idea here is to prime that this is all links but acknowledge
-that in reality species are rarely feeding across their entire diet
-breadth.
+We treat downsampling as a process of \textbf{ecological realisation}
+rather than observation. Starting from a metaweb containing all
+potential trophic interactions, each downsampling approach represents an
+alternative ecological hypothesis describing how local ecological
+processes filter these potential interactions into the subset that is
+realised within a particular community. The different approaches
+therefore differ not only in their implementation, but also in the
+ecological assumptions they embed about how realised food webs emerge
+from a common regional interaction pool.
 
-\emph{Niche:} Attempt to create a network that appears similar to a
-standard niche model network this is done by estimating a
-one-dimensional niche axis from the interaction matrix using the leading
-singular vectors of the Singular Value Decomposition (SVD). Species are
-then assigned positions along a common latent niche dimension, which is
-subsequently used to estimate consumer niche centres and niche breadths.
+\subsubsection{Niche}\label{niche}
 
-\emph{Power-law (Roopnarine, 2006):} Based around ideas of extinctions
-and which links/specie will be lost - with the idea that generalist
-species will be the most robust and as such will retain their links.
-Consumers with larger trophic breadth (higher generality) receive larger
-retention probabilities and are therefore less likely to lose
-interactions.
+The niche approach assumes that realised interactions represent the core
+of a consumer's trophic niche. A one-dimensional latent niche axis,
+\(x_i\), is first estimated from the interaction matrix using the
+leading singular vectors of the Singular Value Decomposition (SVD). For
+each consumer \(i\), the centroid of its realised niche is
 
-\emph{Degree-product:} Product of the out-degreee (generality) of the
-predator and the in-degree (vulnerability) of the consumer are used to
-assign a probability for each link. Links are then randomly removed
-based on that probability (note to self check if it is iterative each
-time so that the degrees are re-evaluated, it think this is the case).
-Here the ecological assumption is that generalist predators and
-vulnerable prey are probably not feeding/being fed on by everything,
-whereas for specialist species those links are probably occurring thus
-it makes sense to prune links from the most connected species pairs
+\[
+\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
+\]
 
-\emph{Random:} Links randomly removed until target connectance is
-reached, with the exception if a species becomes isolated in which case
-a different link is target for removal. This is the `null model'
+where \(R_i\) is the set of resources consumed by species \(i\), and
+\(k_i\) is its trophic breadth (generality). Niche breadth is estimated
+as the standard deviation of prey positions,
+
+\[
+\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
+\]
+
+it is also possible to scale the niche breadth to further constrain
+niche breadth,
+
+\[
+\sigma_i' = \alpha \sigma_i.
+\]
+
+The probability of retaining an interaction between consumer \(i\) and
+resource \(j\) is then
+
+\[
+P_{ij} \propto
+\exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right].
+\]
+
+Interactions closest to the consumer's niche centre are therefore most
+likely to be realised, whereas interactions towards the margins of the
+niche are preferentially removed. Ecologically, this assumes that local
+communities realise the central portion of a consumer's potential
+trophic niche, with peripheral or opportunistic interactions occurring
+less consistently.
+
+\subsubsection{Power-law}\label{power-law}
+
+The power-law approach assumes that interaction realisation depends
+primarily on \textbf{consumer trophic breadth}. Following Roopnarine
+(2006), the retention probability for consumer \(i\) is
+
+\[
+P_i \propto
+\exp\left(\frac{k_i}{E}\right),
+\]
+
+where \(k_i\) is consumer generality and
+
+\[
+E = S^{(y-1)/y},
+\]
+
+with \(S\) denoting network size and \(y\) the scaling exponent.
+Probabilities are subsequently normalised to lie between 0 and 1. Every
+interaction belonging to consumer \(i\) inherits the same retention
+probability,
+
+\[
+P_{ij}=P_i.
+\]
+
+Ecologically, this represents the hypothesis that generalist consumers
+realise a larger fraction of their potential trophic niche than
+specialist consumers, irrespective of the identity of individual
+resources.
+
+\subsubsection{Degree-product}\label{degree-product}
+
+The degree-product approach assumes that interaction realisation depends
+on the centrality of both interacting species. Each interaction is
+assigned a weight
+
+\[
+w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}},
+\]
+
+where \(k_i^{\mathrm{out}}\) is the consumer's out-degree (generality)
+and \(k_j^{\mathrm{in}}\) is the resource's in-degree (vulnerability).
+Retention probabilities are then calculated as
+
+\[
+P_{ij}
+=
+1-
+\frac{w_{ij}}{\max(w)},
+\]
+
+before being constrained to the interval \([0,1]\). Under iterative
+downsampling, degrees are recalculated following each interaction
+removal, allowing probabilities to evolve as the realised network
+changes. Ecologically, this assumes that highly connected species
+possess many potential interactions that are not simultaneously realised
+within any local community, whereas interactions involving more
+specialised or weakly connected species are more likely to represent
+essential realised links.
+
+\subsubsection{Random}\label{random}
+
+Random downsampling provides the ecological null model. Every
+interaction has an equal probability of being retained,
+
+\[
+P_{ij}=c,
+\]
+
+where \(c\) is constant for all existing interactions. Interactions are
+removed uniformly at random until the target connectance is reached,
+subject to the constraint that species cannot become isolated. This
+assumes that no ecological process preferentially favours the
+realisation of one potential interaction over another, such that
+realised food webs constitute an unbiased subset of the regional metaweb
+that is ultimately only constrained by the number of links.
 
 \subsection{Simulations}\label{simulations}
 
-For each community we create a network, sample a body size based on the
-categorical size classes, this is a truncated normal distribution. Body
-sizes are used to build the ATN (mention here that we vary the threshold
-value between 0.01-0.12 and select the network that has the closest
-connectance to the target one) We also select a target connectance
-between 0.05-0.15. Each network is then downsampled to the target
-connectance. This represents the `creation' stage. At this point we run
-a set of topological cascading extinctions for the difference extinction
-scenarios. Using the END (Delmas et al., 2017) each network is then run
-through a `burn-in' period for 5000 time steps or until it has reached a
-steady state. Here we run another set of topological extinctions. For
-the dynamic extinctions primary extinctions are determined based on the
-rules of the different extinction scenarios and secondary extinctions
-occur when the biomass of a species falls below the threshold value of
-1e-12. After every primary extinction event (where the biomass of the
-target species is set to 1e-12) we run 5000 timesteps before the next
-extinction event to allow for biomass simulations to occur.
+For each empirical community, we generated 30 replicate network
+ensembles. Species body masses were sampled independently from truncated
+log-normal distributions constrained by their categorical body-size
+classifications. Initial biomasses were drawn from a uniform
+distribution. These trait values were used to construct a series of
+alternative networks, representing different two realised networks (ATN
+and niche model), one metaweb, and four downsampled (realised) metawebs
+(niche, power-law, degree-product, and random).
+
+For the allometric trophic network (ATN), interaction strengths were
+generated by varying the feeding threshold between 0.01 and 0.12 and
+selecting the network whose connectance most closely matched a target
+connectance. Target connectance was independently sampled for each
+replicate from a truncated normal distribution bounded between 0.05 and
+0.15. The target connectance and richness of the metaweb were used to
+build a niche model and the metaweb was downsampled until the target
+connectance was reach. These represent the `creation' networks.
+
+Each creation network was then parameterised using the END package
+(Delmas et al., 2017) and simulated for up to 5000 time steps.
+Simulations terminated early if a dynamical equilibrium was reached.
+Species whose biomass declined below the survival threshold
+(\(10^{-12}\)) during this burn-in period were considered extinct and
+removed from the network. The surviving species and their interactions
+constituted the corresponding `realised' networks.
+
+Extinction experiments were subsequently performed on both the creation
+and realised networks. Topological extinction simulations were conducted
+on both network stages, whereas dynamic extinction simulations were
+performed only on realised networks. In all simulations, primary
+extinctions followed one of the prescribed extinction scenarios. During
+topological simulations, secondary extinctions occurred when species
+lost all prey, these were allowed to cascade. During dynamic
+simulations, primary extinctions were imposed by setting the biomass of
+the focal species to the survival threshold (\(10^{-12}\)), after which
+the community was simulated for a further 5000 time steps to allow
+biomass dynamics to relax. Species whose biomass subsequently declined
+below the survival threshold were recorded as secondary extinctions.
+This procedure was repeated until the entire community collapsed.
+
+For each extinction scenario, robustness was quantified from the
+resulting extinction curves as the proportion of primary extinctions
+required to produce a 50\% reduction in species richness (\(R_{50}\)
+(Jonsson et al., 2015)), estimated by linear interpolation between
+extinction events.
 
 \subsection{Analyses}\label{analyses}
 
 For each extinction run we calculate the R50 robustness (Jonsson et al.,
-2015) as well as the primary and secondary extinction rates. Add breif
+2015) as well as the primary and secondary extinction rates. Add brief
 description of how robustness is calculated. TBD the breakdown of the
 statistical approaches used to understand the effect of downsampling
 approach/network type on inferred network robustness and extinction

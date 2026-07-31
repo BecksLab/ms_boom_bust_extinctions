@@ -68,6 +68,35 @@ div.csl-indent {
   });
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <meta name="citation_title" content="Dynamic Downsampling">
 <meta name="citation_abstract" content="TODO
@@ -172,11 +201,18 @@ div.csl-indent {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">2</span> Methods</a>
   <ul class="collapse">
-  <li><a href="#network-construction" id="toc-network-construction" class="nav-link" data-scroll-target="#network-construction"><span class="header-section-number">2.1</span> Network construction</a></li>
-  <li><a href="#downsampling-approaches" id="toc-downsampling-approaches" class="nav-link" data-scroll-target="#downsampling-approaches"><span class="header-section-number">2.2</span> Downsampling approaches</a></li>
-  <li><a href="#simulations" id="toc-simulations" class="nav-link" data-scroll-target="#simulations"><span class="header-section-number">2.3</span> Simulations</a></li>
-  <li><a href="#analyses" id="toc-analyses" class="nav-link" data-scroll-target="#analyses"><span class="header-section-number">2.4</span> Analyses</a></li>
-  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software"><span class="header-section-number">2.5</span> Software</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data"><span class="header-section-number">2.1</span> Data</a></li>
+  <li><a href="#network-construction" id="toc-network-construction" class="nav-link" data-scroll-target="#network-construction"><span class="header-section-number">2.2</span> Network construction</a></li>
+  <li><a href="#downsampling-approaches" id="toc-downsampling-approaches" class="nav-link" data-scroll-target="#downsampling-approaches"><span class="header-section-number">2.3</span> ## Downsampling approaches</a>
+  <ul class="collapse">
+  <li><a href="#niche" id="toc-niche" class="nav-link" data-scroll-target="#niche"><span class="header-section-number">2.3.1</span> Niche</a></li>
+  <li><a href="#power-law" id="toc-power-law" class="nav-link" data-scroll-target="#power-law"><span class="header-section-number">2.3.2</span> Power-law</a></li>
+  <li><a href="#degree-product" id="toc-degree-product" class="nav-link" data-scroll-target="#degree-product"><span class="header-section-number">2.3.3</span> Degree-product</a></li>
+  <li><a href="#random" id="toc-random" class="nav-link" data-scroll-target="#random"><span class="header-section-number">2.3.4</span> Random</a></li>
+  </ul></li>
+  <li><a href="#simulations" id="toc-simulations" class="nav-link" data-scroll-target="#simulations"><span class="header-section-number">2.4</span> Simulations</a></li>
+  <li><a href="#analyses" id="toc-analyses" class="nav-link" data-scroll-target="#analyses"><span class="header-section-number">2.5</span> Analyses</a></li>
+  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software"><span class="header-section-number">2.6</span> Software</a></li>
   </ul></li>
   <li><a href="#downsampling-approach-results-in-different-network-structure" id="toc-downsampling-approach-results-in-different-network-structure" class="nav-link" data-scroll-target="#downsampling-approach-results-in-different-network-structure"><span class="header-section-number">3</span> Downsampling approach results in different network structure</a></li>
   <li><a href="#differences-in-inferred-robustness-of-topological-and-dynamic-unaffected-by-network-type" id="toc-differences-in-inferred-robustness-of-topological-and-dynamic-unaffected-by-network-type" class="nav-link" data-scroll-target="#differences-in-inferred-robustness-of-topological-and-dynamic-unaffected-by-network-type"><span class="header-section-number">4</span> Differences in inferred robustness of topological and dynamic unaffected by network type</a></li>
@@ -200,34 +236,97 @@ div.csl-indent {
 <p>Extinction simulation in networks are useful because they can inform us as to the robustness [REF] or resilience [REF] of the system. Understanding community level extinctions is of particular interest for understanding community collapse and mass extinction events [REFs]. However the nature of the fossil record means that we are only able to do topological extinctions [REFs]</p>
 <p>Dynamic extinctions <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">(<em>e.g.,</em> <a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">Curtsdotter et al. 2011</a>)</span> can be useful because they are (probably) a better approximation of reality - or at least not as ‘conservative’/best case scenario as what the topological extinctions are (insert a brief description of how these approaches are different). Something about how this is meaningful in paleo but also real-world settings. Maybe also point out that typically in dynamic context we are using species agnostic models <em>e.g.,</em> niche and atn which lack the real world tractability that we want.</p>
 <p>However in order to <em>correctly</em> match the philosophy of these dynamic networks we need a way in which to turn empirical metawebs into networks that are more representative of realised networks, <em>i.e.,</em> there is some form of link distribution constraint <span class="citation" data-cites="strydomScalingMetawebsRealised2026">(<a href="#ref-strydomScalingMetawebsRealised2026" role="doc-biblioref">Strydom, Dunhill, et al. 2026</a>)</span>. Although there has been some work on downsampling of paleo webs <span class="citation" data-cites="roopnarineExtinctionCascadesCatastrophe2006">(<a href="#ref-roopnarineExtinctionCascadesCatastrophe2006" role="doc-biblioref">Roopnarine 2006</a>)</span> we lack any ground truthing of what the implications are of embedding these ecological assumptions. Additionally this downsampling approach makes insidious assumptions as to what is driving the distribution of links in a network. Possibly also add a sentence here about how the other work has focused on the niche model <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011 jonssonReliabilityR50Measure2015">(<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">Curtsdotter et al. 2011</a>; <a href="#ref-jonssonReliabilityR50Measure2015" role="doc-biblioref">Jonsson et al. 2015</a>)</span> which itself has its own sets of ecological assumptions/embeddings.</p>
-<p>Here we present a selection of downsampling approach that are built on different assumptions as to link constraints. Using these downsampling approaches we recreate the <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">Curtsdotter et al. (<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">2011</a>)</span> approach and test if we see difference in topological and dynamic extinctions, as well as if the different input networks have different signals. We do this using the same dataset from <span class="citation" data-cites="karapunarNoGlobalCollapse2026">Karapunar et al. (<a href="#ref-karapunarNoGlobalCollapse2026" role="doc-biblioref">2026</a>)</span>.</p>
+<p>Here we present a selection of downsampling approach that are built on different assumptions as to link constraints. Using these downsampling approaches we recreate the <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">Curtsdotter et al. (<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">2011</a>)</span> approach and test if we see difference in topological and dynamic extinctions, as well as if the different input networks have different signals. We do this using the same dataset from <span class="citation" data-cites="karapunarNoGlobalCollapse2026">Karapunar et al. (<a href="#ref-karapunarNoGlobalCollapse2026" role="doc-biblioref">2026</a>)</span>. If realised webs emerge through different ecological filters, do our conclusions about dynamic extinctions depend on which realisation process we assume?</p>
 </section>
 <section id="methods" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Methods</h1>
-<p>##&nbsp;Data</p>
+<section id="data" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="data"><span class="header-section-number">2.1</span> Data</h2>
 <p>Seven locations <span class="citation" data-cites="karapunarNoGlobalCollapse2026">(<a href="#ref-karapunarNoGlobalCollapse2026" role="doc-biblioref">Karapunar et al. 2026</a>)</span>. Here we use the guild-level community data to keep the size of the networks manageable and well within the bounds used by <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">Curtsdotter et al. (<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">2011</a>)</span>. Additionally we added plankton and zooplankton data from EcoGenie models [REF] as a way to enlarge the ‘base’ of the network (again to better represent a realised network).</p>
-<section id="network-construction" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="network-construction"><span class="header-section-number">2.1</span> Network construction</h2>
+</section>
+<section id="network-construction" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="network-construction"><span class="header-section-number">2.2</span> Network construction</h2>
 <p>For the empirical networks we used the PFWIM model <span class="citation" data-cites="shawFrameworkReconstructingAncient2024">(<a href="#ref-shawFrameworkReconstructingAncient2024" role="doc-biblioref">Shaw et al. 2024</a>)</span>. <em>Insert brief description about trait assignments and mechanistic assumptions, mention we wanted to go as broad as possible so we used fully categorical rules</em>. This was then used as the base metaweb for each community. Each metaweb was then downsampled to a target connectance (see below for the different downsampling approaches). Additionally the target connectance and species richness was used to parameterise a niche model network <span class="citation" data-cites="Williams2000Simple">(<a href="#ref-Williams2000Simple" role="doc-biblioref">Williams and Martinez 2000</a>)</span>. We also constructed ATN networks <span class="citation" data-cites="broseConsumerResourceBodySize2006">(<a href="#ref-broseConsumerResourceBodySize2006" role="doc-biblioref">Brose et al. 2006</a>)</span>.</p>
 </section>
-<section id="downsampling-approaches" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="downsampling-approaches"><span class="header-section-number">2.2</span> Downsampling approaches</h2>
-<p>Maybe just a brief interlude about how a metaweb represents all feasible interactions (so capturing the entire diet breadth of a specific species). Idea here is to prime that this is all links but acknowledge that in reality species are rarely feeding across their entire diet breadth.</p>
-<p><em>Niche:</em> Attempt to create a network that appears similar to a standard niche model network this is done by estimating a one-dimensional niche axis from the interaction matrix using the leading singular vectors of the Singular Value Decomposition (SVD). Species are then assigned positions along a common latent niche dimension, which is subsequently used to estimate consumer niche centres and niche breadths.</p>
-<p><em>Power-law <span class="citation" data-cites="roopnarineExtinctionCascadesCatastrophe2006">(<a href="#ref-roopnarineExtinctionCascadesCatastrophe2006" role="doc-biblioref">Roopnarine 2006</a>)</span>:</em> Based around ideas of extinctions and which links/specie will be lost - with the idea that generalist species will be the most robust and as such will retain their links. Consumers with larger trophic breadth (higher generality) receive larger retention probabilities and are therefore less likely to lose interactions.</p>
-<p><em>Degree-product:</em> Product of the out-degreee (generality) of the predator and the in-degree (vulnerability) of the consumer are used to assign a probability for each link. Links are then randomly removed based on that probability (note to self check if it is iterative each time so that the degrees are re-evaluated, it think this is the case). Here the ecological assumption is that generalist predators and vulnerable prey are probably not feeding/being fed on by everything, whereas for specialist species those links are probably occurring thus it makes sense to prune links from the most connected species pairs</p>
-<p><em>Random:</em> Links randomly removed until target connectance is reached, with the exception if a species becomes isolated in which case a different link is target for removal. This is the ‘null model’</p>
+<section id="downsampling-approaches" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="downsampling-approaches"><span class="header-section-number">2.3</span> ## Downsampling approaches</h2>
+<p>We treat downsampling as a process of <strong>ecological realisation</strong> rather than observation. Starting from a metaweb containing all potential trophic interactions, each downsampling approach represents an alternative ecological hypothesis describing how local ecological processes filter these potential interactions into the subset that is realised within a particular community. The different approaches therefore differ not only in their implementation, but also in the ecological assumptions they embed about how realised food webs emerge from a common regional interaction pool.</p>
+<section id="niche" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="niche"><span class="header-section-number">2.3.1</span> Niche</h3>
+<p>The niche approach assumes that realised interactions represent the core of a consumer’s trophic niche. A one-dimensional latent niche axis, <span class="math inline">\(x_i\)</span>, is first estimated from the interaction matrix using the leading singular vectors of the Singular Value Decomposition (SVD). For each consumer <span class="math inline">\(i\)</span>, the centroid of its realised niche is</p>
+<p><span class="math display">\[
+\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
+\]</span></p>
+<p>where <span class="math inline">\(R_i\)</span> is the set of resources consumed by species <span class="math inline">\(i\)</span>, and <span class="math inline">\(k_i\)</span> is its trophic breadth (generality). Niche breadth is estimated as the standard deviation of prey positions,</p>
+<p><span class="math display">\[
+\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
+\]</span></p>
+<p>it is also possible to scale the niche breadth to further constrain niche breadth,</p>
+<p><span class="math display">\[
+\sigma_i' = \alpha \sigma_i.
+\]</span></p>
+<p>The probability of retaining an interaction between consumer <span class="math inline">\(i\)</span> and resource <span class="math inline">\(j\)</span> is then</p>
+<p><span class="math display">\[
+P_{ij} \propto
+\exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right].
+\]</span></p>
+<p>Interactions closest to the consumer’s niche centre are therefore most likely to be realised, whereas interactions towards the margins of the niche are preferentially removed. Ecologically, this assumes that local communities realise the central portion of a consumer’s potential trophic niche, with peripheral or opportunistic interactions occurring less consistently.</p>
 </section>
-<section id="simulations" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="simulations"><span class="header-section-number">2.3</span> Simulations</h2>
-<p>For each community we create a network, sample a body size based on the categorical size classes, this is a truncated normal distribution. Body sizes are used to build the ATN (mention here that we vary the threshold value between 0.01-0.12 and select the network that has the closest connectance to the target one) We also select a target connectance between 0.05-0.15. Each network is then downsampled to the target connectance. This represents the ‘creation’ stage. At this point we run a set of topological cascading extinctions for the difference extinction scenarios. Using the END <span class="citation" data-cites="delmasSimulationsBiomassDynamics2017">(<a href="#ref-delmasSimulationsBiomassDynamics2017" role="doc-biblioref">Delmas et al. 2017</a>)</span> each network is then run through a ‘burn-in’ period for 5000 time steps or until it has reached a steady state. Here we run another set of topological extinctions. For the dynamic extinctions primary extinctions are determined based on the rules of the different extinction scenarios and secondary extinctions occur when the biomass of a species falls below the threshold value of 1e-12. After every primary extinction event (where the biomass of the target species is set to 1e-12) we run 5000 timesteps before the next extinction event to allow for biomass simulations to occur.</p>
+<section id="power-law" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="power-law"><span class="header-section-number">2.3.2</span> Power-law</h3>
+<p>The power-law approach assumes that interaction realisation depends primarily on <strong>consumer trophic breadth</strong>. Following <span class="citation" data-cites="roopnarineExtinctionCascadesCatastrophe2006">Roopnarine (<a href="#ref-roopnarineExtinctionCascadesCatastrophe2006" role="doc-biblioref">2006</a>)</span>, the retention probability for consumer <span class="math inline">\(i\)</span> is</p>
+<p><span class="math display">\[
+P_i \propto
+\exp\left(\frac{k_i}{E}\right),
+\]</span></p>
+<p>where <span class="math inline">\(k_i\)</span> is consumer generality and</p>
+<p><span class="math display">\[
+E = S^{(y-1)/y},
+\]</span></p>
+<p>with <span class="math inline">\(S\)</span> denoting network size and <span class="math inline">\(y\)</span> the scaling exponent. Probabilities are subsequently normalised to lie between 0 and 1. Every interaction belonging to consumer <span class="math inline">\(i\)</span> inherits the same retention probability,</p>
+<p><span class="math display">\[
+P_{ij}=P_i.
+\]</span></p>
+<p>Ecologically, this represents the hypothesis that generalist consumers realise a larger fraction of their potential trophic niche than specialist consumers, irrespective of the identity of individual resources.</p>
 </section>
-<section id="analyses" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="analyses"><span class="header-section-number">2.4</span> Analyses</h2>
-<p>For each extinction run we calculate the R50 robustness <span class="citation" data-cites="jonssonReliabilityR50Measure2015">(<a href="#ref-jonssonReliabilityR50Measure2015" role="doc-biblioref">Jonsson et al. 2015</a>)</span> as well as the primary and secondary extinction rates. Add breif description of how robustness is calculated. TBD the breakdown of the statistical approaches used to understand the effect of downsampling approach/network type on inferred network robustness and extinction dynamics.</p>
+<section id="degree-product" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="degree-product"><span class="header-section-number">2.3.3</span> Degree-product</h3>
+<p>The degree-product approach assumes that interaction realisation depends on the centrality of both interacting species. Each interaction is assigned a weight</p>
+<p><span class="math display">\[
+w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}},
+\]</span></p>
+<p>where <span class="math inline">\(k_i^{\mathrm{out}}\)</span> is the consumer’s out-degree (generality) and <span class="math inline">\(k_j^{\mathrm{in}}\)</span> is the resource’s in-degree (vulnerability). Retention probabilities are then calculated as</p>
+<p><span class="math display">\[
+P_{ij}
+=
+1-
+\frac{w_{ij}}{\max(w)},
+\]</span></p>
+<p>before being constrained to the interval <span class="math inline">\([0,1]\)</span>. Under iterative downsampling, degrees are recalculated following each interaction removal, allowing probabilities to evolve as the realised network changes. Ecologically, this assumes that highly connected species possess many potential interactions that are not simultaneously realised within any local community, whereas interactions involving more specialised or weakly connected species are more likely to represent essential realised links.</p>
 </section>
-<section id="software" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="software"><span class="header-section-number">2.5</span> Software</h2>
+<section id="random" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="random"><span class="header-section-number">2.3.4</span> Random</h3>
+<p>Random downsampling provides the ecological null model. Every interaction has an equal probability of being retained,</p>
+<p><span class="math display">\[
+P_{ij}=c,
+\]</span></p>
+<p>where <span class="math inline">\(c\)</span> is constant for all existing interactions. Interactions are removed uniformly at random until the target connectance is reached, subject to the constraint that species cannot become isolated. This assumes that no ecological process preferentially favours the realisation of one potential interaction over another, such that realised food webs constitute an unbiased subset of the regional metaweb that is ultimately only constrained by the number of links.</p>
+</section>
+</section>
+<section id="simulations" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="simulations"><span class="header-section-number">2.4</span> Simulations</h2>
+<p>For each empirical community, we generated 30 replicate network ensembles. Species body masses were sampled independently from truncated log-normal distributions constrained by their categorical body-size classifications. Initial biomasses were drawn from a uniform distribution. These trait values were used to construct a series of alternative networks, representing different two realised networks (ATN and niche model), one metaweb, and four downsampled (realised) metawebs (niche, power-law, degree-product, and random).</p>
+<p>For the allometric trophic network (ATN), interaction strengths were generated by varying the feeding threshold between 0.01 and 0.12 and selecting the network whose connectance most closely matched a target connectance. Target connectance was independently sampled for each replicate from a truncated normal distribution bounded between 0.05 and 0.15. The target connectance and richness of the metaweb were used to build a niche model and the metaweb was downsampled until the target connectance was reach. These represent the ‘creation’ networks.</p>
+<p>Each creation network was then parameterised using the END package <span class="citation" data-cites="delmasSimulationsBiomassDynamics2017">(<a href="#ref-delmasSimulationsBiomassDynamics2017" role="doc-biblioref">Delmas et al. 2017</a>)</span> and simulated for up to 5000 time steps. Simulations terminated early if a dynamical equilibrium was reached. Species whose biomass declined below the survival threshold (<span class="math inline">\(10^{-12}\)</span>) during this burn-in period were considered extinct and removed from the network. The surviving species and their interactions constituted the corresponding ‘realised’ networks.</p>
+<p>Extinction experiments were subsequently performed on both the creation and realised networks. Topological extinction simulations were conducted on both network stages, whereas dynamic extinction simulations were performed only on realised networks. In all simulations, primary extinctions followed one of the prescribed extinction scenarios. During topological simulations, secondary extinctions occurred when species lost all prey, these were allowed to cascade. During dynamic simulations, primary extinctions were imposed by setting the biomass of the focal species to the survival threshold (<span class="math inline">\(10^{-12}\)</span>), after which the community was simulated for a further 5000 time steps to allow biomass dynamics to relax. Species whose biomass subsequently declined below the survival threshold were recorded as secondary extinctions. This procedure was repeated until the entire community collapsed.</p>
+<p>For each extinction scenario, robustness was quantified from the resulting extinction curves as the proportion of primary extinctions required to produce a 50% reduction in species richness (<span class="math inline">\(R_{50}\)</span> <span class="citation" data-cites="jonssonReliabilityR50Measure2015">(<a href="#ref-jonssonReliabilityR50Measure2015" role="doc-biblioref">Jonsson et al. 2015</a>)</span>), estimated by linear interpolation between extinction events.</p>
+</section>
+<section id="analyses" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="analyses"><span class="header-section-number">2.5</span> Analyses</h2>
+<p>For each extinction run we calculate the R50 robustness <span class="citation" data-cites="jonssonReliabilityR50Measure2015">(<a href="#ref-jonssonReliabilityR50Measure2015" role="doc-biblioref">Jonsson et al. 2015</a>)</span> as well as the primary and secondary extinction rates. Add brief description of how robustness is calculated. TBD the breakdown of the statistical approaches used to understand the effect of downsampling approach/network type on inferred network robustness and extinction dynamics.</p>
+</section>
+<section id="software" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="software"><span class="header-section-number">2.6</span> Software</h2>
 <p>Network construction and extinction simulations were run in Julia v1.12.6 <span class="citation" data-cites="bezansonJuliaFreshApproach2017">(<a href="#ref-bezansonJuliaFreshApproach2017" role="doc-biblioref">Bezanson et al. 2017</a>)</span>, we used <code>EcologicalNetworksDynamics.jl</code> <span class="citation" data-cites="lajaaitiEcologicalNetworksDynamicsjlJuliaPackage2025">(<a href="#ref-lajaaitiEcologicalNetworksDynamicsjlJuliaPackage2025" role="doc-biblioref">Lajaaiti et al. 2025</a>)</span> for dynamic simulations, <code>PFIM.jl</code> [REF] for construction of metawebs, <code>FoodWebTools.jl</code> [REF] for network downsampling, and Extinctions.jl [REF] for extinctions and robustness calculations. Statistical analyses were run in R v4.5.2 [REF]. All code can be found at <em>TODO</em></p>
 <blockquote class="blockquote">
 <p>Keep the narrative extinction centric for now but remember we also have the topology of each network before the various extinction simulations begin</p>
