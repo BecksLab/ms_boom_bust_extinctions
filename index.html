@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-07-31">
+<meta name="keywords" content="food webs">
+
+<title>Dynamic Downsampling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script async="" src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
+
+
+<meta name="citation_title" content="Dynamic Downsampling">
+<meta name="citation_abstract" content="TODO
+">
+<meta name="citation_keywords" content="food webs">
+<meta name="citation_author" content="Tanya Strydom">
+<meta name="citation_author" content="Andrew P. Beckerman">
+<meta name="citation_publication_date" content="2026-07-31">
+<meta name="citation_cover_date" content="2026-07-31">
+<meta name="citation_year" content="2026">
+<meta name="citation_online_date" content="2026-07-31">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Consumer–Resource Body-Size Relationships in Natural Food Webs;,citation_abstract=It has been suggested that differences in body size between consumer and resource species may have important implications for interaction strengths, population dynamics, and eventually food web structure, function, and evolution. Still, the general distribution of consumer–resource body-size ratios in real ecosystems, and whether they vary systematically among habitats or broad taxonomic groups, is poorly understood. Using a unique global database on consumer and resource body sizes, we show that the mean body-size ratios of aquatic herbivorous and detritivorous consumers are several orders of magnitude larger than those of carnivorous predators. Carnivorous predator–prey body-size ratios vary across different habitats and predator and prey types (invertebrates, ectotherm, and endotherm vertebrates). Predator–prey body-size ratios are on average significantly higher (1) in freshwater habitats than in marine or terrestrial habitats, (2) for vertebrate than for invertebrate predators, and (3) for invertebrate than for ectotherm vertebrate prey. If recent studies that relate body-size ratios to interaction strengths are general, our results suggest that mean consumer–resource interaction strengths may vary systematically across different habitat categories and consumer types.;,citation_author=Ulrich Brose;,citation_author=Tomas Jonsson;,citation_author=Eric L. Berlow;,citation_author=Philip Warren;,citation_author=Carolin Banasek-Richter;,citation_author=Louis-Félix Bersier;,citation_author=Julia L. Blanchard;,citation_author=Thomas Brey;,citation_author=Stephen R. Carpenter;,citation_author=Marie-France Cattin Blandenier;,citation_author=Lara Cushing;,citation_author=Hassan Ali Dawah;,citation_author=Tony Dell;,citation_author=Francois Edwards;,citation_author=Sarah Harper-Smith;,citation_author=Ute Jacob;,citation_author=Mark E. Ledger;,citation_author=Neo D. Martinez;,citation_author=Jane Memmott;,citation_author=Katja Mintenbeck;,citation_author=John K. Pinnegar;,citation_author=Björn C. Rall;,citation_author=Thomas S. Rayner;,citation_author=Daniel C. Reuman;,citation_author=Liliane Ruess;,citation_author=Werner Ulrich;,citation_author=Richard J. Williams;,citation_author=Guy Woodward;,citation_author=Joel E. Cohen;,citation_publication_date=2006;,citation_cover_date=2006;,citation_year=2006;,citation_fulltext_html_url=http://esajournals.onlinelibrary.wiley.com/doi/abs/10.1890/0012-9658%282006%2987%5B2411%3ACBRINF%5D2.0.CO%3B2;,citation_issue=10;,citation_doi=10.1890/0012-9658(2006)87[2411:CBRINF]2.0.CO;2;,citation_issn=1939-9170;,citation_volume=87;,citation_language=en-US;,citation_journal_title=Ecology;">
+<meta name="citation_reference" content="citation_title=Robustness to secondary extinctions: Comparing trait-based sequential deletions in static and dynamic food webs;,citation_abstract=The loss of species from ecological communities can unleash a cascade of secondary extinctions, the risk and extent of which are likely to depend on the traits of the species that are lost from the community. To identify species traits that have the greatest impact on food web robustness to species loss we here subject allometrically scaled, dynamical food web models to several deletion sequences based on species’ connectivity, generality, vulnerability or body mass. Further, to evaluate the relative importance of dynamical to topological effects we compare robustness between dynamical and purely topological models. This comparison reveals that the topological approach overestimates robustness in general and for certain sequences in particular. Top-down directed sequences have no or very low impact on robustness in topological analyses, while the dynamical analysis reveals that they may be as important as high-impact bottom-up directed sequences. Moreover, there are no deletion sequences that result, on average, in no or very few secondary extinctions in the dynamical approach. Instead, the least detrimental sequence in the dynamical approach yields an average robustness similar to the most detrimental (non-basal) deletion sequence in the topological approach. Hence, a topological analysis may lead to erroneous conclusions concerning both the relative and the absolute importance of different species traits for robustness. The dynamical sequential deletion analysis shows that food webs are least robust to the loss of species that have many trophic links or that occupy low trophic levels. In contrast to previous studies we can infer, albeit indirectly, that secondary extinctions were triggered by both bottom-up and top-down cascades.;,citation_author=Alva Curtsdotter;,citation_author=Amrei Binzer;,citation_author=Ulrich Brose;,citation_author=Francisco De Castro;,citation_author=Bo Ebenman;,citation_author=Anna Eklöf;,citation_author=Jens O. Riede;,citation_author=Aaron Thierry;,citation_author=Björn C. Rall;,citation_publication_date=2011-11;,citation_cover_date=2011-11;,citation_year=2011;,citation_fulltext_html_url=https://linkinghub.elsevier.com/retrieve/pii/S1439179111001216;,citation_issue=7;,citation_doi=10.1016/j.baae.2011.09.008;,citation_issn=14391791;,citation_volume=12;,citation_language=en-US;,citation_journal_title=Basic and Applied Ecology;,citation_journal_abbrev=Basic and Applied Ecology;">
+<meta name="citation_reference" content="citation_title=Extinction cascades, community collapse, and recovery across a Mesozoic hyperthermal event;,citation_abstract=Mass extinctions are considered to be quintessential examples of Court Jester drivers of macroevolution, whereby abiotic pressures drive a suite of extinctions leading to huge ecosystem changes across geological timescales. Most research on mass extinctions ignores species interactions and community structure, limiting inference about which and why species go extinct, and how Red Queen processes that link speciation to extinction rates affect the subsequent recovery of biodiversity, structure and function. Here, we apply network reconstruction, secondary extinction modelling and community structure analysis to the Early Toarcian (Lower Jurassic; 183 Ma) Extinction Event and recovery. We find that primary extinctions targeted towards infaunal guilds, which caused secondary extinction cascades to higher trophic levels, reproduce the empirical post-extinction community most accurately. We find that the extinction event caused a switch from a diverse community with high levels of functional redundancy to a less diverse, more densely connected community of generalists. Recovery was characterised by a return to pre-extinction levels of some elements of community structure and function prior to the recovery of biodiversity. Full ecosystem recovery took ~7 million years at which point we see evidence of dramatically increased vertical structure linked to the Mesozoic Marine Revolution and modern marine ecosystem structure.;,citation_author=Alexander M. Dunhill;,citation_author=Karolina Zarzyczny;,citation_author=Jack O. Shaw;,citation_author=Jed W. Atkinson;,citation_author=Crispin T. S. Little;,citation_author=Andrew P. Beckerman;,citation_publication_date=2024-10-04;,citation_cover_date=2024-10-04;,citation_year=2024;,citation_fulltext_html_url=https://www.nature.com/articles/s41467-024-53000-2;,citation_issue=1;,citation_doi=10.1038/s41467-024-53000-2;,citation_issn=2041-1723;,citation_volume=15;,citation_language=en-US;,citation_journal_title=Nature Communications;,citation_journal_abbrev=Nat Commun;,citation_publisher=Nature Publishing Group;">
+<meta name="citation_reference" content="citation_title=The reliability of R50 as a measure of vulnerability of food webs to sequential species deletions;,citation_abstract=Recent studies predict elevated and accelerating rates of species extinctions over the 21st century, due to climate change and habitat loss. Considering that such primary species loss may initiate cascades of secondary extinctions and push systems towards critical tipping points, we urgently need to increase our understanding of if certain sequences of species extinctions can be expected to be more devastating than others Most theoretical studies addressing this question have used a topological (non-dynamical) approach to analyse the probability that food webs will collapse, below a fixed threshold value in species richness, when subjected to different sequences of species loss. Typically, these studies have neither considered the possibility of dynamical responses of species, nor that conclusions may depend on the value of the collapse threshold. Here we analyse how sensitive conclusions on the importance of different species are to the threshold value of food web collapse. Using dynamical simulations, where we expose model food webs to a range of extinction sequences, we evaluate the reliability of the most frequently used index, R50, as a measure of food web robustness. In general, we find that R50 is a reliable measure and that identification of destructive deletion sequences is fairly robust, within a moderate range of collapse thresholds. At the same time, however, focusing on R50 only hides a lot of interesting information on the disassembly process and can, in some cases, lead to incorrect conclusions on the relative importance of species in food webs.;,citation_author=Tomas Jonsson;,citation_author=Sofia Berg;,citation_author=Alexander Pimenov;,citation_author=Catherine Palmer;,citation_author=Mark Emmerson;,citation_publication_date=2015;,citation_cover_date=2015;,citation_year=2015;,citation_fulltext_html_url=https://onlinelibrary.wiley.com/doi/abs/10.1111/oik.01588;,citation_issue=4;,citation_doi=10.1111/oik.01588;,citation_issn=1600-0706;,citation_volume=124;,citation_language=en-US;,citation_journal_title=Oikos;">
+<meta name="citation_reference" content="citation_title=No global collapse of food webs across the Permian-Triassic Mass Extinction;,citation_abstract=The Permian-Triassic mass extinction (PTME), the Earth’s most severe biotic crisis associated with extreme environmental perturbations, eliminated $&amp;amp;amp;gt;$80% of marine species. However, whether it triggered a globally pervasive top-down collapse of marine food webs, and whether recovery proceeded through bottom-up reassembly, remain unresolved. Here we reconstruct spatially explicit metacommunity food webs from seven regions spanning equatorial to high latitudes to test how extinction dynamics and ecosystem reorganization varied geographically. By integrating estimates of community structure and species interactions, we provide direct inference on trophic disruption across the PTME. Despite catastrophic species loss and flattening of the latitudinal diversity gradient, trophic collapse was not globally uniform, and higher trophic levels were not globally truncated. Instead, extinction selectivity was spatially heterogenous and tracked environmental severity. Benthic, low-motility herbivores with limited respiratory capacity were disproportionately lost, consistent with intensified warming, deoxygenation and disruption of primary productivity under elevated pCO2. Mid- to high-latitude communities became top-heavy and structurally complex, whereas tropical systems remained bottom-heavy and less robust to secondary extinction. These results demonstrate that trophic disruption and recovery were geographically structured, mediated by environmental forcing, species traits and pre-extinction food-web architecture, with implications for predicting marine ecosystem responses to ongoing climate change.;,citation_author=Baran Karapunar;,citation_author=Tanya Strydom;,citation_author=Andrew P. Beckerman;,citation_author=Andy Ridgwell;,citation_author=Paul B. Wignall;,citation_author=Jennifer A. Dunne;,citation_author=Crispin T. S. Little;,citation_author=Pincelli Hull;,citation_author=Catalina Pimiento;,citation_author=Alexander Dunhill;,citation_publication_date=2026-02-25;,citation_cover_date=2026-02-25;,citation_year=2026;,citation_fulltext_html_url=https://www.biorxiv.org/content/10.64898/2026.02.24.707709v1;,citation_doi=10.64898/2026.02.24.707709;,citation_issn=2692-8205;,citation_language=en-US;">
+<meta name="citation_reference" content="citation_title=Extinction Cascades and Catastrophe in Ancient Food Webs;,citation_abstract=A model is developed to explore the potential responses of paleocommunities to disruptions of primary production during times of mass extinction and ecological crisis. Disruptions of primary production are expected to generate bottom-up cascades of secondary extinction, and these are predictable given species richnesses, functional diversity, and trophic link distributions. If, however, consumers are permitted to compensate for the loss of trophic resources by increasing the intensities of their remaining biotic interactions, top-down driven catastrophic increases of secondary extinction emerge from the model. Both bottom-up and top-down effects are themselves controlled by the geometry of the food webs. The general Phanerozoic trends of increasing taxonomic and ecological diversities, as well as the varying strengths of biotic interactions, have led to food webs of increasing complexity. The frequency of catastrophic secondary extinction increases as food web complexity increases, but increased complexity also serves to dampen the magnitude of the secondary extinctions. When intraguild competitive interactions are included in the model, competitively inferior taxa are observed to possess greater probabilities of survival if the guilds are embedded in simple subnetworks of the overall food web. The result is the emergence of post-extinction guilds dominated by those inferior taxa. These results are congruent with empirical observations of &amp;amp;amp;quot;disaster taxa&amp;quot; dominance after some mass extinction events, and provide a mechanism for the reorganization of ecosystems that is observed after those events. The model makes the testable prediction that dominance by disaster taxa, however, should be observed only when bottom-up disruptions have caused ecosystems to collapse catastrophically.;,citation_author=Peter D. Roopnarine;,citation_publication_date=2006;,citation_cover_date=2006;,citation_year=2006;,citation_fulltext_html_url=https://www.jstor.org/stable/4096814;,citation_issue=1;,citation_issn=0094-8373;,citation_volume=32;,citation_journal_title=Paleobiology;,citation_publisher=Paleontological Society;">
+<meta name="citation_reference" content="citation_title=Are We Mapping Ecosystems or Models? Framework Choices Dominate Food Web Topology and Extinction Inferences;,citation_abstract=Aim Ecological networks are widely used to assess community structure, stability, and responses to disturbance. Such networks often require model-based reconstructions (e.g., based on traits or theoretical constraints); however, the extent to which these frameworks influence ecological inference remains unexplored. Here, we assess whether macroecological inference derived from ecological networks is robust to variation in reconstruction framework. Location Cleveland Basin, United Kingdom. Time period Toarcian extinction event (Early Jurassic, late Pliensbachian–late Toarcian, ~183 Ma). Major taxa studied Marine macrofossils. Methods We reconstructed four successive assemblages from an identical species pool using six contrasting food web reconstruction approaches spanning feasible (trait-based), realised (allometric and energetic), and structural (topological) network representations. For each community and reconstruction approach, 100 replicate networks were generated. We quantified several network properties and assessed differences among reconstruction approaches using multivariate analyses. Pairwise interaction turnover was measured using link-based beta diversity. We then simulated species loss under multiple disturbance scenarios, allowing cascading extinctions, and compared predicted community states using mean absolute differences and rank concordance metrics between reconstruction approaches. Results Reconstruction framework strongly influenced inferred network topology, generating distinct structural signatures independent of species composition. Reconstruction approaches that were similar in network metrics often diverged in species-level interactions, with high β-turnover among inferred link sets. During extinction simulations, scenario rankings were broadly consistent at the network level, but interaction-level outcomes and cascade dynamics varied substantially. Main conclusions Network reconstruction functions as a structural prior that conditions ecological inference. While some aggregate patterns are robust across reconstruction approaches, detailed interaction-level dynamics are highly contingent on reconstruction approach. Comparative network studies across spatial or environmental gradients should therefore align reconstruction framework with inferential goals and explicitly evaluate sensitivity to reconstruction assumptions.;,citation_author=Tanya Strydom;,citation_author=Baran Karapunar;,citation_author=Jennifer A. Dunne;,citation_author=Pincelli Hull;,citation_author=Crispin T. S. Little;,citation_author=Catalina Pimiento;,citation_author=Andy Ridgwell;,citation_author=Andrew P. Beckerman;,citation_author=Alexander M. Dunhill;,citation_publication_date=2026-06-17;,citation_cover_date=2026-06-17;,citation_year=2026;,citation_fulltext_html_url=https://ecoevorxiv.org/repository/view/13495/;,citation_language=en-US;,citation_publisher=EcoEvoRxiv;">
+<meta name="citation_reference" content="citation_title=From Metawebs to Realised Webs: A Framework for Ecological Network Representation under Global Change;,citation_abstract=Ecological networks provide a critical framework for understanding the architecture of biodiversity and predicting ecosystem responses to environmental change. However, the application of network ecology is often hindered by a lack of clarity regarding the assumptions inherent in different network representations. Here, we present a hierarchical framework that distinguishes between “metawebs” (representing the fundamental feasibility of interactions) and “realised webs” (representing interactions expressed in specific spatiotemporal contexts). We contrast our conceptual approach with recent data-centric reviews, focusing instead on the theoretical gradients that govern network construction. We identify five core processes that drive the transition from potential to realised interactions: evolutionary compatibility and co-occurrence, which define the feasibility of links; and abundance, diet choice, and non-trophic interactions, which determine their realisation. Furthermore, we map these processes onto a methodological spectrum of network construction, distinguishing between inductive approaches (*e.g.,* trait-matching and stochastic models) that infer structure from observation, and deductive approaches (*e.g.,* neutral and optimal foraging models) that generate structure from mechanistic first principles. By making explicit the assumptions and scale-dependent processes underpinning these different representations, this framework clarifies the scope of inference possible with each approach, ultimately facilitating more robust predictions of biodiversity dynamics in the anthropocene.;,citation_author=Tanya Strydom;,citation_author=Alexander M. Dunhill;,citation_author=Jennifer A. Dunne;,citation_author=Timothée Poisot;,citation_author=Andrew P. Beckerman;,citation_publication_date=2026-01-21;,citation_cover_date=2026-01-21;,citation_year=2026;,citation_fulltext_html_url=https://ecoevorxiv.org/repository/view/11514/;,citation_language=en-US;,citation_publisher=EcoEvoRxiv;">
+<meta name="citation_reference" content="citation_title=Simple rules yield complex food webs;,citation_author=Richard J. Williams;,citation_author=Neo D. Martinez;,citation_publication_date=2000-03;,citation_cover_date=2000-03;,citation_year=2000;,citation_fulltext_html_url=http://www.nature.com/articles/35004572;,citation_issue=6774;,citation_doi=10.1038/35004572;,citation_issn=0028-0836, 1476-4687;,citation_volume=404;,citation_language=en-US;,citation_journal_title=Nature;">
+<meta name="citation_reference" content="citation_title=Collapse of an ecological network in Ancient Egypt;,citation_author=Justin D. Yeakel;,citation_author=Mathias M. Pires;,citation_author=Lars Rudolf;,citation_author=Nathaniel J. Dominy;,citation_author=Paul L. Koch;,citation_author=Paulo R. Guimarães;,citation_author=Thilo Gross;,citation_publication_date=2014-10;,citation_cover_date=2014-10;,citation_year=2014;,citation_issue=40;,citation_doi=10.1073/pnas.1408471111;,citation_volume=111;,citation_journal_title=PNAS;">
+</head>
+
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Dynamic Downsampling</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+            <div class="quarto-title-meta-author">
+          <div class="quarto-title-meta-heading">Authors</div>
+          <div class="quarto-title-meta-heading">Affiliation</div>
+          
+                <div class="quarto-title-meta-contents">
+            <p class="author">Tanya Strydom <a href="mailto:t.strydom@sheffield.ac.uk" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-6067-1349" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+          </div>
+                <div class="quarto-title-meta-contents">
+                    <p class="affiliation">
+                        School of Biosciences, University of Sheffield, Sheffield, UK
+                      </p>
+                  </div>
+                      <div class="quarto-title-meta-contents">
+            <p class="author">Andrew P. Beckerman <a href="https://orcid.org/0000-0002-4797-9143" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+          </div>
+                <div class="quarto-title-meta-contents">
+                    <p class="affiliation">
+                        School of Biosciences, University of Sheffield, Sheffield, UK
+                      </p>
+                  </div>
+                    </div>
+        
+        <div class="quarto-title-meta">
+
+                      
+                <div>
+            <div class="quarto-title-meta-heading">Published</div>
+            <div class="quarto-title-meta-contents">
+              <p class="date">July 31, 2026</p>
+            </div>
+          </div>
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      <div class="quarto-alternate-formats"><div class="quarto-title-meta-heading">Other Formats</div><div class="quarto-title-meta-contents"><p><a href="index.docx"><i class="bi bi-file-word"></i>MS Word</a></p></div><div class="quarto-title-meta-contents"><p><a href="index.pdf"><i class="bi bi-file-pdf"></i>PDF (preprint)</a></p></div></div></div>
+    </div>
+
+    <div>
+      <div class="abstract">
+        <div class="block-title">Abstract</div>
+        <p>TODO</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="keywords">
+        <div class="block-title">Keywords</div>
+        <p>food webs</p>
+      </div>
+    </div>
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods"><span class="header-section-number">2</span> Methods</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">3</span> Results</a></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">4</span> Discussion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="supplement/supplement-preview.html"><i class="bi bi-journal-code"></i>Supplementary Materials</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+  
+
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>This is a simple placeholder for the manuscript’s main document <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">(<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">Curtsdotter et al. 2011</a>)</span>.</p>
+</section>
+<section id="methods" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Methods</h1>
+</section>
+<section id="results" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Results</h1>
+</section>
+<section id="discussion" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Discussion</h1>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-curtsdotterRobustnessSecondaryExtinctions2011" class="csl-entry" role="listitem">
+Curtsdotter, Alva, Amrei Binzer, Ulrich Brose, Francisco De Castro, Bo Ebenman, Anna Eklöf, Jens O. Riede, Aaron Thierry, and Björn C. Rall. 2011. <span>“Robustness to Secondary Extinctions: <span>Comparing</span> Trait-Based Sequential Deletions in Static and Dynamic Food Webs.”</span> <em>Basic and Applied Ecology</em> 12 (7): 571–80. <a href="https://doi.org/10.1016/j.baae.2011.09.008">https://doi.org/10.1016/j.baae.2011.09.008</a>.
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
