@@ -255,26 +255,258 @@ food webs%
 
 \section{Introduction}\label{introduction}
 
-This is a simple placeholder for the manuscript's main document
-(Curtsdotter et al., 2011).
+Extinction simulation in networks are useful because they can inform us
+as to the robustness {[}REF{]} or resilience {[}REF{]} of the system.
+Understanding community level extinctions is of particular interest for
+understanding community collapse and mass extinction events {[}REFs{]}.
+However the nature of the fossil record means that we are only able to
+do topological extinctions {[}REFs{]}
+
+Dynamic extinctions (\emph{e.g.,} Curtsdotter et al., 2011) can be
+useful because they are (probably) a better approximation of reality -
+or at least not as `conservative'/best case scenario as what the
+topological extinctions are (insert a brief description of how these
+approaches are different). Something about how this is meaningful in
+paleo but also real-world settings. Maybe also point out that typically
+in dynamic context we are using species agnostic models \emph{e.g.,}
+niche and atn which lack the real world tractability that we want.
+
+However in order to \emph{correctly} match the philosophy of these
+dynamic networks we need a way in which to turn empirical metawebs into
+networks that are more representative of realised networks, \emph{i.e.,}
+there is some form of link distribution constraint (Strydom, Dunhill, et
+al., 2026). Although there has been some work on downsampling of paleo
+webs (Roopnarine, 2006) we lack any ground truthing of what the
+implications are of embedding these ecological assumptions. Additionally
+this downsampling approach makes insidious assumptions as to what is
+driving the distribution of links in a network. Possibly also add a
+sentence here about how the other work has focused on the niche model
+(Curtsdotter et al., 2011; Jonsson et al., 2015) which itself has its
+own sets of ecological assumptions/embeddings.
+
+Here we present a selection of downsampling approach that are built on
+different assumptions as to link constraints. Using these downsampling
+approaches we recreate the Curtsdotter et al. (2011) approach and test
+if we see difference in topological and dynamic extinctions, as well as
+if the different input networks have different signals. We do this using
+the same dataset from Karapunar et al. (2026).
 
 \section{Methods}\label{methods}
 
-\section{Results}\label{results}
+\#\#~Data
 
-\section{Discussion}\label{discussion}
+Seven locations (Karapunar et al., 2026). Here we use the guild-level
+community data to keep the size of the networks manageable and well
+within the bounds used by Curtsdotter et al. (2011). Additionally we
+added plankton and zooplankton data from EcoGenie models {[}REF{]} as a
+way to enlarge the `base' of the network (again to better represent a
+realised network).
+
+\subsection{Network construction}\label{network-construction}
+
+For the empirical networks we used the PFWIM model (Shaw et al., 2024).
+\emph{Insert brief description about trait assignments and mechanistic
+assumptions, mention we wanted to go as broad as possible so we used
+fully categorical rules}. This was then used as the base metaweb for
+each community. Each metaweb was then downsampled to a target
+connectance (see below for the different downsampling approaches).
+Additionally the target connectance and species richness was used to
+parameterise a niche model network (Williams \& Martinez, 2000). We also
+constructed ATN networks (Brose et al., 2006).
+
+\subsection{Downsampling approaches}\label{downsampling-approaches}
+
+Maybe just a brief interlude about how a metaweb represents all feasible
+interactions (so capturing the entire diet breadth of a specific
+species). Idea here is to prime that this is all links but acknowledge
+that in reality species are rarely feeding across their entire diet
+breadth.
+
+\emph{Niche:} Attempt to create a network that appears similar to a
+standard niche model network this is done by estimating a
+one-dimensional niche axis from the interaction matrix using the leading
+singular vectors of the Singular Value Decomposition (SVD). Species are
+then assigned positions along a common latent niche dimension, which is
+subsequently used to estimate consumer niche centres and niche breadths.
+
+\emph{Power-law (Roopnarine, 2006):} Based around ideas of extinctions
+and which links/specie will be lost - with the idea that generalist
+species will be the most robust and as such will retain their links.
+Consumers with larger trophic breadth (higher generality) receive larger
+retention probabilities and are therefore less likely to lose
+interactions.
+
+\emph{Degree-product:} Product of the out-degreee (generality) of the
+predator and the in-degree (vulnerability) of the consumer are used to
+assign a probability for each link. Links are then randomly removed
+based on that probability (note to self check if it is iterative each
+time so that the degrees are re-evaluated, it think this is the case).
+Here the ecological assumption is that generalist predators and
+vulnerable prey are probably not feeding/being fed on by everything,
+whereas for specialist species those links are probably occurring thus
+it makes sense to prune links from the most connected species pairs
+
+\emph{Random:} Links randomly removed until target connectance is
+reached, with the exception if a species becomes isolated in which case
+a different link is target for removal. This is the `null model'
+
+\subsection{Simulations}\label{simulations}
+
+For each community we create a network, sample a body size based on the
+categorical size classes, this is a truncated normal distribution. Body
+sizes are used to build the ATN (mention here that we vary the threshold
+value between 0.01-0.12 and select the network that has the closest
+connectance to the target one) We also select a target connectance
+between 0.05-0.15. Each network is then downsampled to the target
+connectance. This represents the `creation' stage. At this point we run
+a set of topological cascading extinctions for the difference extinction
+scenarios. Using the END (Delmas et al., 2017) each network is then run
+through a `burn-in' period for 5000 time steps or until it has reached a
+steady state. Here we run another set of topological extinctions. For
+the dynamic extinctions primary extinctions are determined based on the
+rules of the different extinction scenarios and secondary extinctions
+occur when the biomass of a species falls below the threshold value of
+1e-12. After every primary extinction event (where the biomass of the
+target species is set to 1e-12) we run 5000 timesteps before the next
+extinction event to allow for biomass simulations to occur.
+
+\subsection{Analyses}\label{analyses}
+
+For each extinction run we calculate the R50 robustness (Jonsson et al.,
+2015) as well as the primary and secondary extinction rates. Add breif
+description of how robustness is calculated. TBD the breakdown of the
+statistical approaches used to understand the effect of downsampling
+approach/network type on inferred network robustness and extinction
+dynamics.
+
+\subsection{Software}\label{software}
+
+Network construction and extinction simulations were run in Julia
+v1.12.6 (Bezanson et al., 2017), we used
+\texttt{EcologicalNetworksDynamics.jl} (Lajaaiti et al., 2025) for
+dynamic simulations, \texttt{PFIM.jl} {[}REF{]} for construction of
+metawebs, \texttt{FoodWebTools.jl} {[}REF{]} for network downsampling,
+and Extinctions.jl {[}REF{]} for extinctions and robustness
+calculations. Statistical analyses were run in R v4.5.2 {[}REF{]}. All
+code can be found at \emph{TODO}
+
+\begin{quote}
+Keep the narrative extinction centric for now but remember we also have
+the topology of each network before the various extinction simulations
+begin
+\end{quote}
+
+\section{Downsampling approach results in different network
+structure}\label{downsampling-approach-results-in-different-network-structure}
+
+Here we can actually look at the topology and see if the different
+networks actually look different in multivariate space?
+
+\section{Differences in inferred robustness of topological and dynamic
+unaffected by network
+type}\label{differences-in-inferred-robustness-of-topological-and-dynamic-unaffected-by-network-type}
+
+Still see that topological robustness is more conservative than dynamic
+extinctions
+
+\section{Network types result in differences in dynamic
+extinctions}\label{network-types-result-in-differences-in-dynamic-extinctions}
+
+Report here about the secondary extinction rates as well as the pairwise
+contrasts.
+
+\#\#~Relative to the niche model, niche downsampling is the closest
+match
+
+Most often the ones to not be different from each other. Worth pointing
+out that the ATN behaves very differently as well. So again we are back
+at are we modelling network or model behaviour (Strydom, Karapunar, et
+al., 2026)
+
+\section{Conclusion}\label{conclusion}
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-bezansonJuliaFreshApproach2017}
+Bezanson, J., Edelman, A., Karpinski, S., \& Shah, V. (2017). Julia: {A
+Fresh Approach} to {Numerical Computing}. \emph{SIAM Review},
+\emph{59}(1), 65--98. \url{https://doi.org/10.1137/141000671}
+
+\bibitem[\citeproctext]{ref-broseConsumerResourceBodySize2006}
+Brose, U., Jonsson, T., Berlow, E. L., Warren, P., Banasek-Richter, C.,
+Bersier, L.-F., Blanchard, J. L., Brey, T., Carpenter, S. R.,
+Blandenier, M.-F. C., Cushing, L., Dawah, H. A., Dell, T., Edwards, F.,
+Harper-Smith, S., Jacob, U., Ledger, M. E., Martinez, N. D., Memmott,
+J., \ldots{} Cohen, J. E. (2006). Consumer--{Resource Body-Size
+Relationships} in {Natural Food Webs}. \emph{Ecology}, \emph{87}(10),
+2411--2417.
+\url{https://doi.org/10.1890/0012-9658(2006)87\%5B2411:CBRINF\%5D2.0.CO;2}
+
 \bibitem[\citeproctext]{ref-curtsdotterRobustnessSecondaryExtinctions2011}
 Curtsdotter, A., Binzer, A., Brose, U., De Castro, F., Ebenman, B.,
 Eklöf, A., Riede, J. O., Thierry, A., \& Rall, B. C. (2011). Robustness
 to secondary extinctions: {Comparing} trait-based sequential deletions
 in static and dynamic food webs. \emph{Basic and Applied Ecology},
 \emph{12}(7), 571--580. \url{https://doi.org/10.1016/j.baae.2011.09.008}
+
+\bibitem[\citeproctext]{ref-delmasSimulationsBiomassDynamics2017}
+Delmas, E., Brose, U., Gravel, D., Stouffer, D. B., \& Poisot, T.
+(2017). Simulations of biomass dynamics in community food webs.
+\emph{Methods in Ecology and Evolution}, \emph{8}(7), 881--886.
+\url{https://doi.org/10.1111/2041-210X.12713}
+
+\bibitem[\citeproctext]{ref-jonssonReliabilityR50Measure2015}
+Jonsson, T., Berg, S., Pimenov, A., Palmer, C., \& Emmerson, M. (2015).
+The reliability of {R50} as a measure of vulnerability of food webs to
+sequential species deletions. \emph{Oikos}, \emph{124}(4), 446--457.
+\url{https://doi.org/10.1111/oik.01588}
+
+\bibitem[\citeproctext]{ref-karapunarNoGlobalCollapse2026}
+Karapunar, B., Strydom, T., Beckerman, A. P., Ridgwell, A., Wignall, P.
+B., Dunne, J. A., Little, C. T. S., Hull, P., Pimiento, C., \& Dunhill,
+A. (2026, February 25). \emph{No global collapse of food webs across the
+{Permian-Triassic Mass Extinction}}.
+\url{https://doi.org/10.64898/2026.02.24.707709} (Pre-published)
+
+\bibitem[\citeproctext]{ref-lajaaitiEcologicalNetworksDynamicsjlJuliaPackage2025}
+Lajaaiti, I., Bonnici, I., Kéfi, S., Mayall, H., Danet, A., Beckerman,
+A. P., Malpas, T., \& Delmas, E. (2025).
+{EcologicalNetworksDynamics}.jl: {A Julia} package to simulate the
+temporal dynamics of complex ecological networks. \emph{Methods in
+Ecology and Evolution}, \emph{16}(3), 520--529.
+\url{https://doi.org/10.1111/2041-210X.14497}
+
+\bibitem[\citeproctext]{ref-roopnarineExtinctionCascadesCatastrophe2006}
+Roopnarine, P. D. (2006). Extinction {Cascades} and {Catastrophe} in
+{Ancient Food Webs}. \emph{Paleobiology}, \emph{32}(1), 1--19.
+\url{https://www.jstor.org/stable/4096814}
+
+\bibitem[\citeproctext]{ref-shawFrameworkReconstructingAncient2024}
+Shaw, J. O., Dunhill, A. M., Beckerman, A. P., Dunne, J. A., \& Hull, P.
+M. (2024, January 30). \emph{A framework for reconstructing ancient food
+webs using functional trait data}.
+\url{https://doi.org/10.1101/2024.01.30.578036} (Pre-published)
+
+\bibitem[\citeproctext]{ref-strydomScalingMetawebsRealised2026}
+Strydom, T., Dunhill, A. M., Dunne, J. A., Poisot, T., \& Beckerman, A.
+P. (2026). \emph{From {Metawebs} to {Realised Webs}: {A Framework} for
+{Ecological Network Representation} under {Global Change}}.
+\url{https://ecoevorxiv.org/repository/view/11514/}
+
+\bibitem[\citeproctext]{ref-strydomAreWeMapping2026}
+Strydom, T., Karapunar, B., Dunne, J. A., Hull, P., Little, C. T. S.,
+Pimiento, C., Ridgwell, A., Beckerman, A. P., \& Dunhill, A. M. (2026).
+\emph{Are {We Mapping Ecosystems} or {Models}? {Framework Choices
+Dominate Food Web Topology} and {Extinction Inferences}}.
+\url{https://ecoevorxiv.org/repository/view/13495/}
+
+\bibitem[\citeproctext]{ref-Williams2000Simple}
+Williams, R. J., \& Martinez, N. D. (2000). Simple rules yield complex
+food webs. \emph{Nature}, \emph{404}(6774), 180--183.
+\url{https://doi.org/10.1038/35004572}
 
 \end{CSLReferences}
 
