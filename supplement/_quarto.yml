@@ -1,0 +1,9 @@
+project:
+  type: default
+  output-dir: docs
+
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    csl: https://www.zotero.org/styles/methods-in-ecology-and-evolution

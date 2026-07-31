@@ -1,0 +1,45 @@
+---
+title: "Dynamic Downsampling"
+authors:
+  - name: Tanya Strydom
+    id: ts
+    orcid: 0000-0001-6067-1349
+    corresponding: true
+    email: t.strydom@sheffield.ac.uk
+    role: 
+    - conceptualization: lead
+    - methodology: lead
+    affiliation:
+      - id: sheffield
+        name: School of Biosciences, University of Sheffield, Sheffield, UK
+  - name: Andrew P. Beckerman
+    id: apb
+    orcid: 0000-0002-4797-9143
+    corresponding: false
+    role: 
+    - conceptualization: lead
+    - methodology: supporting
+    affiliations:
+      - ref: sheffield
+keywords:
+  - food webs
+abstract: |
+  TODO
+date: last-modified
+bibliography: references.bib
+number-sections: true
+---
+
+# Introduction
+This is a simple placeholder for the manuscript's main document [@curtsdotterRobustnessSecondaryExtinctions2011].
+
+# Methods
+
+# Results
+
+# Discussion
+
+# References {.unnumbered}
+
+::: {#refs}
+:::

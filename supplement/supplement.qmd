@@ -1,0 +1,14 @@
+---
+title: "Supplementary Materials"
+author: "Put ms title here"
+format: 
+  pdf:
+    toc: true
+    number-sections: true
+---
+
+## Section S1: Text Elements
+Write your supplementary text content here.
+
+## Section S2: Supplementary Figures
+Include your images cleanly like this
