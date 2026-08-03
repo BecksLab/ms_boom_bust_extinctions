@@ -147,27 +147,29 @@ Extinction experiments were subsequently performed on both the creation and real
 
 For each extinction scenario, robustness was quantified from the resulting extinction curves as the proportion of primary extinctions required to produce a 50% reduction in species richness ($R_{50}$ [@jonssonReliabilityR50Measure2015]), estimated by linear interpolation between extinction events.
 
-## Analyses
-
-For each extinction run we calculate the R50 robustness [@jonssonReliabilityR50Measure2015] as well as the primary and secondary extinction rates. Add brief description of how robustness is calculated. TBD the breakdown of the statistical approaches used to understand the effect of downsampling approach/network type on inferred network robustness and extinction dynamics.
-
 ## Software
 
 Network construction and extinction simulations were run in Julia v1.12.6 [@bezansonJuliaFreshApproach2017], we used `EcologicalNetworksDynamics.jl` [@lajaaitiEcologicalNetworksDynamicsjlJuliaPackage2025] for dynamic simulations, `PFIM.jl` [REF] for construction of metawebs, `FoodWebTools.jl` [REF] for network downsampling, and Extinctions.jl [REF] for extinctions and robustness calculations. Statistical analyses were run in R v4.5.2 [REF]. All code can be found at *TODO*
 
 > Keep the narrative extinction centric for now but remember we also have the topology of each network before the various extinction simulations begin
 
-# Downsampling approach results in different network structure
+# Downsampling approaches generate distinct network structures
 
-Here we can actually look at the topology and see if the different networks actually look different in multivariate space?
+Here we can actually look at the topology and see if the different networks actually look different in multivariate space? Despite similar target connectance and richness, networks differed strongly in higher-order structure.
 
 # Differences in inferred robustness of topological and dynamic unaffected by network type
 
 Still see that topological robustness is more conservative than dynamic extinctions
 
-# Network types result in differences in dynamic extinctions
+# Network type alters the propagation of dynamical extinctions
 
 Report here about the secondary extinction rates as well as the pairwise contrasts.
+
+![TODO](figures/paleo_primVsec.png){#fig-1}
+
+![TODO](figures/rob_contrasts.png){#fig-2}
+
+![TODO](figures/rob_prop_indistinguishable.png){#fig-3}
 
 ## Relative to the niche model, niche downsampling is the closest match
 
