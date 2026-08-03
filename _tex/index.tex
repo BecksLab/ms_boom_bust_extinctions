@@ -65,7 +65,6 @@
 
 
 \usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -182,13 +181,9 @@
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
-% fallback for those not using the hyperref driver hyperxmp:
-\makeatletter
-\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
-\makeatother
 \hypersetup{
   pdftitle={Dynamic Downsampling},
-  pdfkeywords={\xmpquote{food webs}},
+  pdfkeywords={food webs},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -212,7 +207,7 @@
 1%
 }%
 }
-\date{2026-07-31}
+\date{2026-08-03}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -496,15 +491,6 @@ required to produce a 50\% reduction in species richness (\(R_{50}\)
 (Jonsson et al., 2015)), estimated by linear interpolation between
 extinction events.
 
-\subsection{Analyses}\label{analyses}
-
-For each extinction run we calculate the R50 robustness (Jonsson et al.,
-2015) as well as the primary and secondary extinction rates. Add brief
-description of how robustness is calculated. TBD the breakdown of the
-statistical approaches used to understand the effect of downsampling
-approach/network type on inferred network robustness and extinction
-dynamics.
-
 \subsection{Software}\label{software}
 
 Network construction and extinction simulations were run in Julia
@@ -522,11 +508,13 @@ the topology of each network before the various extinction simulations
 begin
 \end{quote}
 
-\section{Downsampling approach results in different network
-structure}\label{downsampling-approach-results-in-different-network-structure}
+\section{Downsampling approaches generate distinct network
+structures}\label{downsampling-approaches-generate-distinct-network-structures}
 
 Here we can actually look at the topology and see if the different
-networks actually look different in multivariate space?
+networks actually look different in multivariate space? Despite similar
+target connectance and richness, networks differed strongly in
+higher-order structure.
 
 \section{Differences in inferred robustness of topological and dynamic
 unaffected by network
@@ -535,11 +523,47 @@ type}\label{differences-in-inferred-robustness-of-topological-and-dynamic-unaffe
 Still see that topological robustness is more conservative than dynamic
 extinctions
 
-\section{Network types result in differences in dynamic
-extinctions}\label{network-types-result-in-differences-in-dynamic-extinctions}
+\section{Network type alters the propagation of dynamical
+extinctions}\label{network-type-alters-the-propagation-of-dynamical-extinctions}
 
 Report here about the secondary extinction rates as well as the pairwise
 contrasts.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/paleo_primVsec.png}}
+
+}
+
+\caption{\label{fig-1}TODO}
+
+\end{figure}%
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/rob_contrasts.png}}
+
+}
+
+\caption{\label{fig-2}TODO}
+
+\end{figure}%
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/rob_prop_indistinguishable.png}}
+
+}
+
+\caption{\label{fig-3}TODO}
+
+\end{figure}%
 
 \#\#~Relative to the niche model, niche downsampling is the closest
 match
@@ -554,7 +578,7 @@ al., 2026)
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
-\protect\phantomsection\label{refs}
+\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
 \bibitem[\citeproctext]{ref-bezansonJuliaFreshApproach2017}
 Bezanson, J., Edelman, A., Karpinski, S., \& Shah, V. (2017). Julia: {A
