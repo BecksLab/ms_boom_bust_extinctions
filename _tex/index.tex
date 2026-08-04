@@ -330,11 +330,48 @@ from a common regional interaction pool.
 
 \subsubsection{Niche}\label{niche}
 
-The niche approach assumes that realised interactions represent the core
-of a consumer's trophic niche. A one-dimensional latent niche axis,
-\(x_i\), is first estimated from the interaction matrix using the
-leading singular vectors of the Singular Value Decomposition (SVD). For
-each consumer \(i\), the centroid of its realised niche is
+The original niche model from Williams \& Martinez (2000) assumes that
+realised interactions represent the core of a consumer's trophic niche,
+and that these diets can be arranged along a single niche axis. In order
+to create a downsampling approach that mimics this we we infer a latent
+trophic axis directly from the metaweb using Singular Value
+Decomposition (SVD). It has been shown that the latent spaces described
+by the left and right singular vectors are closely aligned wth the
+generality and vulnerability of species (Strydom et al., 2022) and so
+the SVD composition should retain the diet of the species.
+
+Let \(A\) denote the \(S \times S\) adjacency matrix of the metaweb,
+where \(A_{ij}=1\) if consumer \(i\) feeds on resource \(j\). We compute
+its singular value decomposition,
+
+\[
+A = U \Sigma V^\top,
+\]
+
+where \(U\) and \(V\) are the left and right singular vectors,
+respectively, and \(\Sigma\) is the diagonal matrix of singular values.
+Using the leading singular value, \(\sigma_1\), and corresponding
+singular vectors, \(\mathbf{u}_1\) and \(\mathbf{v}_1\), each species is
+assigned latent consumer and resource coordinates,
+
+\[
+c_i = \sqrt{\sigma_1}\,u_{i1},
+\qquad
+r_i = \sqrt{\sigma_1}\,v_{i1}.
+\]
+
+Because species can act both as consumers and as resources, these
+coordinates are combined to obtain a single niche position,
+
+\[
+x_i = \frac{c_i + r_i}{2},
+\]
+
+which is subsequently rescaled to lie between 0 and 1. Species with
+similar values of \(x_i\) therefore occupy similar positions along the
+dominant trophic gradient of the metaweb.
+
+For each consumer \(i\), the centroid of its realised niche is
 
 \[
 \mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
@@ -348,12 +385,15 @@ as the standard deviation of prey positions,
 \sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
 \]
 
-it is also possible to scale the niche breadth to further constrain
-niche breadth,
+where the lower bound prevents unrealistically narrow niches for
+specialists. Niche breadth can optionally be scaled to further constrain
+realised diets,
 
 \[
-\sigma_i' = \alpha \sigma_i.
+\sigma_i' = \alpha \sigma_i,
 \]
+
+where \(\alpha\) is acts as a scaling parameter.
 
 The probability of retaining an interaction between consumer \(i\) and
 resource \(j\) is then
@@ -364,11 +404,11 @@ P_{ij} \propto
 \]
 
 Interactions closest to the consumer's niche centre are therefore most
-likely to be realised, whereas interactions towards the margins of the
-niche are preferentially removed. Ecologically, this assumes that local
-communities realise the central portion of a consumer's potential
-trophic niche, with peripheral or opportunistic interactions occurring
-less consistently.
+likely to be realised (retained), whereas interactions towards the
+margins of the niche are preferentially removed. Ecologically, this
+assumes that local communities realise the central portion of a
+consumer's potential trophic niche, with peripheral or opportunistic
+interactions occurring less consistently.
 
 \subsubsection{Power-law}\label{power-law}
 
@@ -518,20 +558,20 @@ method-dependent
 ways}\label{downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways}
 
 Redundancy analysis (RDA), using permutation-based significance testing
-and accounting for community-level variation, revealed that downsampling
-approach significantly affected network topology, but that this effect
-depended on the magnitude of connectance reduction required to reach the
-target connectance (999 permutations; \(F_{7, 707}\) = 112.8, \(p\) =
-0.001, Figure~\ref{fig-downsample} panel A). The model explained 31.8\%
-of total topology variation (adjusted \(R^2\) = 0.318), with community
-identity accounting for an additional 39.7\% of variation. The
-significant interaction between downsampling approach and connectance
-change (marginal test; \(F_{3, 707}\) = 18.90, \(p\) = 0.001)
-demonstrated that topology trajectories differed among downsampling
-methods as connectance declined. Thus, the extent to which network
-structure diverged from the original topology depended on both the
-severity of downsampling and the downsampling mechanism by which
-interactions were removed.
+while accounting for community-level variation, revealed that
+downsampling approach significantly affected network topology, but that
+this effect depended on the magnitude of connectance reduction required
+to reach the target connectance (999 permutations; \(F_{7, 707}\) =
+112.8, \(p\) = 0.001; Figure~\ref{fig-downsample}, panel A). The model
+explained 31.8\% of total topology variation (adjusted \emph{R}² =
+0.318), with community identity accounting for an additional 39.7\% of
+variation. The significant interaction between downsampling approach and
+connectance change (marginal test; \(F_{3, 707}\) = 18.90, \(p\) =
+0.001) demonstrated that topology trajectories differed among
+downsampling methods as connectance declined. Thus, the extent to which
+network structure diverged from the original topology depended on both
+the severity of downsampling and the mechanism by which interactions
+were removed.
 
 \begin{figure}
 
@@ -541,52 +581,74 @@ interactions were removed.
 
 }
 
-\caption{\label{fig-downsample}TODO}
+\caption{\label{fig-downsample}\textbf{Downsampling approach influences
+both network topology and subsequent structural reorganisation during
+burn-in.} (A) Redundancy analysis (RDA) ordination showing differences
+in network topology among downsampling approaches across the connectance
+gradient after accounting for community-level variation. (B) Estimated
+slopes (±95\% confidence intervals) describing the relationship between
+the primary RDA axis and connectance change for each downsampling
+approach; letters denote post-hoc groupings from estimated marginal
+trend comparisons. (C) Principal component trajectories illustrating
+structural change between network creation and burn-in for each
+downsampling approach. (D) Mean Euclidean displacement through PCA space
+during burn-in (±95\% confidence intervals); letters indicate pairwise
+differences among network types from estimated marginal means. Networks
+sharing the same letter are not significantly different.}
 
 \end{figure}%
 
 To identify the source of this interaction, the response of the primary
 RDA axis was examined across the connectance gradient. RDA1 was strongly
-associated with connectance change (\(F_{7, 712}\) = 2076.86, \(p\)
+associated with connectance change (\(F_{1, 712}\) = 2076.86, \(p\)
 \textless{} 0.001), with additional effects of downsampling approach
 (\(F_{3, 712}\) = 33.28, \(p\) \textless{} 0.001) and a significant
 downsampling approach \(\times\) connectance change interaction
 (\(F_{3, 712}\) = 4.81, \(p\) = 0.003). Pairwise comparisons of
-estimated trajectory slopes showed that link-based downsampling produced
-a distinct response, differing from the other three downsampling
-approaches. In contrast, these latter three approaches showed
-statistically indistinguishable trajectories
-Figure~\ref{fig-downsample}. Together, these results indicate that
-although all approaches altered topology as connectance decreased,
-link-based removal generated a different pathway of structural change
-compared with the other downsampling approaches.
+estimated trajectory slopes showed that link-based downsampling followed
+a distinct trajectory, differing from niche-, power-, and random-based
+downsampling, whereas the latter three approaches exhibited
+statistically indistinguishable responses (Figure~\ref{fig-downsample},
+panel B). These results indicate that all downsampling methods alter
+network topology as connectance declines, but that removing interactions
+according to their realised connectivity produces a fundamentally
+different pathway of structural change from approaches that incorporate
+species-level ecological information or random link loss.
 
-Beyond the effects of downsampling, network construction approach also
-influenced how topology changed during subsequent burn-in. Principal
-component analysis (PCA) was used to represent variation in topology
-space, and structural reorganisation during burn-in was quantified as
-the Euclidean displacement between network positions at creation and
-after burn-in across the first three PCA dimensions. Linear modelling
-showed that burn-in displacement differed significantly among network
-types (\(F_{6, 1158}\) = 62.00, \(p\) \textless{} 0.001). With the
-exception of the random the downsampled networks had a similar
-displacement to the niche model Figure~\ref{fig-downsample}, whereas
-metawebs and ATNs had their own distinct displacement trajectories.
+We next asked whether these structurally distinct networks responded
+differently during dynamic burn-in. Structural reorganisation was
+quantified as the Euclidean displacement between network positions
+before and after burn-in in the first three principal component
+dimensions, with community included as a random effect to account for
+the substantial variation among communities. Burn-in displacement
+differed significantly among network types (\(F\) = 62.0, \(p\)
+\textless{} 0.001). Metawebs underwent the greatest structural
+reorganisation, whereas ATNs exhibited the smallest displacement. Among
+the downsampled networks, niche-, power-, and link-based approaches
+underwent comparable structural change during burn-in, while random
+downsampling showed a modestly greater displacement
+(Figure~\ref{fig-downsample}, panels C--D).
 
-Together, these analyses demonstrate that the different downsampling
-approaches will create structurally distinct networks, with these
-differences becoming more apparent the more aggressive the degree of
-downsampling becomes. This is unsurprising since as more links are
-removed the stronger the embedded ecological assumptions behind the link
-removal process will become. Reassuringly we see that the downsampled
-networks showcase similar structural changes during the burn-in phase,
-and that these changes are more in line with those exhibited by the
-niche model than the original metaweb indicating that these downsampling
-approaches do indeed produce networks that are more aligned with
-realised webs than with the original metaweb. The exception here is the
-random network, which is to be expected as it does not embed any
-ecological assumptions and thus we expect it to behave differently in
-dynamic settings.
+Together, these analyses demonstrate that downsampling approach
+influences network topology both during network construction and
+subsequent dynamic relaxation. Differences among downsampling methods
+become increasingly pronounced as greater proportions of interactions
+are removed, consistent with the expectation that the ecological
+assumptions underlying each removal strategy exert a stronger influence
+under more aggressive downsampling. Importantly, despite generating
+distinct initial topologies, the different downsampling approaches
+underwent remarkably similar structural reorganisation during burn-in,
+changing in ways more similar to the niche model than the original
+metaweb. In contrast, random downsampling remained distinct throughout
+burn-in, consistent with its lack of an underlying ecological mechanism
+governing interaction removal. This suggests that the ecologically
+informed downsampling on metawebs allows us to produce networks whose
+subsequent structural dynamics more closely resemble those of the niche
+model. Notably the two realised models (Niche and ATN) do not behave
+similarly and still end up at different `end points' post burn-in to the
+empirical webs, highlighting that network reconstruction approach will
+still have a strong effect on the inferred dynamics and behaviour of the
+system (Strydom, Karapunar, et al., 2026)
 
 \section{Differences in inferred robustness of topological and dynamic
 unaffected by network
@@ -594,6 +656,31 @@ type}\label{differences-in-inferred-robustness-of-topological-and-dynamic-unaffe
 
 Still see that topological robustness is more conservative than dynamic
 extinctions
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessTopoVDynamic.png}}
+
+}
+
+\caption{\label{fig-TopoVDynamic}\textbf{Differences between topological
+and dynamic estimates of network robustness.} (A) Estimated robustness
+(\(R_50\)) of realised networks under topological (green) and dynamic
+(yellow) extinction simulations across network types and extinction
+scenarios. Points represent mean robustness values, with connecting
+lines highlighting the consistent reduction in robustness estimates when
+extinction cascades are evaluated dynamically. (B) Difference between
+dynamic and topological robustness estimates
+(\(\Delta R_50 = R_{50, dynamic} - R_{50, topological}\)) for each
+network type. Negative values indicate that dynamic simulations produce
+lower inferred robustness than topological simulations. Bars show
+estimated marginal means from linear models accounting for differences
+among empirical communities; letters indicate significant differences
+among network types based on Sidak-adjusted pairwise comparisons.}
+
+\end{figure}%
 
 \section{Network type alters the propagation of dynamical
 extinctions}\label{network-type-alters-the-propagation-of-dynamical-extinctions}
@@ -637,8 +724,7 @@ contrasts.
 
 \end{figure}%
 
-\#\#~Relative to the niche model, niche downsampling is the closest
-match
+\#\#~Relative to the niche model, XXX is the closest match
 
 Most often the ones to not be different from each other. Worth pointing
 out that the ATN behaves very differently as well. So again we are back
@@ -711,6 +797,14 @@ Shaw, J. O., Dunhill, A. M., Beckerman, A. P., Dunne, J. A., \& Hull, P.
 M. (2024, January 30). \emph{A framework for reconstructing ancient food
 webs using functional trait data}.
 \url{https://doi.org/10.1101/2024.01.30.578036} (Pre-published)
+
+\bibitem[\citeproctext]{ref-strydomFoodWebReconstruction2022a}
+Strydom, T., Bouskila, S., Banville, F., Barros, C., Caron, D., Farrell,
+M. J., Fortin, M.-J., Hemming, V., Mercier, B., Pollock, L. J., Runghen,
+R., Dalla Riva, G. V., \& Poisot, T. (2022). Food web reconstruction
+through phylogenetic transfer of low-rank network representation.
+\emph{Methods in Ecology and Evolution}, \emph{13}(12).
+\url{https://doi.org/10.1111/2041-210X.13835}
 
 \bibitem[\citeproctext]{ref-strydomScalingMetawebsRealised2026}
 Strydom, T., Dunhill, A. M., Dunne, J. A., Poisot, T., \& Beckerman, A.
