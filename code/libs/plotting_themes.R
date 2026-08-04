@@ -36,13 +36,13 @@ set_theme(figure_theme)
 # for network types
 net_type_col_pal <- c(
   "down_power" = "#A6192E", 
-  "metaweb" = "#154734", 
-  #"niche" = "#4A8770",
-  "niche" = "#C5E86C",
-  "down_rand" = "#662932",
-  "down_link" = "#332124",
+  "metaweb"    = "#154734", 
+  #"niche".    = "#4A8770",
+  "niche"      = "#C5E86C",
+  "down_rand"  = "#662932",
+  "down_link"  = "#332124",
   "down_niche" = "#9FC7B8",
-  "atn" = "#BFFFE7")
+  "atn"        = "#BFFFE7")
 
 # General colour vibes
 col_pal <- c(
@@ -52,6 +52,13 @@ col_pal <- c(
   "forest_green"    = "#154734",
   "minnesota_wheat" = "#DDCBA4",
   "light_green"     = "#C5E86C"
+)
+
+# extinction colours
+extinction_pal <- c(
+  "topo_realised"  = "#046A38", 
+  "dyn_realised"   = "#FFB81C",
+  "topo_creation"  = "#63d4a9"
 )
 
 

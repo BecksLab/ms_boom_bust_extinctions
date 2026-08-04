@@ -195,6 +195,8 @@ Together, these analyses demonstrate that downsampling approach influences netwo
 
 Still see that topological robustness is more conservative than dynamic extinctions
 
+![**Differences between topological and dynamic estimates of network robustness.** (A) Estimated robustness ($R_50$) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates ($\Delta R_50 = R_{50, dynamic} - R_{50, topological}$) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.](figures/robustnessTopoVDynamic.png){#fig-TopoVDynamic}
+
 # Network type alters the propagation of dynamical extinctions
 
 Report here about the secondary extinction rates as well as the pairwise contrasts.
@@ -205,7 +207,7 @@ Report here about the secondary extinction rates as well as the pairwise contras
 
 ![TODO](figures/rob_prop_indistinguishable.png){#fig-3}
 
-## Relative to the niche model, niche downsampling is the closest match
+## Relative to the niche model, XXX is the closest match
 
 Most often the ones to not be different from each other. Worth pointing out that the ATN behaves very differently as well. So again we are back at are we modelling network or model behaviour [@strydomAreWeMapping2026]
 

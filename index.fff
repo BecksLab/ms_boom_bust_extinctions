@@ -28,6 +28,32 @@ sharing the same letter are not significantly different.}
 
 \centering{
 
+\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessTopoVDynamic.png}}
+
+}
+
+\caption{\label{fig-TopoVDynamic}\textbf{Differences between topological
+and dynamic estimates of network robustness.} (A) Estimated robustness
+(\(R_50\)) of realised networks under topological (green) and dynamic
+(yellow) extinction simulations across network types and extinction
+scenarios. Points represent mean robustness values, with connecting
+lines highlighting the consistent reduction in robustness estimates when
+extinction cascades are evaluated dynamically. (B) Difference between
+dynamic and topological robustness estimates
+(\(\Delta R_50 = R_{50, dynamic} - R_{50, topological}\)) for each
+network type. Negative values indicate that dynamic simulations produce
+lower inferred robustness than topological simulations. Bars show
+estimated marginal means from linear models accounting for differences
+among empirical communities; letters indicate significant differences
+among network types based on Sidak-adjusted pairwise comparisons.}
+
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+
+\centering{
+
 \pandocbounded{\includegraphics[keepaspectratio]{figures/paleo_primVsec.png}}
 
 }
