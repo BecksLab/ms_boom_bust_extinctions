@@ -2,6 +2,19 @@
 
 \centering{
 
+\pandocbounded{\includegraphics[keepaspectratio]{figures/downsamplingEffect.png}}
+
+}
+
+\caption{\label{fig-downsample}TODO}
+
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+
+\centering{
+
 \pandocbounded{\includegraphics[keepaspectratio]{figures/paleo_primVsec.png}}
 
 }
