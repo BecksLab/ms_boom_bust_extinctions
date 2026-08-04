@@ -1,6 +1,9 @@
 library(tidyverse)
 library(FactoMineR)
 library(vegan)
+library(lme4)
+library(emmeans)
+library(multcomp)
 
 source("libs/plotting_themes.R")
 
@@ -161,6 +164,73 @@ p_traj_all <-
   scale_colour_manual(values = net_type_col_pal)
 
 # ------------------------------------------------------------------------------
+# Trajectory test
+# ------------------------------------------------------------------------------
+
+burnin_traj <- scores %>%
+  vibe_check(net_id, community, net_type, stage, Dim.1, Dim.2, Dim.3) %>%
+  pivot_wider(names_from = stage,
+              values_from = c(Dim.1, Dim.2, Dim.3)) %>%
+  glow_up(displacement = sqrt((Dim.1_burnin - Dim.1_creation)^2 +
+                                (Dim.2_burnin - Dim.2_creation)^2 +
+                                (Dim.3_burnin - Dim.3_creation)^2))
+
+m_disp <- lmer(log(displacement + 0.01) ~ net_type + (1|community),
+               data = burnin_traj)
+
+anova(m_disp)
+
+disp_emm <- emmeans(m_disp, ~ net_type)
+
+cld_disp <- cld(disp_emm,
+                Letters = letters,
+                adjust = "sidak")
+
+# compact letter display
+cld_tble <-
+  cld_disp %>%
+  as_tibble() %>%
+  left_join(as_tibble(disp_emm ))
+
+# Extract unique letters present in your CLD results
+all_letters <- unique(unlist(strsplit(tolower(cld_tble$.group), "")))
+all_letters <- sort(all_letters[all_letters %in% letters])
+
+# Assign your named theme colors directly to individual letters (a, b, c, etc.)
+base_palette <- setNames(
+  unname(col_pal)[seq_along(all_letters)],
+  all_letters
+)
+
+# Apply color blending algorithm to each cont_group string
+cld_tble <- cld_tble %>%
+  glow_up(blended_color = get_cld_color(.group, color_map = base_palette),
+          .group = trimws(.group)) %>%
+  arrange(desc(.group), 
+          .by_group = TRUE) %>%
+  mutate(net_type = factor(net_type, levels = net_type))
+
+p_pca_contrast <- 
+  ggplot(cld_tble,
+         aes(y = net_type,
+             x = emmean,
+             colour = blended_color)) +
+  geom_point(size = 3) +
+  geom_errorbar(
+    aes(xmin = lower.CL, 
+        xmax = upper.CL),
+    width = 0.15) + 
+  geom_text(aes(label = .group), 
+            size = 4.5, 
+            fontface = "bold", 
+            vjust = 0,
+            nudge_y = 0.2) +
+  scale_colour_identity() +
+  labs(y = "Network type",
+       x = "Displacement",
+       title = "Differences in displacement during burn in")
+
+# ------------------------------------------------------------------------------
 # Multivariate tests (creation networks only)
 # ------------------------------------------------------------------------------
 
@@ -262,19 +332,10 @@ rda_dat$rda1 <- rda_scores[,1]
 rda_dat$rda2 <- rda_scores[,2]
 rda_dat$rda3 <- rda_scores[,3]
 
-library(lme4)
-
-m <- lm(rda1 ~ net_type * delta_co, data = rda_dat)
+m <- lmer(rda1 ~ net_type * delta_co + (1|community),
+          data = rda_dat)
 
 anova(m)
-
-library(emmeans)
-
-emtrends(m, pairwise ~ net_type, var = "delta_co")
-
-library(emmeans)
-library(multcomp)
-
 # estimate slopes
 trends <- emtrends(m, ~ net_type, var = "delta_co")
 
@@ -301,9 +362,9 @@ cld_tble <- cld_tble %>%
 
 p_contrast <- 
   ggplot(cld_tble,
-       aes(y = net_type,
-           x = delta_co.trend,
-           colour = blended_color)) +
+         aes(y = net_type,
+             x = delta_co.trend,
+             colour = blended_color)) +
   geom_point(size = 3) +
   geom_errorbar(
     aes(xmin = lower.CL, 
@@ -324,17 +385,17 @@ p_contrast <-
 
 design <- "
   12
-  33
-  33
+  34
 "
 
 p_rda + p_contrast +
-  p_traj_all +
+  p_traj_all + p_pca_contrast+
+  plot_annotation(tag_levels = 'A') +
   plot_layout(design = design,
               guides = "collect") &
   theme(legend.position='bottom')
 
 ggsave("../figures/downsamplingEffect.png",
        width = 6000, 
-       height = 8000, 
+       height = 6000, 
        units = "px", dpi = 500)
