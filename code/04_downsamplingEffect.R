@@ -389,7 +389,7 @@ design <- "
 "
 
 p_rda + p_contrast +
-  p_traj_all + p_pca_contrast+
+  p_traj_all + p_pca_contrast +
   plot_annotation(tag_levels = 'A') +
   plot_layout(design = design,
               guides = "collect") &
