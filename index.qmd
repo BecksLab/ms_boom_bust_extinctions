@@ -56,7 +56,31 @@ We treat downsampling as a process of **ecological realisation** rather than obs
 
 ### Niche
 
-The niche approach assumes that realised interactions represent the core of a consumer's trophic niche. A one-dimensional latent niche axis, $x_i$, is first estimated from the interaction matrix using the leading singular vectors of the Singular Value Decomposition (SVD). For each consumer $i$, the centroid of its realised niche is
+The original niche model from @Williams2000Simple assumes that realised interactions represent the core of a consumer's trophic niche, and that these diets can be arranged along a single niche axis. In order to create a downsampling approach that mimics this we we infer a latent trophic axis directly from the metaweb using Singular Value Decomposition (SVD). It has been shown that the latent spaces described by the left and right singular vectors are closely aligned wth the generality and vulnerability of species [@strydomFoodWebReconstruction2022a] and so the SVD composition should retain the diet of the species.
+
+Let $A$ denote the $S \times S$ adjacency matrix of the metaweb, where $A_{ij}=1$ if consumer $i$ feeds on resource $j$. We compute its singular value decomposition,
+
+$$
+A = U \Sigma V^\top,
+$$
+
+where $U$ and $V$ are the left and right singular vectors, respectively, and $\Sigma$ is the diagonal matrix of singular values. Using the leading singular value, $\sigma_1$, and corresponding singular vectors, $\mathbf{u}_1$ and $\mathbf{v}_1$, each species is assigned latent consumer and resource coordinates,
+
+$$
+c_i = \sqrt{\sigma_1}\,u_{i1},
+\qquad
+r_i = \sqrt{\sigma_1}\,v_{i1}.
+$$
+
+Because species can act both as consumers and as resources, these coordinates are combined to obtain a single niche position,
+
+$$
+x_i = \frac{c_i + r_i}{2},
+$$
+
+which is subsequently rescaled to lie between 0 and 1. Species with similar values of $x_i$ therefore occupy similar positions along the dominant trophic gradient of the metaweb.
+
+For each consumer $i$, the centroid of its realised niche is
 
 $$
 \mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
@@ -68,11 +92,13 @@ $$
 \sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
 $$
 
-it is also possible to scale the niche breadth to further constrain niche breadth,
+where the lower bound prevents unrealistically narrow niches for specialists. Niche breadth can optionally be scaled to further constrain realised diets,
 
 $$
-\sigma_i' = \alpha \sigma_i.
+\sigma_i' = \alpha \sigma_i,
 $$
+
+where $\alpha$ is acts as a scaling parameter.
 
 The probability of retaining an interaction between consumer $i$ and resource $j$ is then
 
@@ -81,7 +107,7 @@ P_{ij} \propto
 \exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right].
 $$
 
-Interactions closest to the consumer's niche centre are therefore most likely to be realised, whereas interactions towards the margins of the niche are preferentially removed. Ecologically, this assumes that local communities realise the central portion of a consumer's potential trophic niche, with peripheral or opportunistic interactions occurring less consistently.
+Interactions closest to the consumer's niche centre are therefore most likely to be realised (retained), whereas interactions towards the margins of the niche are preferentially removed. Ecologically, this assumes that local communities realise the central portion of a consumer's potential trophic niche, with peripheral or opportunistic interactions occurring less consistently.
 
 ### Power-law
 
