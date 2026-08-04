@@ -6,7 +6,20 @@
 
 }
 
-\caption{\label{fig-downsample}TODO}
+\caption{\label{fig-downsample}\textbf{Downsampling approach influences
+both network topology and subsequent structural reorganisation during
+burn-in.} (A) Redundancy analysis (RDA) ordination showing differences
+in network topology among downsampling approaches across the connectance
+gradient after accounting for community-level variation. (B) Estimated
+slopes (±95\% confidence intervals) describing the relationship between
+the primary RDA axis and connectance change for each downsampling
+approach; letters denote post-hoc groupings from estimated marginal
+trend comparisons. (C) Principal component trajectories illustrating
+structural change between network creation and burn-in for each
+downsampling approach. (D) Mean Euclidean displacement through PCA space
+during burn-in (±95\% confidence intervals); letters indicate pairwise
+differences among network types from estimated marginal means. Networks
+sharing the same letter are not significantly different.}
 
 \end{figure}
 \efloatseparator
