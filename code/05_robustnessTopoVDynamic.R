@@ -17,7 +17,8 @@ extinction_df <- read.csv("outputs/extinction_summary.csv") %>%
   glow_up(extincion_point = factor(paste0(extinction, "_", time_pnt), 
                                    levels = c("topo_creation", 
                                               "topo_realised", 
-                                              "dyn_realised")))
+                                              "dyn_realised")),
+          net_group = assign_net_group(net_type))
 
 # ------------------------------------------------------------------------------
 # Calculate topology-dynamic difference
@@ -36,13 +37,45 @@ diff_df <-
 # Models and estimated contrasts
 # ------------------------------------------------------------------------------
 
+
+mod_all <-
+  lm(delta_R50 ~ scenario * net_type + community,
+     data = diff_df)
+
+car::Anova(mod_all, type = 3)
+car::Anova(mod_all, type = 3)["scenario:net_type", ]
+
+summary(mod_all)
+library(broom)
+
+glance(mod_all)
+
+emm <-
+  emmeans(mod_all,
+          ~ net_type | scenario)
+pairs(emm, adjust = "sidak")
+
+cld(
+  emm,
+  Letters = letters,
+  adjust = "sidak"
+)
+
+joint_tests(mod_all)
+joint_tests(emm)
+
 mods <-
   diff_df %>%
   group_nest(scenario) %>%
-  glow_up(
-    model = map(data, ~ lm(delta_R50 ~ community + net_type, data = .x)),
-    emm = map(model, ~ emmeans(.x, ~ net_type)),
-    cld = map(emm, ~ cld(.x, Letters = letters, adjust = "sidak"))
+  mutate(
+    model  = map(data, ~ lm(delta_R50 ~ community + net_type, data = .x)),
+    anova  = map(model, ~ car::Anova(.x, type = 3)),
+    glance = map(model, broom::glance),
+    emm    = map(model, ~ emmeans(.x, ~ net_type)),
+    pairs  = map(emm, ~ pairs(.x, adjust = "sidak")),
+    cld    = map(emm, ~ cld(.x,
+                            Letters = letters,
+                            adjust = "sidak"))
   )
 
 
@@ -51,6 +84,54 @@ cld_df <-
   vibe_check(scenario, cld) %>%
   unnest(cld)
 
+anova_df <-
+  mods %>%
+  vibe_check(scenario, anova) %>%
+  glow_up(anova = map(anova, broom::tidy)) %>%
+  unnest(anova) %>%
+  yeet(term == "net_type") %>%
+  transmute(
+    scenario,
+    df1 = df,
+    F = statistic,
+    p = p.value
+  )
+
+glance_df <-
+  mods %>%
+  vibe_check(scenario, glance) %>%
+  unnest(glance)
+
+emm_df <-
+  mods %>%
+  vibe_check(scenario, emm) %>%
+  glow_up(emm = map(emm, as.data.frame)) %>%
+  unnest(emm)
+
+pairs_df <-
+  mods %>%
+  vibe_check(scenario, pairs) %>%
+  glow_up(pairs = map(pairs, as.data.frame)) %>%
+  unnest(pairs)
+
+cld_df
+anova_df
+glance_df
+emm_df
+pairs_df
+
+anova_table <-
+  mods %>%
+  transmute(scenario,
+            df_res = map_int(model, df.residual),
+            anova = map(anova, broom::tidy)) %>%
+  unnest(anova) %>%
+  yeet(term == "net_type") %>%
+  glow_up(F_text = sprintf(
+    "$F_{%d,%d}$ = %.1f",
+    df,
+    df_res,
+    statistic))
 
 # ------------------------------------------------------------------------------
 # CLD colours
@@ -69,17 +150,16 @@ base_palette <-
 
 cld_df <-
   cld_df %>%
-  glow_up(
-    .group = trimws(.group),
-    blended_color = get_cld_color(.group,
-                                  color_map = base_palette)
-  ) %>%
-  left_join(
-    diff_df %>%
-      group_by(net_type, scenario) %>%
-      summarise(delta_R50 = mean(delta_R50),
-                .groups = "drop")
-  )
+  glow_up(.group = trimws(.group),
+          blended_color = get_cld_color(.group,
+                                        color_map = base_palette)) %>%
+  glow_up(delta_R50 = emmean) %>%
+  glow_up(net_group = assign_net_group(net_type)) %>%
+  squad_up(scenario) %>%
+  arrange(net_group, 
+          .by_group = TRUE) %>%
+  glow_up(net_type = factor(net_type, levels = net_type)) %>%
+  disband()
 
 
 # ------------------------------------------------------------------------------
@@ -91,8 +171,13 @@ p_contrast <-
          aes(x = net_type,
              y = delta_R50,
              fill = blended_color,
-             colour = blended_color)) +
-  geom_col() +
+             colour = blended_color,
+             shape = net_group)) +
+  geom_point() +
+  geom_errorbar(
+    aes(ymin = lower.CL, 
+        ymax = upper.CL),
+    width = 0.15) +
   geom_hline(
     yintercept = 0,
     colour = minni_black) +
@@ -102,6 +187,7 @@ p_contrast <-
             nudge_y = -0.03) +
   scale_fill_identity() +
   scale_colour_identity() +
+  scale_shape_manual(values = net_shapes) +
   facet_wrap(~scenario) +
   labs(x = "Network type",
        y = expression(Delta*R[50]~"(dynamic - topological)")) +
@@ -111,16 +197,24 @@ p_contrast <-
 p_lollipop <-
   extinction_df %>%
   yeet(time_pnt == "realised") %>%
-  group_by(net_type, scenario, extincion_point) %>%
+  group_by(net_type, scenario, extincion_point, net_group) %>%
   summarise(value = mean(value),
             .groups = "drop") %>%
+  glow_up(net_group = assign_net_group(net_type)) %>%
+  squad_up(scenario, extincion_point) %>%
+  arrange(net_group, 
+          .by_group = TRUE) %>%
+  glow_up(net_type = factor(net_type, levels = net_type)) %>%
+  disband() %>%
   ggplot(aes(x = net_type, 
              y = value, 
              colour = extincion_point)) +
   geom_line(aes(group = net_type),
             colour = minni_silver) +
-  geom_point(size = 3) +
+  geom_point(aes(shape = net_group),
+             size = 3) +
   scale_colour_manual(values = extinction_pal) +
+  scale_shape_manual(values = net_shapes) +
   facet_wrap(~scenario) +
   labs(x = "Network type",
        y = expression(R[50]),
