@@ -100,3 +100,27 @@ assign_net_group <- function(net_type) {
             TRUE ~ net_type)
 }
 
+# ---- Network ordering ----
+
+net_levs <- c("metaweb",
+              "down_rand",
+              "down_power",
+              "down_link",
+              "down_niche",
+              "niche",
+              "atn")
+
+# ---- Community ordering ----
+
+comm_ord <- 
+  topology %>% 
+  yeet(stage == "creation", 
+       net_type == "metaweb") %>% 
+  vibe_check(community, connectance) %>% 
+  distinct() %>% 
+  slay(-connectance) %>%
+  glow_up(print_name = paste0(stringr::str_to_title(community),
+                              ", Co = ",
+                              round(connectance, digits = 3)))
+
+comm_levs <- c(comm_ord$print_name)

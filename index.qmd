@@ -50,7 +50,7 @@ Seven locations [@karapunarNoGlobalCollapse2026]. Here we use the guild-level co
 
 For the empirical networks we used the PFWIM model [@shawFrameworkReconstructingAncient2024]. *Insert brief description about trait assignments and mechanistic assumptions, mention we wanted to go as broad as possible so we used fully categorical rules*. This was then used as the base metaweb for each community. Each metaweb was then downsampled to a target connectance (see below for the different downsampling approaches). Additionally the target connectance and species richness was used to parameterise a niche model network [@Williams2000Simple]. We also constructed ATN networks [@broseConsumerResourceBodySize2006].
 
-## ## Downsampling approaches
+## Downsampling approaches
 
 We treat downsampling as a process of **ecological realisation** rather than observation. Starting from a metaweb containing all potential trophic interactions, each downsampling approach represents an alternative ecological hypothesis describing how local ecological processes filter these potential interactions into the subset that is realised within a particular community. The different approaches therefore differ not only in their implementation, but also in the ecological assumptions they embed about how realised food webs emerge from a common regional interaction pool.
 
@@ -201,17 +201,21 @@ Despite these quantitative differences, the qualitative pattern identified by @c
 
 Together, these analyses demonstrate that the principal conclusion of @curtsdotterRobustnessSecondaryExtinctions2011 extends well beyond the niche model. While the precise magnitude of the discrepancy between topological and dynamic robustness depends on both network reconstruction and extinction mechanism, the qualitative tendency for topological extinction simulations to infer greater robustness than dynamic simulations was recovered across the vast majority of reconstructed food webs examined here.
 
-# Network type alters the propagation of dynamical extinctions
+# Downsampling and burn-in alter inferred topological robustness
 
-Report here about the secondary extinction rates as well as the pairwise contrasts.
+> this is probably destined as a supp matt exercise
 
-![TODO](figures/paleo_primVsec.png){#fig-1}
+To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference 'states' (metaweb, ATN, and niche model) changed with increasing degree of downsampling ($\Delta_{connectance}$). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered (Panel A; @fig-robDownsample).
 
-![TODO](figures/rob_contrasts.png){#fig-2}
+![TODO.](figures/robustnessDownsampling.png){#fig-robDownsample}
 
-![TODO](figures/rob_prop_indistinguishable.png){#fig-3}
+Under body-mass ordered extinction, reductions in connectance produced increasingly divergent robustness responses relative to the metaweb, while trajectories relative to the niche and ATN reference states were weaker and more variable. This pattern was reflected in a strong interaction between connectance reduction and reference state ($\chi^2$ = 384, $p$ < 0.001). Similar reference-dependent trajectories occurred under degree-based extinction ($\Delta_{connectance}$ $\times$ reference $\times$ downsampling approach: $\chi^2$ = 98.7, $p$ < 0.001) and random consumer removal ($\chi^2$ = 22.1, $p$ = 0.001), whereas random basal removal showed little evidence that the mechanism of downsampling altered robustness trajectories ($\chi^2$ = 0.54, $p$ = 0.997)
 
-## Relative to the niche model, XXX is the closest match
+Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that dynamic relaxation altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B @fig-robDownsample). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.
+
+Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed the downsampling approach increasingly imposes these assumptions, different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.
+
+# Relative to the niche model, XXX is the closest match
 
 Most often the ones to not be different from each other. Worth pointing out that the ATN behaves very differently as well. So again we are back at are we modelling network or model behaviour [@strydomAreWeMapping2026]
 
