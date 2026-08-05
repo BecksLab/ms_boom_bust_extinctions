@@ -79,3 +79,24 @@ blend_cld_colors <- function(letter_string, color_map) {
 }
 
 get_cld_color <- Vectorize(blend_cld_colors, vectorize.args = "letter_string")
+
+# ---- Shapes for network types ----
+
+# we can specify chapes for metawebs, downsampled, and realised webs to help
+# with a consistent visual language so to say
+
+net_shapes <- c(
+  "Downsampled web" = 15, 
+  "Realised web"     = 16, 
+  "Metaweb"    = 17)
+
+# ---- Assign network types ----
+# helper function that can be quickly deployed to set the netowrk types
+assign_net_group <- function(net_type) {
+  
+  case_when(str_detect(net_type, "down") ~ "Downsampled web",
+            net_type %in% c("niche", "atn") ~ "Realised web",
+            net_type %in% c("metaweb") ~ "Metaweb",
+            TRUE ~ net_type)
+}
+
