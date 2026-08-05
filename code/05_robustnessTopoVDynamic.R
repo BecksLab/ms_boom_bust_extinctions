@@ -173,7 +173,7 @@ p_contrast <-
              fill = blended_color,
              colour = blended_color,
              shape = net_group)) +
-  geom_point() +
+  geom_col() +
   geom_errorbar(
     aes(ymin = lower.CL, 
         ymax = upper.CL),
@@ -184,7 +184,7 @@ p_contrast <-
   geom_text(aes(label = .group),
             fontface = "bold",
             vjust = 1,
-            nudge_y = -0.03) +
+            nudge_y = -0.025) +
   scale_fill_identity() +
   scale_colour_identity() +
   scale_shape_manual(values = net_shapes) +
@@ -236,7 +236,7 @@ p_final <-
 ggsave(
   "../figures/robustnessTopoVDynamic.png",
   p_final,
-  width = 9000,
+  width = 9500,
   height = 6000,
   units = "px",
   dpi = 500
