@@ -4,7 +4,9 @@ library(tidyverse)
 library(lme4)
 library(lmerTest)
 library(emmeans)
-library(multcomp)# For flexible base color generation
+library(multcomp)
+
+source("libs/plotting_themes.R")
 
 
 # --- 3. DATA PREPARATION & MODELLING ---
@@ -90,7 +92,14 @@ plot_tbl <- plot_tbl_base %>%
           net_group = assign_net_group(net_type)) %>%
   left_join(comm_ord) %>%
   glow_up(print_name = factor(print_name, levels = comm_levs)) %>%
-  slay(print_name)
+  glow_up(ext_scen = factor(paste0(extinction, "_", time_pnt),
+                            levels = c("topo_creation", "topo_realised", "dyn_realised")),
+          ext_scen_label = assign_ext_scen(ext_scen)) %>%
+  slay(print_name, ext_scen)
+
+# save this object because we need it for clustering
+saveRDS(plot_tbl,
+        file = "outputs/derived/robustnessEmmTbl.rds")
 
 # --- 5. PLOTTING CLD RESULTS (WITH BLENDED GRADIENTS) ---
 
@@ -162,13 +171,17 @@ indistinguishable_counts <- pairs_tbl %>%
   ) %>%
   glow_up(ext_scen = paste0(extinction, "_", time_pnt)) %>%
   left_join(comm_ord) %>%
-  glow_up(print_name = factor(print_name, levels = comm_levs))
+  glow_up(print_name = factor(print_name, levels = comm_levs),
+          ext_scen = factor(paste0(extinction, "_", time_pnt),
+                            levels = c("topo_creation", "topo_realised", "dyn_realised")),
+          ext_scen_label = assign_ext_scen(ext_scen)) %>%
+  slay(ext_scen)
 
 
 plot_indistinguishable_counts <- function(ext_scenario) {
   
   indistinguishable_counts %>%
-    filter(ext_scen == ext_scenario) %>%
+    filter(ext_scen_label == ext_scenario) %>%
     ggplot(aes(x = net_type_1,
                y = net_type_2,
                fill = prop_indistinguishable)) +
@@ -192,8 +205,8 @@ plot_indistinguishable_counts <- function(ext_scenario) {
 }
 
 p_indistinguishable_counts <- indistinguishable_counts %>%
-  distinct(ext_scen) %>%
-  pull(ext_scen) %>%
+  distinct(ext_scen_label) %>%
+  pull(ext_scen_label) %>%
   purrr::map(plot_indistinguishable_counts)
 
 wrap_plots(p_indistinguishable_counts,
@@ -205,3 +218,4 @@ ggsave("../figures/robustnessIndistinguishable.png",
        width = 9000, 
        height = 6000, 
        units = "px", dpi = 500)
+

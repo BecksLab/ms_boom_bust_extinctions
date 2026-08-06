@@ -25,7 +25,8 @@ figure_theme =
         legend.key = element_blank(),
         text = element_text(color = minni_black),
         plot.margin = margin(10, 5, 5, 10),
-        legend.margin = margin(1, 2, 1, 2)
+        legend.margin = margin(1, 2, 1, 2),
+        plot.title = element_text( hjust = 0.5, face = "bold", size = 16)
   )
 
 # this set the theme once so dont need to call every time when plotting
@@ -91,7 +92,7 @@ net_shapes <- c(
   "Metaweb"    = 17)
 
 # ---- Assign network types ----
-# helper function that can be quickly deployed to set the netowrk types
+# helper function that can be quickly deployed to set the network types
 assign_net_group <- function(net_type) {
   
   case_when(str_detect(net_type, "down") ~ "Downsampled web",
@@ -99,6 +100,20 @@ assign_net_group <- function(net_type) {
             net_type %in% c("metaweb") ~ "Metaweb",
             TRUE ~ net_type)
 }
+
+# helper function that can be quickly deployed to set the extinction scenario
+# as well as network stage
+assign_ext_scen <- function(ext_scen) {
+  
+  case_when(ext_scen == "dyn_realised" ~ "Realised: Dynamic extinctions",
+            ext_scen == "topo_realised" ~ "Realised: Topological extinctions",
+            ext_scen == "topo_creation" ~ "Creation: Topological extinctions")
+  
+}
+
+ext_scen_labs = c("Creation: Topological extinctions",
+                  "Realised: Topological extinctions",
+                  "Realised: Dynamic extinctions")
 
 # ---- Network ordering ----
 
