@@ -131,6 +131,15 @@ cluster_tbl_comm <-
     ext_scen_label = assign_ext_scen(ext_scen)) %>%
   ungroup()
 
+cluster_plots <-
+  cluster_tbl_comm %>%
+  mutate(
+    plot = map(
+      hc,
+      make_cluster_plot
+    )
+  )
+
 # export all community plots
 
 cluster_tbl_comm %>%
