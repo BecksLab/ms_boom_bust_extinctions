@@ -130,6 +130,18 @@ ggplot(scores,
 # Trajectories through PCA space
 # ------------------------------------------------------------------------------
 
+variance <- pca$eig %>%
+  as_tibble()
+
+variance_explained <-
+  tibble(
+    PC = seq_along(pca$sdev),
+    variance =
+      100 *
+      pca$sdev^2 /
+      sum(pca$sdev^2)
+  )
+
 p_traj <-
   ggplot(traj,
          aes(Dim.1,
@@ -137,12 +149,15 @@ p_traj <-
              colour = net_type,
              group = interaction(community, net_type))) +
   geom_vline(xintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_hline(yintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_path(arrow = arrow(length = unit(0.25, "cm")),
             linewidth = 1.2,
             alpha = 0.8) +
+  labs(title = "Change in structure creation - downsample - burnin",
+       x = glue::glue("PC1 ({round(variance$`percentage of variance`[1],1)}%)"),
+       y = glue::glue("PC2 ({round(variance$`percentage of variance`[2],1)}%)")) +
   facet_wrap(~community) +
   scale_colour_manual(values = net_type_col_pal)
 
@@ -154,13 +169,16 @@ p_traj_all <-
              colour = net_type,
              group = interaction(community, net_type))) +
   geom_vline(xintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_hline(yintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_path(arrow = arrow(length = unit(0.25, "cm")),
             linewidth = 1.2,
             alpha = 0.8) +
-  labs(title = "Change in structure during burnin") +
+  labs(title = "Change in structure during burn-in",
+       x = glue::glue("PC1 ({round(variance$`percentage of variance`[1],1)}%)"),
+       y = glue::glue("PC2 ({round(variance$`percentage of variance`[2],1)}%)"),
+       colour = "Network Type") +
   scale_colour_manual(values = net_type_col_pal)
 
 # ------------------------------------------------------------------------------
@@ -230,7 +248,7 @@ p_pca_contrast <-
             nudge_y = 0.2) +
   scale_colour_identity() +
   scale_shape_manual(values = net_shapes) +
-  labs(y = "Network type",
+  labs(y = NULL,
        x = "Displacement",
        title = "Differences in displacement during burn in")
 
@@ -289,7 +307,9 @@ rda_bp <-
   scores(rda_model,
          display = "bp") %>%
   as.data.frame() %>%
-  rownames_to_column("variable")
+  rownames_to_column("variable") %>%
+  yeet(variable == "delta_co") %>%
+  glow_up(variable = "Δ connectance")
 
 # factor centroids
 rda_cn <-
@@ -304,9 +324,9 @@ p_rda <-
              RDA2,
              colour = net_type)) +
   geom_hline(yintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_vline(xintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   stat_ellipse(level = .68,
                linewidth = 1,
                show.legend = FALSE) +
@@ -320,12 +340,15 @@ p_rda <-
                    yend = RDA2),
                inherit.aes = FALSE,
                arrow = arrow(length = unit(.25, "cm")),
-               show.legend = FALSE) +
+               show.legend = FALSE,
+               colour = minni_tan,
+               linewidth = 2) +
   geom_label_repel(data = rda_bp,
                    aes(RDA1,
                        RDA2,
                        label = variable),
-                   inherit.aes = FALSE) +
+                   inherit.aes = FALSE,
+                   colour = minni_tan) +
   labs(title = "Effect of Downsampling") +
   scale_colour_manual(values = net_type_col_pal)
 
@@ -386,9 +409,9 @@ p_contrast <-
             nudge_y = 0.15) +
   scale_colour_identity()  +
   scale_shape_manual(values = net_shapes) +
-  labs(y = "Network type",
-       x = "delta_co.trend",
-       title = "Difference in downsample approach and connectance change")
+  labs(y = NULL,
+       x = "Δ connectance 'effect size'",
+       title = "Role of Δ connectance in driving differences")
 
 
 design <- "
