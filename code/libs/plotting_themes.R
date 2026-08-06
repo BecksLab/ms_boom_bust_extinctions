@@ -8,6 +8,7 @@ library(RColorBrewer)
 minni_silver <- "#687982"
 minni_black <-  "#1F2C33"
 minni_wheat <-  "#F2E4C7"
+minni_tan   <-  "#5E4735"
 
 # ---- General Figure Theme ----
 
