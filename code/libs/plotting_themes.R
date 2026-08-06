@@ -6,7 +6,8 @@ library(RColorBrewer)
 
 # for accents
 minni_silver <- "#687982"
-minni_black <- "#1F2C33"
+minni_black <-  "#1F2C33"
+minni_wheat <-  "#F2E4C7"
 
 # ---- General Figure Theme ----
 
@@ -39,11 +40,36 @@ net_type_col_pal <- c(
   "down_power" = "#A6192E", 
   "metaweb"    = "#154734", 
   #"niche".    = "#4A8770",
-  "niche"      = "#C5E86C",
-  "down_rand"  = "#662932",
-  "down_link"  = "#332124",
-  "down_niche" = "#9FC7B8",
-  "atn"        = "#BFFFE7")
+  "niche"      = "#EAAA00",
+  "down_rand"  = "#A61983",
+  "down_link"  = "#33212F",
+  "down_niche" = "#A6505D",
+  "atn"        = "#A89968")
+
+net_type_col_pal <- c(
+  "down_power" = "#59BD96", 
+  "metaweb"    = "#5DB6E7", 
+  "niche"      = "#EAAA00",
+  "down_rand"  = "#216F52",
+  "down_link"  = "#44E4A7",
+  "down_niche" = "#154734",
+  "atn"        = "#A89968")
+
+net_type_col_pal_contrast <- c(
+  "down_power" = minni_black, 
+  "metaweb"    = minni_black, 
+  "niche"      = minni_black,
+  "down_rand"  = minni_wheat,
+  "down_link"  = minni_black,
+  "down_niche" = minni_wheat,
+  "atn"        = minni_black)
+
+col_df <-
+  cbind(net_type_col_pal,net_type_col_pal_contrast) %>%
+  as_tibble() %>%
+  lowkey(col = net_type_col_pal,
+         contrast = net_type_col_pal_contrast) %>%
+  glow_up(label = names(net_type_col_pal_contrast))
 
 # General colour vibes
 col_pal <- c(

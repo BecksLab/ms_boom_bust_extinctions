@@ -13,16 +13,19 @@ make_cluster_plot <- function(hc,
           xend = xend,
           yend = yend),
       linewidth = 0.8) +
-    geom_text(
-      data = dend$labels,
+    geom_label(
+      data = dend$labels %>%
+        left_join(col_df),
       aes(x = x,
           y = -0.02 * max(dend$segments$y),
           label = label,
-          colour = label),
+          colour = contrast,
+          fill = col),
       size = 4,
       hjust = 0,
       show.legend = FALSE) +
-    scale_colour_manual(values = net_type_col_pal) +
+    scale_colour_identity() +
+    scale_fill_identity() +
     coord_flip(clip = "off") +
     scale_y_reverse(expand = expansion(mult = c(0.05, 0.02))) +
     labs(title = title) +
