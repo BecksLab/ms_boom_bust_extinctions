@@ -65,7 +65,6 @@
 
 
 \usepackage{longtable,booktabs,array}
-\newcounter{none} % for unnumbered tables
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -182,13 +181,9 @@
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
-% fallback for those not using the hyperref driver hyperxmp:
-\makeatletter
-\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
-\makeatother
 \hypersetup{
   pdftitle={Dynamic Downsampling},
-  pdfkeywords={\xmpquote{food webs}},
+  pdfkeywords={food webs},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -932,7 +927,7 @@ ecosystems.
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
 
-\protect\phantomsection\label{refs}
+\phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
 \bibitem[\citeproctext]{ref-bezansonJuliaFreshApproach2017}
 Bezanson, J., Edelman, A., Karpinski, S., \& Shah, V. (2017). Julia: {A
