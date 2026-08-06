@@ -86,9 +86,9 @@ dist_long <-
   mutate(
     reference = recode(
       reference,
-      d_meta = "Metaweb",
-      d_atn = "ATN",
-      d_niche = "Niche"
+      d_meta = "metaweb",
+      d_atn = "atn",
+      d_niche = "niche"
     )
   )
 
@@ -187,11 +187,12 @@ p_realisation <-
              linetype = "dashed",
              colour = minni_silver) +
   geom_point(size=3) +
-  geom_line(aes(group = interaction(reference,net_type))) +
+  geom_line(aes(group = interaction(reference,net_type)))+
+  scale_colour_manual(values = net_type_col_pal) +
   facet_grid(scenario~net_type) +
   labs(
     x = "Assembly stage",
-    y = "Effect of burn-in of distnace in robustness",
+    y = "Effect of burn-in of distance in robustness",
     colour = "Reference state"
   )
 
@@ -206,6 +207,7 @@ ggplot(dist_long,
            colour = reference,
            linetype = time_pnt)) +
   geom_smooth(method = "lm") +
+  scale_colour_manual(values = net_type_col_pal) +
   facet_grid(scenario ~ net_type)
 
 mod_downsamp_trends <-
@@ -227,17 +229,34 @@ pred_creation <-
               vibe_check(scenario, net_type, reference, alpha),
             by = c("scenario","net_type","reference"))
 
-ggplot(pred_creation,
+p_creation <-
+  ggplot(pred_creation,
        aes(delta_co,
            emmean,
            colour = reference,
            alpha = alpha,
            group = reference)) +
+  geom_hline(yintercept = 0,
+             colour = minni_tan) +
   geom_line(linewidth = 1) +
   scale_alpha_identity() +
-  facet_grid(scenario ~ net_type) +
+  facet_grid(scenario ~ net_type)+
+  scale_colour_manual(values = net_type_col_pal) +
   labs(y = "Predicted robustness distance",
        x = "Degree of downsampling (Δ connectance)")
+
+mod_burnin_trends <-
+  mod_burnin %>%
+  transmute(scenario,
+            trends = map(model, ~
+                           emtrends(.x,
+                                    ~ net_type * reference * time_pnt,
+                                    var = "delta_co") %>%
+                           summary(infer = TRUE) %>%
+                           as.data.frame())) %>%
+  unnest(trends) %>%
+  glow_up(sig = p.value < 0.05,
+          alpha = if_else(sig, 1, 0.25))
 
 pred_burnin <-
   mod_burnin %>%
@@ -247,22 +266,29 @@ pred_burnin <-
                                         at = list(delta_co = seq(0, 0.5, length.out = 50))) %>%
                          as.data.frame())) %>%
   unnest(pred) %>%
-  left_join(burnin_tests %>%
-              vibe_check(scenario, net_type, reference, alpha),
-            by = c("scenario","net_type","reference")
-  )
+  left_join(mod_burnin_trends %>%
+              vibe_check(scenario, net_type, reference, alpha))
 
 
-ggplot(pred_burnin,
+p_realisation <- 
+  ggplot(pred_burnin,
        aes(delta_co,
            emmean,
            colour = reference,
-           group = interaction(reference, time_pnt))) +
+           group = interaction(reference, time_pnt, alpha))) +
+  geom_hline(yintercept = 0,
+             colour = minni_tan) +
   geom_line(aes(alpha = alpha,
                 linetype = time_pnt),
             linewidth = 1) +
-  facet_grid(scenario ~ net_type) +
-  scale_alpha_identity()
+  scale_alpha_identity() +
+  scale_colour_manual(values = net_type_col_pal) +
+  facet_grid(scenario ~ net_type)
+
+p_creation + p_realisation +
+  plot_annotation(tag_levels = "A") +
+  plot_layout(guides = "collect") &
+  theme(legend.position = "bottom")
 
 ggsave(
   "../figures/robustnessDownsampling.png",
