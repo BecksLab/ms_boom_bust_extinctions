@@ -54,11 +54,11 @@ among network types based on Sidak-adjusted pairwise comparisons.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{figures/paleo_primVsec.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessDownsampling.png}}
 
 }
 
-\caption{\label{fig-1}TODO}
+\caption{\label{fig-robDownsample}TODO.}
 
 \end{figure}
 \efloatseparator
@@ -67,23 +67,10 @@ among network types based on Sidak-adjusted pairwise comparisons.}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{figures/rob_contrasts.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessHighLevel.png}}
 
 }
 
-\caption{\label{fig-2}TODO}
-
-\end{figure}
-\efloatseparator
- 
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{figures/rob_prop_indistinguishable.png}}
-
-}
-
-\caption{\label{fig-3}TODO}
+\caption{\label{fig-robDynamic}TODO}
 
 \end{figure}
