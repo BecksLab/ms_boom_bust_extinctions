@@ -208,14 +208,17 @@ cld_tble <- cld_tble %>%
           .group = trimws(.group)) %>%
   arrange(desc(.group), 
           .by_group = TRUE) %>%
-  mutate(net_type = factor(net_type, levels = net_type))
+  mutate(net_type = factor(net_type, levels = net_type),
+         net_group = assign_net_group(net_type))
 
 p_pca_contrast <- 
   ggplot(cld_tble,
          aes(y = net_type,
              x = emmean,
-             colour = blended_color)) +
-  geom_point(size = 3) +
+             colour = blended_color,
+             shape = net_group)) +
+  geom_point(size = 3,
+             show.legend = FALSE) +
   geom_errorbar(
     aes(xmin = lower.CL, 
         xmax = upper.CL),
@@ -226,6 +229,7 @@ p_pca_contrast <-
             vjust = 0,
             nudge_y = 0.2) +
   scale_colour_identity() +
+  scale_shape_manual(values = net_shapes) +
   labs(y = "Network type",
        x = "Displacement",
        title = "Differences in displacement during burn in")
@@ -358,14 +362,17 @@ base_palette <- setNames(
 # Apply color blending algorithm to each cont_group string
 cld_tble <- cld_tble %>%
   glow_up(blended_color = get_cld_color(.group, color_map = base_palette),
-          .group = trimws(.group))
+          .group = trimws(.group),
+          net_group = assign_net_group(net_type))
 
 p_contrast <- 
   ggplot(cld_tble,
          aes(y = net_type,
              x = delta_co.trend,
              colour = blended_color)) +
-  geom_point(size = 3) +
+  geom_point(aes(shape = net_group),
+             size = 3,
+             show.legend = FALSE) +
   geom_errorbar(
     aes(xmin = lower.CL, 
         xmax = upper.CL),
@@ -377,7 +384,8 @@ p_contrast <-
             fontface = "bold", 
             vjust = 0,
             nudge_y = 0.15) +
-  scale_colour_identity() +
+  scale_colour_identity()  +
+  scale_shape_manual(values = net_shapes) +
   labs(y = "Network type",
        x = "delta_co.trend",
        title = "Difference in downsample approach and connectance change")
