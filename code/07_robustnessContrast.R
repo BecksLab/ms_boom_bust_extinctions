@@ -139,7 +139,7 @@ wrap_plots(p_contrast, ncol = 1)
 
 ggsave("../figures/robustnessContrasts.png",
        width = 7000, 
-       height = 12000, 
+       height = 15000, 
        units = "px", dpi = 500)
 
 # --- 6. PAIRWISE INDISTINGUISHABLE MATRIX ---
@@ -216,6 +216,6 @@ wrap_plots(p_indistinguishable_counts,
 
 ggsave("../figures/robustnessIndistinguishable.png",
        width = 9000, 
-       height = 6000, 
+       height = 7000, 
        units = "px", dpi = 500)
 

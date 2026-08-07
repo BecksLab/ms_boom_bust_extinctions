@@ -293,7 +293,7 @@ p_creation + p_realisation +
 ggsave(
   "../figures/robustnessDownsampling.png",
   width = 9500,
-  height = 5500,
+  height = 10000,
   units = "px",
   dpi = 500
 )

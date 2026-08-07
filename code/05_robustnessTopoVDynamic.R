@@ -187,8 +187,10 @@ p_contrast <-
             nudge_y = -0.025) +
   scale_fill_identity() +
   scale_colour_identity() +
-  scale_shape_manual(values = net_shapes) +
-  facet_wrap(~scenario) +
+  scale_shape_manual(values = net_shapes,
+                     guide = "none") +
+  facet_wrap(~scenario,
+             ncol = 2) +
   labs(x = "Network type",
        y = expression(Delta*R[50]~"(dynamic - topological)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -214,8 +216,10 @@ p_lollipop <-
   geom_point(aes(shape = net_group),
              size = 3) +
   scale_colour_manual(values = extinction_pal) +
-  scale_shape_manual(values = net_shapes) +
-  facet_wrap(~scenario) +
+  scale_shape_manual(values = net_shapes,
+                     guide = "none") +
+  facet_wrap(~scenario,
+             ncol = 2) +
   labs(x = "Network type",
        y = expression(R[50]),
        colour = NULL) +
@@ -237,7 +241,7 @@ ggsave(
   "../figures/robustnessTopoVDynamic.png",
   p_final,
   width = 9500,
-  height = 6000,
+  height = 10000,
   units = "px",
   dpi = 500
 )
