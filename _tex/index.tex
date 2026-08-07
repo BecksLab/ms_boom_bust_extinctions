@@ -187,7 +187,7 @@
 \@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
 \makeatother
 \hypersetup{
-  pdftitle={Dynamic Downsampling},
+  pdftitle={Realising food webs: downsampling assumptions propagate into dynamic extinction models},
   pdfkeywords={\xmpquote{food webs}},
   colorlinks=true,
   linkcolor={blue},
@@ -198,7 +198,8 @@
 
 
 
-\title{Dynamic Downsampling}
+\title{Realising food webs: downsampling assumptions propagate into
+dynamic extinction models}
 \author{Tanya Strydom %
 %
 \textsuperscript{%
@@ -212,7 +213,7 @@
 1%
 }%
 }
-\date{2026-08-06}
+\date{2026-08-07}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -224,7 +225,8 @@
 \begin{document}
 
 \thispagestyle{empty}
-{\bfseries\sffamily\Large Dynamic Downsampling}
+{\bfseries\sffamily\Large Realising food webs: downsampling assumptions
+propagate into dynamic extinction models}
 \vfil
 Tanya Strydom %
 %
@@ -241,7 +243,30 @@ Tanya Strydom %
 
 \vfil
 {\small
-\textbf{Abstract:} TODO
+\textbf{Abstract:} Dynamic food-web models require realised interaction
+networks, yet empirical data frequently describe regional metawebs
+containing many potential interactions that cannot occur simultaneously.
+Converting metawebs into realised networks is therefore an essential but
+often overlooked modelling step. Existing approaches implicitly assume
+different ecological mechanisms governing which interactions are
+realised, but the consequences of these assumptions remain largely
+unexplored. Here we compare four ecologically motivated downsampling
+approaches representing alternative hypotheses of interaction
+realisation. Using empirical metawebs, we generated ensembles of
+realised networks and examined how these assumptions influenced network
+topology, burn-in dynamics and extinction simulations under both
+topological and dynamical frameworks. Rather than identifying a single
+optimal downsampling procedure, our objective was to evaluate how
+alternative ecological assumptions propagate through subsequent
+analyses. Different realisation processes consistently produced distinct
+network structures and altered the behaviour of extinction models
+despite beginning from identical regional interaction pools. These
+results suggest that realised-network generation should be regarded as
+an explicit component of ecological modelling rather than a purely
+technical preprocessing step. As dynamic food-web models become
+increasingly common, uncertainty arising from assumptions about
+interaction realisation may be as important to ecological interpretation
+as the choice of dynamical model itself.
 \vfil
 \textbf{Keywords:} %
 %
@@ -255,43 +280,108 @@ food webs%
 
 \section{Introduction}\label{introduction}
 
-Extinction simulation in networks are useful because they can inform us
-as to the robustness {[}REF{]} or resilience {[}REF{]} of the system.
-Understanding community level extinctions is of particular interest for
-understanding community collapse and mass extinction events {[}REFs{]}.
-However the nature of the fossil record means that we are only able to
-do topological extinctions {[}REFs{]}
+Ecological networks provide one of the most powerful frameworks for
+understanding how biodiversity is organised and how ecological
+communities respond to environmental change. Historically, food-web
+research focused largely on describing structural properties such as
+connectance, trophic organisation and degree distributions, revealing
+remarkably consistent patterns across ecosystems (Williams \& Martinez,
+2000). Increasingly, however, the focus has shifted from describing
+network architecture to predicting ecological processes. Mechanistic
+dynamic food-web models now allow researchers to investigate community
+stability, biomass dynamics, extinction cascades and ecosystem responses
+to perturbation by explicitly simulating the transfer of energy through
+interacting species (Brose et al., 2006; Curtsdotter et al., 2011;
+Delmas et al., 2017; Yodzis \& Innes, 1992). These approaches represent
+an important advance over purely topological analyses because secondary
+extinctions emerge from ecological dynamics---including resource
+limitation, interaction strengths and feedbacks---rather than simply
+from the structural loss of trophic links. As a result, dynamic food-web
+models are increasingly used to address questions spanning conservation
+biology, ecosystem functioning and macroecological responses to
+environmental change.
 
-Dynamic extinctions (\emph{e.g.,} Curtsdotter et al., 2011) can be
-useful because they are (probably) a better approximation of reality -
-or at least not as `conservative'/best case scenario as what the
-topological extinctions are (insert a brief description of how these
-approaches are different). Something about how this is meaningful in
-paleo but also real-world settings. Maybe also point out that typically
-in dynamic context we are using species agnostic models \emph{e.g.,}
-niche and atn which lack the real world tractability that we want.
+Despite these advances, the application of dynamic food-web models
+remains constrained by an often-overlooked problem: the ecological
+network used as the input to the model. Dynamic simulations require a
+realised interaction network representing the set of trophic
+interactions occurring simultaneously within a community. Broadly, three
+classes of input networks are available, each with distinct strengths
+and limitations. Synthetic networks (e.g.~Cascade and Niche models)
+generate ecologically realistic topologies from theoretical rules but
+are not intended to represent specific communities (Cohen et al., 1985;
+Williams \& Martinez, 2000). Mechanistic approaches, such as the
+Allometric Diet Breadth Model (ADBM) or Allometric Trophic Networks
+(ATNs), infer interactions from biological traits including body size
+and energetics, but necessarily embed assumptions about the ecological
+processes governing interaction occurrence (Brose et al., 2006; Petchey
+et al., 2008). Finally, empirical networks are constructed from observed
+or predicted species interactions and therefore offer the greatest
+potential for community-specific inference, but often represent regional
+interaction pools rather than locally realised communities (see Strydom,
+Dunhill, et al. (2026) for a broader conceptual framework).
 
-However in order to \emph{correctly} match the philosophy of these
-dynamic networks we need a way in which to turn empirical metawebs into
-networks that are more representative of realised networks, \emph{i.e.,}
-there is some form of link distribution constraint (Strydom, Dunhill, et
-al., 2026). Although there has been some work on downsampling of paleo
-webs (Roopnarine, 2006) we lack any ground truthing of what the
-implications are of embedding these ecological assumptions. Additionally
-this downsampling approach makes insidious assumptions as to what is
-driving the distribution of links in a network. Possibly also add a
-sentence here about how the other work has focused on the niche model
-(Curtsdotter et al., 2011; Jonsson et al., 2015) which itself has its
-own sets of ecological assumptions/embeddings.
+Increasingly, ecologists instead have access to extensive empirical
+interaction datasets that describe real species and observed trophic
+interactions. Many of these datasets, however, represent regional
+interaction pools, or metawebs, compiled across multiple locations,
+seasons, sampling periods or studies (Dunne, 2006; Strydom, Dunhill, et
+al., 2026). Metawebs capture the set of interactions that are
+ecologically feasible within a region, but they typically include many
+interactions that could never occur simultaneously within a single local
+community. As such, they are often considerably more connected than
+realised ecological networks. While this makes metawebs invaluable
+representations of interaction potential, it also creates a fundamental
+mismatch with the assumptions of dynamic food-web models, which require
+networks describing co-occurring species and simultaneously realised
+interactions.
 
-Here we present a selection of downsampling approach that are built on
-different assumptions as to link constraints. Using these downsampling
-approaches we recreate the Curtsdotter et al. (2011) approach and test
-if we see difference in topological and dynamic extinctions, as well as
-if the different input networks have different signals. We do this using
-the same dataset from Karapunar et al. (2026). If realised webs emerge
-through different ecological filters, do our conclusions about dynamic
-extinctions depend on which realisation process we assume?
+Bridging this gap requires an additional modelling step: transforming a
+feasible regional interaction network into one or more ecologically
+plausible realised communities. Here we use the term network realisation
+to describe this process. Importantly, network realisation is not simply
+a computational exercise in reducing connectance. Every realisation
+procedure implicitly represents a hypothesis regarding the ecological
+processes governing interaction occurrence. Random sampling assumes that
+interactions are realised independently of network structure;
+degree-based approaches assume that highly connected species are more
+likely to retain interactions; niche-constrained approaches preserve
+trophic organisation; and other methods may encode assumptions regarding
+energetic constraints or species abundances. In this sense,
+realised-network generation constitutes an ecological model in its own
+right, introducing structural assumptions before any population dynamics
+are simulated.
+
+These assumptions are likely to propagate throughout the modelling
+pipeline. Once a realised network has been generated, dynamic models
+typically undergo a burn-in period during which biomass redistributes
+and species unable to persist under the chosen dynamical formulation are
+lost. This burn-in represents a second filtering process, determining
+which structurally feasible communities are dynamically viable under the
+assumptions of the selected ecological model. Only after these
+successive stages of network realisation and dynamical filtering are
+perturbations, such as species removals or environmental change,
+imposed. Consequently, ecological inference derived from dynamic
+food-web simulations is conditioned not only by the chosen dynamical
+model but also by assumptions introduced during network construction and
+community realisation.
+
+Here we investigate whether alternative approaches to network
+realisation influence subsequent ecological inference. Using empirical
+metawebs, we generate ensembles of realised food webs using four
+ecologically motivated downsampling algorithms representing contrasting
+hypotheses of interaction realisation. We then evaluate how these
+assumptions influence network topology, dynamical burn-in and extinction
+simulations. Our objective is not to identify an optimal downsampling
+algorithm, nor to suggest that any single approach provides the
+`correct' realised community. Rather, we present network realisation as
+a proof of concept for integrating empirical metawebs into dynamic
+food-web models while demonstrating that the assumptions embedded within
+this step remain detectable throughout the modelling process. As dynamic
+ecological modelling becomes increasingly central to predicting
+community responses to environmental change, recognising network
+realisation as an explicit source of model uncertainty may prove as
+important as selecting the dynamical model itself.
 
 \section{Methods}\label{methods}
 
@@ -874,7 +964,8 @@ node-level properties and metabolic rates rather than link topology
 alone. Thus, inferred dynamic robustness reflects an interaction between
 network structure and the physiological constraints imposed upon it.
 
-\#\#~Mapping empirical networks or model philosophy?
+\subsection{Mapping empirical networks or model
+philosophy?}\label{mapping-empirical-networks-or-model-philosophy}
 
 A central question arising from our findings is whether dynamic
 simulations evaluate empirical reality or simply mirror the assumptions
@@ -949,6 +1040,13 @@ Relationships} in {Natural Food Webs}. \emph{Ecology}, \emph{87}(10),
 2411--2417.
 \url{https://doi.org/10.1890/0012-9658(2006)87\%5B2411:CBRINF\%5D2.0.CO;2}
 
+\bibitem[\citeproctext]{ref-cohenStochasticTheoryCommunity1985}
+Cohen, J. E., Newman, C. M., \& Steele, J. H. (1985). A stochastic
+theory of community food webs {I}. {Models} and aggregated data.
+\emph{Proceedings of the Royal Society of London. Series B. Biological
+Sciences}, \emph{224}(1237), 421--448.
+\url{https://doi.org/10.1098/rspb.1985.0042}
+
 \bibitem[\citeproctext]{ref-curtsdotterRobustnessSecondaryExtinctions2011}
 Curtsdotter, A., Binzer, A., Brose, U., De Castro, F., Ebenman, B.,
 Eklöf, A., Riede, J. O., Thierry, A., \& Rall, B. C. (2011). Robustness
@@ -961,6 +1059,11 @@ Delmas, E., Brose, U., Gravel, D., Stouffer, D. B., \& Poisot, T.
 (2017). Simulations of biomass dynamics in community food webs.
 \emph{Methods in Ecology and Evolution}, \emph{8}(7), 881--886.
 \url{https://doi.org/10.1111/2041-210X.12713}
+
+\bibitem[\citeproctext]{ref-dunneNetworkStructureFood2006a}
+Dunne, J. (2006). The network structure of food webs. In
+\emph{Ecological {Networks}: {Linking Structure} to {Dynamics} in {Food
+Webs}} (pp. 27--86).
 
 \bibitem[\citeproctext]{ref-jonssonReliabilityR50Measure2015}
 Jonsson, T., Berg, S., Pimenov, A., Palmer, C., \& Emmerson, M. (2015).
@@ -982,6 +1085,12 @@ A. P., Malpas, T., \& Delmas, E. (2025).
 temporal dynamics of complex ecological networks. \emph{Methods in
 Ecology and Evolution}, \emph{16}(3), 520--529.
 \url{https://doi.org/10.1111/2041-210X.14497}
+
+\bibitem[\citeproctext]{ref-petcheyTrophicallyUniqueSpecies2008}
+Petchey, O. L., Eklöf, A., Borrvall, C., \& Ebenman, B. (2008).
+Trophically {Unique Species Are Vulnerable} to {Cascading Extinction}.
+\emph{The American Naturalist}, \emph{171}(5), 568--579.
+\url{https://doi.org/10.1086/587068}
 
 \bibitem[\citeproctext]{ref-roopnarineExtinctionCascadesCatastrophe2006}
 Roopnarine, P. D. (2006). Extinction {Cascades} and {Catastrophe} in
@@ -1019,6 +1128,11 @@ Dominate Food Web Topology} and {Extinction Inferences}}.
 Williams, R. J., \& Martinez, N. D. (2000). Simple rules yield complex
 food webs. \emph{Nature}, \emph{404}(6774), 180--183.
 \url{https://doi.org/10.1038/35004572}
+
+\bibitem[\citeproctext]{ref-yodzisBodySizeConsumerResource1992}
+Yodzis, P., \& Innes, S. (1992). Body {Size} and {Consumer-Resource
+Dynamics}. \emph{The American Naturalist}, \emph{139}(6), 1151--1175.
+\url{https://doi.org/10.1086/285380}
 
 \end{CSLReferences}
 
