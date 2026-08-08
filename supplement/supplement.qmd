@@ -17,3 +17,25 @@ Trophic level distributions and bodysize?
 
 ## Reaching of target Connectance
 
+
+# Downsampling and burn-in alter inferred topological robustness
+
+> this is probably destined as a supp matt exercise
+
+To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference 'states' (metaweb, ATN, and niche model) changed with increasing degree of downsampling ($\Delta_{connectance}$). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered (Panel A; @fig-robDownsample).
+
+![TODO.](../figures/robustnessDownsampling.png){#fig-robDownsample}
+
+Under body-mass ordered extinction, reductions in connectance produced increasingly divergent robustness responses relative to the metaweb, while trajectories relative to the niche and ATN reference states were weaker and more variable. This pattern was reflected in a strong interaction between connectance reduction and reference state ($\chi^2$ = 384, $p$ < 0.001). Similar reference-dependent trajectories occurred under degree-based extinction ($\Delta_{connectance}$ $\times$ reference $\times$ downsampling approach: $\chi^2$ = 98.7, $p$ < 0.001) and random consumer removal ($\chi^2$ = 22.1, $p$ = 0.001), whereas random basal removal showed little evidence that the mechanism of downsampling altered robustness trajectories ($\chi^2$ = 0.54, $p$ = 0.997)
+
+Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that the process of dynamic modelling altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B @fig-robDownsample). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.
+
+Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed the downsampling approach increasingly imposes these assumptions, different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.
+
+
+# Differences in inferred robustness of topological and dynamic are unaffected by network type
+
+(A) Estimated robustness ($R_50$) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates ($\Delta R_50 = R_{50, dynamic} - R_{50, topological}$) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.
+
+![](../figures/robustnessTopoVDynamic_allScenario.png){#fig-TopoVDynamic}
+
