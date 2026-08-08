@@ -253,6 +253,41 @@ p_pca_contrast <-
        title = "Differences in displacement during burn in")
 
 # ------------------------------------------------------------------------------
+# PCA loadings
+# ------------------------------------------------------------------------------
+
+
+loadings <- pca$var$coord
+loadings_top10 <- 
+  loadings %>%
+  as_tibble(.,
+            rownames = "metric") %>%
+  glow_up(contribution = abs(Dim.1) * variance$`percentage of variance`[1] +
+            abs(Dim.2) * variance$`percentage of variance`[2]) %>%
+  slay(desc(contribution)) %>%
+  slice_head(n = 10)
+
+loading_plot <-
+  ggplot(loadings_top10) +
+  geom_vline(xintercept = 0, 
+             colour = minni_wheat) +
+  geom_hline(yintercept = 0, 
+             colour = minni_wheat) +
+  geom_segment(aes(x = 0,
+                   y = 0,
+                   xend = Dim.1,
+                   yend = Dim.2),
+               colour = minni_tan,
+               arrow = arrow(length = unit(0.1, "cm"))) +
+  ggrepel::geom_text_repel(aes(x = Dim.1,
+                               y = Dim.2,
+                               label = metric),
+                           colour = minni_tan) +
+  labs(x = glue::glue("PC1 ({round(variance$`percentage of variance`[1],1)}%)"),
+       y = glue::glue("PC2 ({round(variance$`percentage of variance`[2],1)}%)"),
+       title = "PCA loadings")
+
+# ------------------------------------------------------------------------------
 # Multivariate tests (creation networks only)
 # ------------------------------------------------------------------------------
 
@@ -415,18 +450,21 @@ p_contrast <-
 
 
 design <- "
-  12
-  34
+  1
+  2
+  3
 "
 
-p_rda + p_contrast +
-  p_traj_all + p_pca_contrast +
+combo_plot <- 
+  p_rda +
+  p_traj_all +
+  loading_plot +
   plot_annotation(tag_levels = 'A') +
   plot_layout(design = design,
               guides = "collect") &
-  theme(legend.position='bottom')
+  theme(legend.position='right')
 
 ggsave("../figures/downsamplingEffect.png",
-       width = 6000, 
-       height = 6000, 
+       width = 4500, 
+       height = 7000, 
        units = "px", dpi = 500)
