@@ -158,7 +158,7 @@ cld_df <-
   squad_up(scenario) %>%
   arrange(net_group, 
           .by_group = TRUE) %>%
-  glow_up(net_type = factor(net_type, levels = net_type)) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs)) %>%
   disband()
 
 
@@ -200,21 +200,16 @@ p_lollipop <-
   extinction_df %>%
   yeet(time_pnt == "realised") %>%
   group_by(net_type, scenario, extincion_point, net_group) %>%
-  summarise(value = mean(value),
-            .groups = "drop") %>%
   glow_up(net_group = assign_net_group(net_type)) %>%
   squad_up(scenario, extincion_point) %>%
   arrange(net_group, 
           .by_group = TRUE) %>%
-  glow_up(net_type = factor(net_type, levels = net_type)) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs)) %>%
   disband() %>%
   ggplot(aes(x = net_type, 
              y = value, 
              colour = extincion_point)) +
-  geom_line(aes(group = net_type),
-            colour = minni_silver) +
-  geom_point(aes(shape = net_group),
-             size = 3) +
+  geom_boxplot() +
   scale_colour_manual(values = extinction_pal) +
   scale_shape_manual(values = net_shapes,
                      guide = "none") +
@@ -238,10 +233,39 @@ p_final <-
 
 
 ggsave(
-  "../figures/robustnessTopoVDynamic.png",
+  "../figures/robustnessTopoVDynamic_allScenario.png",
   p_final,
-  width = 9500,
+  width = 10000,
   height = 10000,
+  units = "px",
+  dpi = 500
+)
+
+
+p_lollipop_collapsed <-
+  extinction_df %>%
+  yeet(time_pnt == "realised") %>%
+  glow_up(net_group = assign_net_group(net_type)) %>%
+  squad_up(extinction, community, scenario, net_id, time_pnt) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs),
+          extinction = paste0(extinction, "_", time_pnt)) %>%
+  slay(net_type) %>%
+  disband() %>%
+  ggplot(aes(x = net_type, 
+             y = value, 
+             colour = extinction)) +
+  geom_boxplot(outliers = FALSE) +
+  scale_colour_manual(values = extinction_pal) +
+  labs(x = NULL,
+       y = expression(Robustness~(R[50])),
+       colour = "Extinction scenario") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave(
+  "../figures/robustnessTopoVDynamic.png",
+  p_lollipop_collapsed,
+  width = 5000,
+  height = 3000,
   units = "px",
   dpi = 500
 )
