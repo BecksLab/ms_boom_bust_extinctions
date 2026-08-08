@@ -130,12 +130,15 @@
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-7fca231f0f6bfd3bec1af756033c583c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
      <script async="" src="https://hypothes.is/embed.js"></script>
 <script>
   window.document.addEventListener("DOMContentLoaded", function (_event) {
     document.body.classList.add('hypothesis-enabled');
   });
-</script>  
+</script>   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script> 
       </head>
 
   <body class="quarto-notebook quarto-light">
@@ -186,6 +189,8 @@
   <ul>
   <li><a href="#network-creationsimulation-sanity-checks" id="toc-network-creationsimulation-sanity-checks" class="nav-link active" data-scroll-target="#network-creationsimulation-sanity-checks">Network creation/simulation sanity checks</a></li>
   <li><a href="#reaching-of-target-connectance" id="toc-reaching-of-target-connectance" class="nav-link" data-scroll-target="#reaching-of-target-connectance">Reaching of target Connectance</a></li>
+  <li><a href="#downsampling-and-burn-in-alter-inferred-topological-robustness" id="toc-downsampling-and-burn-in-alter-inferred-topological-robustness" class="nav-link" data-scroll-target="#downsampling-and-burn-in-alter-inferred-topological-robustness">Downsampling and burn-in alter inferred topological robustness</a></li>
+  <li><a href="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" id="toc-differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" class="nav-link" data-scroll-target="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type">Differences in inferred robustness of topological and dynamic are unaffected by network type</a></li>
   </ul>
 </nav>
 </div>
@@ -201,6 +206,41 @@
 </section>
 <section id="reaching-of-target-connectance" class="level2">
 <h2 class="anchored" data-anchor-id="reaching-of-target-connectance">Reaching of target Connectance</h2>
+</section>
+<section id="downsampling-and-burn-in-alter-inferred-topological-robustness" class="level1">
+<h1>Downsampling and burn-in alter inferred topological robustness</h1>
+<blockquote class="blockquote">
+<p>this is probably destined as a supp matt exercise</p>
+</blockquote>
+<p>To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference ‘states’ (metaweb, ATN, and niche model) changed with increasing degree of downsampling (<span class="math inline">\(\Delta_{connectance}\)</span>). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered (Panel A; <span class="citation" data-cites="fig-robDownsample">@fig-robDownsample</span>).</p>
+<div id="fig-robDownsample" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../figures/robustnessDownsampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="TODO."><img src="../figures/robustnessDownsampling.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+TODO.
+</figcaption>
+</figure>
+</div>
+<p>Under body-mass ordered extinction, reductions in connectance produced increasingly divergent robustness responses relative to the metaweb, while trajectories relative to the niche and ATN reference states were weaker and more variable. This pattern was reflected in a strong interaction between connectance reduction and reference state (<span class="math inline">\(\chi^2\)</span> = 384, <span class="math inline">\(p\)</span> &lt; 0.001). Similar reference-dependent trajectories occurred under degree-based extinction (<span class="math inline">\(\Delta_{connectance}\)</span> <span class="math inline">\(\times\)</span> reference <span class="math inline">\(\times\)</span> downsampling approach: <span class="math inline">\(\chi^2\)</span> = 98.7, <span class="math inline">\(p\)</span> &lt; 0.001) and random consumer removal (<span class="math inline">\(\chi^2\)</span> = 22.1, <span class="math inline">\(p\)</span> = 0.001), whereas random basal removal showed little evidence that the mechanism of downsampling altered robustness trajectories (<span class="math inline">\(\chi^2\)</span> = 0.54, <span class="math inline">\(p\)</span> = 0.997)</p>
+<p>Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that the process of dynamic modelling altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B <span class="citation" data-cites="fig-robDownsample">@fig-robDownsample</span>). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.</p>
+<p>Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed the downsampling approach increasingly imposes these assumptions, different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.</p>
+</section>
+<section id="differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" class="level1">
+<h1>Differences in inferred robustness of topological and dynamic are unaffected by network type</h1>
+<ol type="A">
+<li>Estimated robustness (<span class="math inline">\(R_50\)</span>) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates (<span class="math inline">\(\Delta R_50 = R_{50, dynamic} - R_{50, topological}\)</span>) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.</li>
+</ol>
+<div id="fig-TopoVDynamic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-TopoVDynamic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../figures/robustnessTopoVDynamic_allScenario.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../figures/robustnessTopoVDynamic_allScenario.png" id="fig-TopoVDynamic" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-TopoVDynamic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</figcaption>
+</figure>
+</div>
 </section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
@@ -602,6 +642,37 @@
       }
     }
   });
-  </script>  </div> <!-- /content --> 
+  </script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script> 
   
 </body></html>
