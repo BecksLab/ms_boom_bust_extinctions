@@ -213,7 +213,7 @@ dynamic extinction models}
 1%
 }%
 }
-\date{2026-08-08}
+\date{2026-08-10}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -850,6 +850,13 @@ the synthetic niche model, whereas the remaining empirically derived
 networks maintained their mutual similarity. Additionally, the ATN model
 shifted to become more similar in robustness to the empirical cluster.
 
+Topological extinction simulations primarily interrogate network
+architecture, and therefore retain the common structural signature
+inherited from the metaweb. Dynamic simulations introduce a second layer
+of ecological structure through biomass and rate-dependent interactions,
+revealing differences among networks that are not apparent from topology
+alone.
+
 When examining topological extinctions, it is clear why empirically
 derived networks behave similarly to one another - they share a common
 baseline architecture inherited from the regional metaweb
@@ -869,93 +876,84 @@ construction.
 
 \section{Conclusions}\label{conclusions}
 
-Reconstructing local food webs from regional metawebs requires explicit
-assumptions about how ecological processes filter potential interactions
-into realised local networks. By comparing four downsampling approaches
-across topological and dynamic extinction scenarios, we demonstrate that
-the mechanism of interaction removal influences both the structural
-topology of the resulting networks and their inferred robustness to
-extinction.
+Reconstructing realised food webs from regional interaction pools
+requires assumptions about which potential interactions are likely to
+occur together. Here, we demonstrate that empirical metawebs can be
+converted into dynamically tractable food webs through alternative
+downsampling approaches, but that the resulting networks retain
+detectable signatures of the assumptions used during their construction.
+These signatures were evident in network topology and persisted through
+subsequent dynamical simulations, indicating that network realisation is
+not simply a preprocessing step but an additional component of the
+ecological model.
 
-\subsection{Structural vs.~dynamic
-fragility}\label{structural-vs.-dynamic-fragility}
+Our results further suggest that dynamical burn-in represents a second
+form of network realisation. Although burn-in altered the structure of
+all networks, it did not erase the differences introduced during initial
+network construction. Instead, the dynamical model filtered structurally
+feasible networks according to its own assumptions about biomass,
+interaction strengths and species persistence. The ecological behaviour
+of a simulated community is therefore shaped by successive filters: how
+potential interactions are realised into a network, and how that network
+is subsequently realised as a dynamically viable community.
 
-Our results confirm that the qualitative discrepancy between topological
-and dynamic robustness identified by Curtsdotter et al. (2011) extends
-across alternative network reconstructions. Under most extinction
-scenarios, topological simulations inferred greater robustness than
-dynamic simulations regardless of downsampling approach. Topological
-extinctions treat networks as static topological dependency graphs,
-whereas dynamic extinctions incorporate biomass drawdown, competitive
-release, and rate-dependent secondary collapses. Consequently, static
-metrics consistently provide a conservative estimate of community
-vulnerability.
+\begin{quote}
+Possible supplement here is to look at the difference between creation
+and realised topological robustness. If we see a clear difference then
+clearly the burn in process is altering structure.
+\end{quote}
 
-Importantly, while downsampling methods generated distinct initial
-topologies, their effects on topological robustness were relatively
-modest---likely because initial metawebs were already relatively sparse
-(mas Co = 0.20). However, once bio-energetic dynamics were introduced,
-subtle structural differences translated into substantial variations in
-dynamic persistence. Dynamic extinctions are strongly driven by
-node-level properties and metabolic rates rather than link topology
-alone. Thus, inferred dynamic robustness reflects an interaction between
-network structure and the physiological constraints imposed upon it.
+Importantly, the broad relationship between topological and dynamic
+robustness was consistent across network reconstruction approaches, even
+though the absolute robustness of individual networks varied. This
+suggests that some conclusions drawn from network topology may be robust
+to uncertainty in network reconstruction, while also demonstrating that
+dynamic simulations can reveal differences among networks that are not
+apparent from topology alone. In particular, networks generated from the
+same empirical interaction pool could exhibit distinct dynamical
+behaviour depending on the assumptions used to realise that pool,
+supporting the growing synthesis that we cannot neglect the decisions
+that are made when a network is initially constructed (Brimacombe et
+al., 2023; Strydom, Karapunar, et al., 2026).
 
-\subsection{Mapping empirical networks or model
-philosophy?}\label{mapping-empirical-networks-or-model-philosophy}
+These findings highlight an important challenge for the growing use of
+dynamic food web models to move beyond describing network structure
+towards predicting ecological change. Increasingly sophisticated
+approaches can construct networks from empirical observations or
+biological traits, while regional metawebs provide a means of retaining
+broad empirical information on interaction potential. Yet neither
+empirical provenance nor mechanistic parameterisation necessarily
+produces a realised community: both require assumptions about which
+interactions occur together and, in dynamic models, which of those
+interactions can persist. Network realisation therefore represents a
+necessary but currently underappreciated bridge between empirical
+interaction data and mechanistic dynamic modelling.
 
-A central question arising from our findings is whether dynamic
-simulations evaluate empirical reality or simply mirror the assumptions
-of the underlying models (Strydom, Karapunar, et al., 2026). The dynamic
-convergence between SVD-downsampled metawebs and synthetic niche models
-highlights a fundamental circularity - because frameworks like the BEFW
-rely heavily on body-mass ratios and trophic positioning to derive
-interaction rates, networks constructed around niche-ordering
-assumptions naturally align with these dynamic engines. Conversely,
-downsampling methods that do not enforce trophic hierarchy (such as
-degree-product or random link removal) introduce structural
-configurations that interact differently with allometric scaling rules,
-leading to divergent dynamic behaviors.
+This distinction may be particularly important for systems in which
+empirical interaction data are necessarily incomplete, including
+palaeoecological communities. Fossil records can provide unusually
+valuable opportunities to examine ecological change across major
+extinction events, but the interaction data available from such systems
+are often better interpreted as empirically constrained interaction
+pools than complete realised food webs. If these pools can be converted
+into plausible dynamically viable communities, dynamic modelling could
+provide a route to testing mechanistic explanations of observed
+ecological change rather than relying solely on topological
+reconstructions. Our results provide a first step towards this goal,
+while demonstrating that the assumptions required to construct the
+network can remain detectable throughout the modelling process.
 
-This distinction is particularly evident when comparing the ATN and
-empirical downsampled networks. Although the ATN model is widely used as
-a realistic benchmark, its dynamic behaviour diverged from both the
-niche model. This underscores that no single synthetic network model can
-be treated as an absolute benchmark for realised food-web dynamics.
-
-\subsection{Implications for network
-reconstruction}\label{implications-for-network-reconstruction}
-
-While there is no single correct downsampling approach, our results
-offer practical considerations for empirically-derived metaweb
-downsampling:
-
-\begin{itemize}
-\tightlist
-\item
-  Alignment with dynamic frameworks: If the objective is to parameterise
-  dynamic biomass simulations using allometric or bio-energetic models,
-  SVD-based niche downsampling provides an internally consistent
-  approach that preserves trophic hierarchy without imposing arbitrary
-  degree distributions.
-\item
-  Caution with unconstrained null models: Random downsampling introduces
-  topological distortions that increase structural displacement during
-  burn-in (Figure~\ref{fig-downsample}) and generate unpredictable
-  dynamic responses, making it unsuitable as an ecologically informative
-  filter.
-\item
-  Evaluating static and dynamic stability together: Because topological
-  extinctions represent an upper bound of structural robustness and
-  dynamic extinctions reflect rate-dependent persistence, reporting both
-  provides a clearer picture of network robustness.
-\end{itemize}
-
-Ultimately, downsampling a metaweb is an act of modelling ecological
-realisation rather than simple network reduction. Acknowledging the
-assumptions embedded within these downsampling filters is essential for
-accurately inferring community robustness in both ancient and modern
-ecosystems.
+Rather than identifying a single correct method for constructing
+realised networks, we therefore argue that network realisation should be
+treated as an explicit source of ecological model uncertainty. As food
+web modelling increasingly combines empirical interaction data with
+dynamical approaches, predictions will depend not only on the equations
+governing population dynamics, but also on how empirical knowledge is
+translated into the network those equations operate upon. Understanding
+and quantifying this additional layer of uncertainty will be essential
+if dynamic food-web models are to provide increasingly empirical
+predictions of how ecological communities respond to environmental
+change.
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
@@ -966,6 +964,13 @@ ecosystems.
 Bezanson, J., Edelman, A., Karpinski, S., \& Shah, V. (2017). Julia: {A
 Fresh Approach} to {Numerical Computing}. \emph{SIAM Review},
 \emph{59}(1), 65--98. \url{https://doi.org/10.1137/141000671}
+
+\bibitem[\citeproctext]{ref-brimacombeShortcomingsReusingSpecies2023}
+Brimacombe, C., Bodner, K., Michalska-Smith, M., Poisot, T., \& Fortin,
+M.-J. (2023). Shortcomings of reusing species interaction networks
+created by different sets of researchers. \emph{PLOS Biology},
+\emph{21}(4), e3002068.
+\url{https://doi.org/10.1371/journal.pbio.3002068}
 
 \bibitem[\citeproctext]{ref-broseConsumerResourceBodySize2006}
 Brose, U., Jonsson, T., Berlow, E. L., Warren, P., Banasek-Richter, C.,
