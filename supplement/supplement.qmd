@@ -20,8 +20,6 @@ Trophic level distributions and bodysize?
 
 # Downsampling and burn-in alter inferred topological robustness
 
-> this is probably destined as a supp matt exercise
-
 To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference 'states' (metaweb, ATN, and niche model) changed with increasing degree of downsampling ($\Delta_{connectance}$). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered (Panel A; @fig-robDownsample).
 
 ![TODO.](../figures/robustnessDownsampling.png){#fig-robDownsample}
