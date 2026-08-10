@@ -322,7 +322,8 @@ for t in t_values
                     :net_id => i,
                     :community => community_name,
                     :net_type => net_name,
-                    :C_target => C_targ, :S_creation => creation_metrics[net_name].S,
+                    :C_target => C_targ, 
+                    :S_creation => creation_metrics[net_name].S,
                     :C_creation => creation_metrics[net_name].C,
                     :C_realised => C_realised
                 )
