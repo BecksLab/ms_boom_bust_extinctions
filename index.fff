@@ -34,10 +34,12 @@ sharing the same letter are not significantly different.}
 
 \caption{\label{fig-TopoVDynamic}\textbf{Differences between topological
 and dynamic estimates of network robustness.} Boxplot showing aggregated
-realised topological and dynamic robustness for the different network
-types. Each extinction scenario is presented in the supp matt but note
-that the with the exception of the random basal extinctions this pattern
-remains consistent}
+realised topological and dynamic robustness across the different
+communities and extinction scenarios for the different network types.
+See the {[}\emph{SUPP MATT}{]} for by extinction scenario breakdowns.
+Note that the pattern of `conservative-ness' is persistent across all
+extinction scenarios with the exception of random, basal extinctions in
+which the difference was diminished and in some cases reversed}
 
 \end{figure}
 \efloatseparator
