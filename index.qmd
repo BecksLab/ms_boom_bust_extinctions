@@ -38,7 +38,7 @@ Despite these advances, the application of dynamic food web models remains const
 
 This distinction is important because empirical provenance does not necessarily imply realised ecological structure. Metawebs can incorporate substantial information about real ecological interactions while aggregating interactions observed or inferred across locations, seasons, sampling periods or environmental contexts [@dunneNetworkStructureFood2006a]. They therefore provide a potentially powerful empirical basis for dynamic modelling, but typically contain more interactions than are realised simultaneously within any particular community. For regional metawebs, exploiting this information in a dynamic framework consequently requires an additional network realisation step - selecting from the pool of potential interactions to generate plausible community-level networks. Such network realisation is more than a computational reduction in connectance; it is an ecological modelling decision that determines which interactions are assumed to occur together.
 
-The need for 'metaweb realisation' is particularly apparent when considering ecological systems for which dynamic predictions could be most informative but empirical data are inherently incomplete. Palaeoecological records, for example, can provide unusually valuable opportunities to study the ecological consequences of major extinction events because fossil assemblages can document communities before and after large-scale biodiversity loss [@roopnarineNetworksExtinctionPaleocommunity2017; @roopnarineExtinctionCascadesCatastrophe2006; @frickeCollapseTerrestrialMammal2022; @dunhillExtinctionCascadesCommunity2024; @karapunarNoGlobalCollapse2026]. Yet even where species composition and trophic interactions can be reconstructed, palaeoecological data rarely provide a complete observation of a single realised food web. Instead, they are more naturally used to reconstruct empirically constrained interaction pools from which plausible community networks can be inferred. This creates an opportunity for dynamic food-web modelling - provided metawebs can be converted into dynamically viable realised networks. Empirically-informed ecological change has the potential be used to test mechanistic explanations through comparisons before and after extinction event or more complex hindcasting exercises [@strydomRoadmapPredictingSpecies2021].
+The need for 'metaweb realisation' is particularly apparent when considering ecological systems for which dynamic predictions could be most informative but empirical data are inherently incomplete. Palaeoecological records, for example, can provide unusually valuable opportunities to study the ecological consequences of major extinction events because fossil assemblages can document communities before and after large-scale biodiversity loss [@roopnarineEcologicalModellingPaleocommunity2017; @roopnarineExtinctionCascadesCatastrophe2006; @frickeCollapseTerrestrialMammal2022; @dunhillExtinctionCascadesCommunity2024; @karapunarNoGlobalCollapse2026]. Yet even where species composition and trophic interactions can be reconstructed, palaeoecological data rarely provide a complete observation of a single realised food web. Instead, they are more naturally used to reconstruct empirically constrained interaction pools from which plausible community networks can be inferred. This creates an opportunity for dynamic food-web modelling - provided metawebs can be converted into dynamically viable realised networks. Empirically-informed ecological change has the potential be used to test mechanistic explanations through comparisons before and after extinction event or more complex hindcasting exercises [@strydomRoadmapPredictingSpecies2021].
 
 However, the process of metaweb realisation itself has the potential to introduce assumptions that may propagate into subsequent ecological inference. In this sense, realised-network generation constitutes an ecological model in its own right, introducing structural assumptions before any population dynamics are simulated. These assumptions may then be compounded by the dynamics themselves. Once a realised network has been generated, dynamic models typically undergo a burn-in period during which biomass redistributes and species unable to persist under the chosen dynamical formulation are lost. Burn-in therefore represents a further filtering step, transforming a structurally feasible network into a dynamically viable community. Only after these successive stages of network realisation and dynamical filtering are perturbations, such as species removals or environmental change, imposed. Ecological inference from dynamic food web models is consequently conditioned not only by the dynamical formulation of the model, but also by assumptions introduced during network construction and by the subsequent process of dynamical realisation.
 
@@ -48,7 +48,7 @@ Here we investigate whether alternative approaches to network realisation influe
 
 ## Data
 
-Seven locations [@karapunarNoGlobalCollapse2026]. Here we use the guild-level community data to keep the size of the networks manageable and well within the bounds used by @curtsdotterRobustnessSecondaryExtinctions2011. Additionally we added plankton and zooplankton data from EcoGenie models [REF] as a way to enlarge the 'base' of the network (again to better represent a realised network).
+Seven locations [@karapunarNoGlobalCollapse2026]. Here we use the guild-level community data to keep the size of the networks manageable and well within the bounds used by @curtsdotterRobustnessSecondaryExtinctions2011. Additionally we added plankton and zooplankton data from EcoGenie models \[REF\] as a way to enlarge the 'base' of the network (again to better represent a realised network).
 
 ## Network construction
 
@@ -65,21 +65,19 @@ The original niche model from @Williams2000Simple assumes that realised interact
 Let $A$ denote the $S \times S$ adjacency matrix of the metaweb, where $A_{ij}=1$ if consumer $i$ feeds on resource $j$. We compute its singular value decomposition,
 
 $$
-A = U \Sigma V^\top,
+A = U \Sigma V^\top
 $$
 
 where $U$ and $V$ are the left and right singular vectors, respectively, and $\Sigma$ is the diagonal matrix of singular values. Using the leading singular value, $\sigma_1$, and corresponding singular vectors, $\mathbf{u}_1$ and $\mathbf{v}_1$, each species is assigned latent consumer and resource coordinates,
 
 $$
-c_i = \sqrt{\sigma_1}\,u_{i1},
-\qquad
-r_i = \sqrt{\sigma_1}\,v_{i1}.
+c_i = \sqrt{\sigma_1}\,u_{i1}, \qquad r_i = \sqrt{\sigma_1}\,v_{i1}
 $$
 
 Because species can act both as consumers and as resources, these coordinates are combined to obtain a single niche position,
 
-$$
-x_i = \frac{c_i + r_i}{2},
+$$ 
+x_i = \frac{c_i + r_i}{2}
 $$
 
 which is subsequently rescaled to lie between 0 and 1. Species with similar values of $x_i$ therefore occupy similar positions along the dominant trophic gradient of the metaweb.
@@ -87,19 +85,19 @@ which is subsequently rescaled to lie between 0 and 1. Species with similar valu
 For each consumer $i$, the centroid of its realised niche is
 
 $$
-\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
+\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j
 $$
 
 where $R_i$ is the set of resources consumed by species $i$, and $k_i$ is its trophic breadth (generality). Niche breadth is estimated as the standard deviation of prey positions,
 
 $$
-\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
+\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right)
 $$
 
 where the lower bound prevents unrealistically narrow niches for specialists. Niche breadth can optionally be scaled to further constrain realised diets,
 
 $$
-\sigma_i' = \alpha \sigma_i,
+\sigma_i' = \alpha \sigma_i
 $$
 
 where $\alpha$ is acts as a scaling parameter.
@@ -107,8 +105,7 @@ where $\alpha$ is acts as a scaling parameter.
 The probability of retaining an interaction between consumer $i$ and resource $j$ is then
 
 $$
-P_{ij} \propto
-\exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right].
+P_{ij} \propto \exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right]
 $$
 
 Interactions closest to the consumer's niche centre are therefore most likely to be realised (retained), whereas interactions towards the margins of the niche are preferentially removed. Ecologically, this assumes that local communities realise the central portion of a consumer's potential trophic niche, with peripheral or opportunistic interactions occurring less consistently.
@@ -118,20 +115,19 @@ Interactions closest to the consumer's niche centre are therefore most likely to
 The power-law approach assumes that interaction realisation depends primarily on **consumer trophic breadth**. Following @roopnarineExtinctionCascadesCatastrophe2006, the retention probability for consumer $i$ is
 
 $$
-P_i \propto
-\exp\left(\frac{k_i}{E}\right),
+P_i \propto \exp\left(\frac{k_i}{E}\right)
 $$
 
 where $k_i$ is consumer generality and
 
 $$
-E = S^{(y-1)/y},
+E = S^{(y-1)/y}
 $$
 
 with $S$ denoting network size and $y$ the scaling exponent. Probabilities are subsequently normalised to lie between 0 and 1. Every interaction belonging to consumer $i$ inherits the same retention probability,
 
 $$
-P_{ij}=P_i.
+P_{ij}=P_i
 $$
 
 Ecologically, this represents the hypothesis that generalist consumers realise a larger fraction of their potential trophic niche than specialist consumers, irrespective of the identity of individual resources.
@@ -141,16 +137,13 @@ Ecologically, this represents the hypothesis that generalist consumers realise a
 The degree-product approach assumes that interaction realisation depends on the centrality of both interacting species. Each interaction is assigned a weight
 
 $$
-w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}},
+w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}}
 $$
 
 where $k_i^{\mathrm{out}}$ is the consumer's out-degree (generality) and $k_j^{\mathrm{in}}$ is the resource's in-degree (vulnerability). Retention probabilities are then calculated as
 
 $$
-P_{ij}
-=
-1-
-\frac{w_{ij}}{\max(w)},
+P_{ij} = 1- \frac{w_{ij}}{\max(w)}
 $$
 
 before being constrained to the interval $[0,1]$. Under iterative downsampling, degrees are recalculated following each interaction removal, allowing probabilities to evolve as the realised network changes. Ecologically, this assumes that highly connected species possess many potential interactions that are not simultaneously realised within any local community, whereas interactions involving more specialised or weakly connected species are more likely to represent essential realised links.
@@ -160,7 +153,7 @@ before being constrained to the interval $[0,1]$. Under iterative downsampling, 
 Random downsampling provides the ecological null model. Every interaction has an equal probability of being retained,
 
 $$
-P_{ij}=c,
+P_{ij}=c
 $$
 
 where $c$ is constant for all existing interactions. Interactions are removed uniformly at random until the target connectance is reached, subject to the constraint that species cannot become isolated. This assumes that no ecological process preferentially favours the realisation of one potential interaction over another, such that realised food webs constitute an unbiased subset of the regional metaweb that is ultimately only constrained by the number of links.
@@ -189,25 +182,25 @@ Redundancy analysis (RDA), using permutation-based significance testing while ac
 
 ![**Downsampling approach influences both network topology and subsequent structural reorganisation during burn-in.** (A) Redundancy analysis (RDA) ordination showing differences in network topology among downsampling approaches across the connectance gradient after accounting for community-level variation. (B) Estimated slopes (±95% confidence intervals) describing the relationship between the primary RDA axis and connectance change for each downsampling approach; letters denote post-hoc groupings from estimated marginal trend comparisons. (C) Principal component trajectories illustrating structural change between network creation and burn-in for each downsampling approach. (D) Mean Euclidean displacement through PCA space during burn-in (±95% confidence intervals); letters indicate pairwise differences among network types from estimated marginal means. Networks sharing the same letter are not significantly different.](figures/downsamplingEffect.png){#fig-downsample}
 
-To identify the source of this interaction, the response of the primary RDA axis was examined across the connectance gradient. RDA1 was strongly associated with connectance change ($F_{1, 712}$ = 2076.86, $p$ < 0.001), with additional effects of downsampling approach ($F_{3, 712}$ = 33.28, $p$ < 0.001) and a significant downsampling approach $\times$ connectance change interaction ($F_{3, 712}$ = 4.81, $p$ = 0.003). Pairwise comparisons of estimated trajectory slopes showed that link-based downsampling followed a distinct trajectory, differing from niche-, power-, and random-based downsampling, whereas the latter three approaches exhibited statistically indistinguishable responses (@fig-downsample, panel B). These results indicate that all downsampling methods alter network topology as connectance declines, but that removing interactions according to their realised connectivity produces a fundamentally different pathway of structural change from approaches that incorporate species-level ecological information or random link loss.
+To identify the source of this interaction, the response of the primary RDA axis was examined across the connectance gradient. RDA1 was strongly associated with connectance change ($F_{1, 712}$ = 2076.86, $p$ \< 0.001), with additional effects of downsampling approach ($F_{3, 712}$ = 33.28, $p$ \< 0.001) and a significant downsampling approach $\times$ connectance change interaction ($F_{3, 712}$ = 4.81, $p$ = 0.003). Pairwise comparisons of estimated trajectory slopes showed that link-based downsampling followed a distinct trajectory, differing from niche-, power-, and random-based downsampling, whereas the latter three approaches exhibited statistically indistinguishable responses (@fig-downsample, panel B). These results indicate that all downsampling methods alter network topology as connectance declines, but that removing interactions according to their realised connectivity produces a fundamentally different pathway of structural change from approaches that incorporate species-level ecological information or random link loss.
 
-We next asked whether these structurally distinct networks responded differently during dynamic burn-in. Structural reorganisation was quantified as the Euclidean displacement between network positions before and after burn-in in the first three principal component dimensions, with community included as a random effect to account for the substantial variation among communities. Burn-in displacement differed significantly among network types ($F$ = 62.0, $p$ < 0.001). Metawebs underwent the greatest structural reorganisation, whereas ATNs exhibited the smallest displacement. Among the downsampled networks, niche-, power-, and link-based approaches underwent comparable structural change during burn-in, while random downsampling showed a modestly greater displacement (@fig-downsample, panels C–D).
+We next asked whether these structurally distinct networks responded differently during dynamic burn-in. Structural reorganisation was quantified as the Euclidean displacement between network positions before and after burn-in in the first three principal component dimensions, with community included as a random effect to account for the substantial variation among communities. Burn-in displacement differed significantly among network types ($F$ = 62.0, $p$ \< 0.001). Metawebs underwent the greatest structural reorganisation, whereas ATNs exhibited the smallest displacement. Among the downsampled networks, niche-, power-, and link-based approaches underwent comparable structural change during burn-in, while random downsampling showed a modestly greater displacement (@fig-downsample, panels C–D).
 
 Together, these analyses demonstrate that downsampling approach influences network topology both during network construction and subsequent dynamic relaxation. Differences among downsampling methods become increasingly pronounced as greater proportions of interactions are removed, consistent with the expectation that the ecological assumptions underlying each removal strategy exert a stronger influence under more aggressive downsampling. Importantly, despite generating distinct initial topologies, the different downsampling approaches underwent remarkably similar structural reorganisation during burn-in, changing in ways more similar to the niche model than the original metaweb. In contrast, random downsampling remained distinct throughout burn-in, consistent with its lack of an underlying ecological mechanism governing interaction removal. This suggests that the ecologically informed downsampling on metawebs allows us to produce networks whose subsequent structural dynamics more closely resemble those of the niche model. Notably the two realised models (Niche and ATN) do not behave similarly and still end up at different 'end points' post burn-in to the empirical webs, highlighting that network reconstruction approach will still have a strong effect on the inferred dynamics and behaviour of the system [@strydomAreWeMapping2026]
 
 # Differences in inferred robustness of topological and dynamic are unaffected by network type
 
-To determine whether the qualitative differences between topological and dynamic extinction simulations previously demonstrated using niche-model food webs generalise across alternative network reconstructions, we compared the difference in robustness ($\Delta R_50$) among network types for each extinction scenario while accounting for community-level variation. Network type significantly affected $\Delta R_50$ in all four extinction scenarios (low-to-high biomass: $F_{6, 1248}$ = 22.3, $p$<0.001; high-to-low biomass: $F_{6, 1248}$ = 46.7, $p$<0.001; random basal: $F_{6, 1248}$ = 109.0, $p$<0.001; random consumer: $F_{6, 1248}$ = 22.9, $p$<0.001), indicating that the magnitude of the difference between topological and dynamic robustness depended on network reconstruction.
+To determine whether the qualitative differences between topological and dynamic extinction simulations previously demonstrated using niche-model food webs generalise across alternative network reconstructions, we compared the difference in robustness ($\Delta R_50$) among network types for each extinction scenario while accounting for community-level variation. Network type significantly affected $\Delta R_50$ in all four extinction scenarios (low-to-high biomass: $F_{6, 1248}$ = 22.3, $p$\<0.001; high-to-low biomass: $F_{6, 1248}$ = 46.7, $p$\<0.001; random basal: $F_{6, 1248}$ = 109.0, $p$\<0.001; random consumer: $F_{6, 1248}$ = 22.9, $p$\<0.001), indicating that the magnitude of the difference between topological and dynamic robustness depended on network reconstruction.
 
 Despite these quantitative differences, the qualitative pattern identified by @curtsdotterRobustnessSecondaryExtinctions2011 was largely maintained. Under all but random basal removal, topological extinction simulations inferred greater robustness than dynamic simulations for every network type, although the magnitude of this discrepancy varied among reconstruction methods [@fig-TopoVDynamic]. Random basal extinction represented the only notable departure from this general pattern. Here, the discrepancy between topological and dynamic robustness was substantially reduced, with link- and power-downsampled networks exhibiting slightly positive values of $\Delta R_50$ and random downsampled networks showing little difference between the two approaches, whereas niche-derived networks retained lower dynamic than topological robustness. Thus, the conclusion that topological analyses provide more conservative estimates of robustness was not universal, but remained remarkably robust across reconstruction methods and extinction scenarios.
 
-![**Differences between topological and dynamic estimates of network robustness.** Boxplot showing aggregated realised topological and dynamic robustness across the different communities and extinction scenarios for the different network types. See the [*SUPP MATT*] for by extinction scenario breakdowns. Note that the pattern of 'conservative-ness' is persistent across all extinction scenarios with the exception of random, basal extinctions in which the difference was diminished and in some cases reversed](figures/robustnessTopoVDynamic.png){#fig-TopoVDynamic}
+![**Differences between topological and dynamic estimates of network robustness.** Boxplot showing aggregated realised topological and dynamic robustness across the different communities and extinction scenarios for the different network types. See the \[*SUPP MATT*\] for by extinction scenario breakdowns. Note that the pattern of 'conservative-ness' is persistent across all extinction scenarios with the exception of random, basal extinctions in which the difference was diminished and in some cases reversed](figures/robustnessTopoVDynamic.png){#fig-TopoVDynamic}
 
 Together, these analyses demonstrate that the principal conclusion of @curtsdotterRobustnessSecondaryExtinctions2011 extends well beyond the niche model. While the precise magnitude of the discrepancy between topological and dynamic robustness depends on both network reconstruction and extinction mechanism, the qualitative tendency for topological extinction simulations to infer greater robustness than dynamic simulations was recovered across the vast majority of reconstructed food webs examined here.
 
 # Dynamic extinctions re-enforce ecological assumptions
 
-To evaluate how interaction filtering influences dynamic behavior, we calculated pairwise contrasts of inferred robustness ($R_{50}$) across all combinations of community, extinction mechanism, and network type. In aggregate, topological extinctions (evaluated both at network creation and after dynamic burn-in (realisation)) yielded consistent robustness estimates across all empirically derived networks (@fig-robDynamic, left column). This structural cohesion was further reflected in hierarchical clustering, where empirically derived networks consistently formed a distinct cluster separate from the two synthetic benchmark networks (niche model and ATN; @fig-robDynamic, right column). 
+To evaluate how interaction filtering influences dynamic behaviour, we calculated pairwise contrasts of inferred robustness ($R_{50}$) across all combinations of community, extinction mechanism, and network type. In aggregate, topological extinctions (evaluated both at network creation and after dynamic burn-in (realisation)) yielded consistent robustness estimates across all empirically derived networks (@fig-robDynamic, left column). This structural cohesion was further reflected in hierarchical clustering, where empirically derived networks consistently formed a distinct cluster separate from the two synthetic benchmark networks (niche model and ATN; @fig-robDynamic, right column).
 
 ![TODO](figures/robustnessHighLevel.png){#fig-robDynamic}
 
@@ -232,7 +225,6 @@ These findings highlight an important challenge for the growing use of dynamic f
 This distinction may be particularly important for systems in which empirical interaction data are necessarily incomplete, including palaeoecological communities. Fossil records can provide unusually valuable opportunities to examine ecological change across major extinction events, but the interaction data available from such systems are often better interpreted as empirically constrained interaction pools than complete realised food webs. If these pools can be converted into plausible dynamically viable communities, dynamic modelling could provide a route to testing mechanistic explanations of observed ecological change rather than relying solely on topological reconstructions. Our results provide a first step towards this goal, while demonstrating that the assumptions required to construct the network can remain detectable throughout the modelling process.
 
 Rather than identifying a single correct method for constructing realised networks, we therefore argue that network realisation should be treated as an explicit source of ecological model uncertainty. As food web modelling increasingly combines empirical interaction data with dynamical approaches, predictions will depend not only on the equations governing population dynamics, but also on how empirical knowledge is translated into the network those equations operate upon. Understanding and quantifying this additional layer of uncertainty will be essential if dynamic food-web models are to provide increasingly empirical predictions of how ecological communities respond to environmental change.
-
 
 # References {.unnumbered}
 
