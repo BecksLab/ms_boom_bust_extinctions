@@ -1,4 +1,5 @@
 library(tidyverse)
+library(broom)
 library(emmeans)
 library(genzplyr)
 
@@ -46,7 +47,6 @@ car::Anova(mod_all, type = 3)
 car::Anova(mod_all, type = 3)["scenario:net_type", ]
 
 summary(mod_all)
-library(broom)
 
 glance(mod_all)
 
@@ -269,3 +269,128 @@ ggsave(
   units = "px",
   dpi = 500
 )
+
+
+# ------------------------------------------------------------------------------
+# Look at topo creation-realised diff
+# ------------------------------------------------------------------------------
+
+diff_topo <-
+  extinction_df %>% 
+  yeet(extinction == "topo") %>% 
+  vibe_check(community, net_id, net_type, scenario, time_pnt, value) %>% 
+  pivot_wider(names_from = time_pnt, 
+              values_from = value) %>%
+  squad_up(scenario, community, net_type) %>%
+  nest() %>%
+  glow_up(model = map(data,~ tryCatch(t.test(Pair(realised, creation) ~ 1, 
+                                             data = .x),
+                                      error = function(e) NA)))
+
+ttest_tbl <- diff_topo %>%
+  glow_up(ttest = map(model, broom::tidy)) %>%
+  vibe_check(scenario, community, net_type, ttest) %>%
+  unnest(ttest) %>%
+  yeet(p.value < 0.05) %>%
+  left_join(comm_ord) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs),
+          print_name = factor(print_name, levels = comm_levs))
+
+extinction_df %>%
+  yeet(extinction == "topo") %>%
+  glow_up(net_group = assign_net_group(net_type)) %>%
+  squad_up(extinction, community, scenario, net_id, time_pnt) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs),
+          extinction = paste0(extinction, "_", time_pnt)) %>%
+  left_join(comm_ord) %>%
+  glow_up(print_name = factor(print_name, levels = comm_levs)) %>%
+  slay(print_name, net_type) %>%
+  disband() %>%
+  ggplot(aes(x = net_type, 
+             y = value, 
+             colour = extinction)) +
+  geom_boxplot(outliers = FALSE) +
+  geom_text(data = ttest_tbl,
+            aes(x = net_type,
+                y = 0.52,
+                label = "*"),
+            colour = minni_tan) +
+  scale_colour_manual(values = extinction_pal) +
+  facet_grid(cols = vars(print_name),
+             rows = vars(scenario)) +
+  labs(x = NULL,
+       y = expression(Robustness~(R[50])),
+       colour = "Extinction scenario") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# plotting data -----------------------------------------------------------
+
+ttest_plot_tbl <-
+  extinction_df %>%
+  yeet(extinction == "topo") %>%
+  glow_up(
+    net_group = assign_net_group(net_type)
+  ) %>%
+  squad_up(
+    extinction,
+    community,
+    scenario,
+    net_id,
+    time_pnt
+  ) %>%
+  glow_up(
+    net_type = factor(net_type, levels = net_levs),
+    extinction = paste0(extinction, "_", time_pnt)
+  ) %>%
+  left_join(comm_ord) %>%
+  glow_up(
+    print_name = factor(print_name, levels = comm_levs)
+  ) %>%
+  slay(print_name, net_type) %>%
+  disband()
+
+
+# export one plot per community x scenario -------------------------------
+
+ttest_plot_tbl %>%
+  group_split(scenario) %>%
+  walk(\(x) {
+    
+    scen <- x$scenario[[1]]
+    
+    p <-
+      x %>%
+      ggplot(aes(x = net_type,
+                 y = value,
+                 colour = extinction)) +
+      geom_boxplot(outliers = FALSE) +
+      geom_text(data = ttest_tbl %>%
+                  yeet(scenario == scen),
+                aes(x = net_type,
+                    y = 0.52,
+                    label = "*"),
+                colour = minni_tan) +
+      scale_colour_manual(values = extinction_pal) +
+      facet_wrap(vars(print_name)) +
+      labs(x = NULL,
+           y = expression(Robustness~(R[50])),
+           colour = "Extinction scenario",
+           title = scen) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    scenario_name <-
+      scen %>%
+      str_to_lower() %>%
+      str_replace_all(" ", "_")
+    
+    ggsave(paste0("../figures/ttestTopo/ttestTopo_",
+                  scenario_name,
+                  ".png"),
+           p,
+           width = 5000,
+           height = 3000,
+           units = "px",
+           dpi = 500
+    )
+  })
+
