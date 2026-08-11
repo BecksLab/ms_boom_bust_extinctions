@@ -186,7 +186,7 @@ for t in t_values
             for (net_name, fw) in initial_networks
 
                 # for everything BUT the niche we do an empirical bodymass run
-                if net_name ∉ ["metaweb_empiricalbm", "down_niche_empiricalbm", "atn_empiricalbm"]
+                if net_name ∈ ["metaweb_empiricalbm", "down_niche_empiricalbm", "atn_empiricalbm"]
                     realised = realise_network(
                         fw;
                         bodymasses=df.bodymass,
