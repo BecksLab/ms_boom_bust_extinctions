@@ -213,7 +213,7 @@ dynamic extinction models}
 1%
 }%
 }
-\date{2026-08-10}
+\date{2026-08-11}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -347,18 +347,17 @@ Palaeoecological records, for example, can provide unusually valuable
 opportunities to study the ecological consequences of major extinction
 events because fossil assemblages can document communities before and
 after large-scale biodiversity loss (Dunhill et al., 2024; Fricke et
-al., 2022; Karapunar et al., 2026; Roopnarine, 2006;
-\textbf{roopnarineNetworksExtinctionPaleocommunity2017?}). Yet even
-where species composition and trophic interactions can be reconstructed,
-palaeoecological data rarely provide a complete observation of a single
-realised food web. Instead, they are more naturally used to reconstruct
-empirically constrained interaction pools from which plausible community
-networks can be inferred. This creates an opportunity for dynamic
-food-web modelling - provided metawebs can be converted into dynamically
-viable realised networks. Empirically-informed ecological change has the
-potential be used to test mechanistic explanations through comparisons
-before and after extinction event or more complex hindcasting exercises
-(Strydom et al., 2021).
+al., 2022; Karapunar et al., 2026; Roopnarine, 2017; Roopnarine, 2006).
+Yet even where species composition and trophic interactions can be
+reconstructed, palaeoecological data rarely provide a complete
+observation of a single realised food web. Instead, they are more
+naturally used to reconstruct empirically constrained interaction pools
+from which plausible community networks can be inferred. This creates an
+opportunity for dynamic food-web modelling - provided metawebs can be
+converted into dynamically viable realised networks.
+Empirically-informed ecological change has the potential be used to test
+mechanistic explanations through comparisons before and after extinction
+event or more complex hindcasting exercises (Strydom et al., 2021).
 
 However, the process of metaweb realisation itself has the potential to
 introduce assumptions that may propagate into subsequent ecological
@@ -449,7 +448,7 @@ where \(A_{ij}=1\) if consumer \(i\) feeds on resource \(j\). We compute
 its singular value decomposition,
 
 \[
-A = U \Sigma V^\top,
+A = U \Sigma V^\top
 \]
 
 where \(U\) and \(V\) are the left and right singular vectors,
@@ -459,16 +458,14 @@ singular vectors, \(\mathbf{u}_1\) and \(\mathbf{v}_1\), each species is
 assigned latent consumer and resource coordinates,
 
 \[
-c_i = \sqrt{\sigma_1}\,u_{i1},
-\qquad
-r_i = \sqrt{\sigma_1}\,v_{i1}.
+c_i = \sqrt{\sigma_1}\,u_{i1}, \qquad r_i = \sqrt{\sigma_1}\,v_{i1}
 \]
 
 Because species can act both as consumers and as resources, these
 coordinates are combined to obtain a single niche position,
 
-\[
-x_i = \frac{c_i + r_i}{2},
+\[ 
+x_i = \frac{c_i + r_i}{2}
 \]
 
 which is subsequently rescaled to lie between 0 and 1. Species with
@@ -478,7 +475,7 @@ dominant trophic gradient of the metaweb.
 For each consumer \(i\), the centroid of its realised niche is
 
 \[
-\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j,
+\mu_i = \frac{1}{k_i}\sum_{j \in R_i} x_j
 \]
 
 where \(R_i\) is the set of resources consumed by species \(i\), and
@@ -486,7 +483,7 @@ where \(R_i\) is the set of resources consumed by species \(i\), and
 as the standard deviation of prey positions,
 
 \[
-\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right),
+\sigma_i = \max\left(\mathrm{sd}(x_j),\,0.1\right)
 \]
 
 where the lower bound prevents unrealistically narrow niches for
@@ -494,7 +491,7 @@ specialists. Niche breadth can optionally be scaled to further constrain
 realised diets,
 
 \[
-\sigma_i' = \alpha \sigma_i,
+\sigma_i' = \alpha \sigma_i
 \]
 
 where \(\alpha\) is acts as a scaling parameter.
@@ -503,8 +500,7 @@ The probability of retaining an interaction between consumer \(i\) and
 resource \(j\) is then
 
 \[
-P_{ij} \propto
-\exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right].
+P_{ij} \propto \exp\left[-\left(\frac{x_j-\mu_i}{\sigma_i'}\right)^2\right]
 \]
 
 Interactions closest to the consumer's niche centre are therefore most
@@ -521,14 +517,13 @@ primarily on \textbf{consumer trophic breadth}. Following Roopnarine
 (2006), the retention probability for consumer \(i\) is
 
 \[
-P_i \propto
-\exp\left(\frac{k_i}{E}\right),
+P_i \propto \exp\left(\frac{k_i}{E}\right)
 \]
 
 where \(k_i\) is consumer generality and
 
 \[
-E = S^{(y-1)/y},
+E = S^{(y-1)/y}
 \]
 
 with \(S\) denoting network size and \(y\) the scaling exponent.
@@ -537,7 +532,7 @@ interaction belonging to consumer \(i\) inherits the same retention
 probability,
 
 \[
-P_{ij}=P_i.
+P_{ij}=P_i
 \]
 
 Ecologically, this represents the hypothesis that generalist consumers
@@ -552,7 +547,7 @@ on the centrality of both interacting species. Each interaction is
 assigned a weight
 
 \[
-w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}},
+w_{ij}=k_i^{\mathrm{out}}k_j^{\mathrm{in}}
 \]
 
 where \(k_i^{\mathrm{out}}\) is the consumer's out-degree (generality)
@@ -560,10 +555,7 @@ and \(k_j^{\mathrm{in}}\) is the resource's in-degree (vulnerability).
 Retention probabilities are then calculated as
 
 \[
-P_{ij}
-=
-1-
-\frac{w_{ij}}{\max(w)},
+P_{ij} = 1- \frac{w_{ij}}{\max(w)}
 \]
 
 before being constrained to the interval \([0,1]\). Under iterative
@@ -581,7 +573,7 @@ Random downsampling provides the ecological null model. Every
 interaction has an equal probability of being retained,
 
 \[
-P_{ij}=c,
+P_{ij}=c
 \]
 
 where \(c\) is constant for all existing interactions. Interactions are
@@ -667,8 +659,8 @@ downsampling approach significantly affected network topology, but that
 this effect depended on the magnitude of connectance reduction required
 to reach the target connectance (999 permutations; \(F_{7, 707}\) =
 112.8, \(p\) = 0.001; Figure~\ref{fig-downsample}, panel A). The model
-explained 31.8\% of total topology variation (adjusted \emph{R}² =
-0.318), with community identity accounting for an additional 39.7\% of
+explained 31.8\% of total topology variation (adjusted \(R^2\) = 0.318),
+with community identity accounting for an additional 39.7\% of
 variation. The significant interaction between downsampling approach and
 connectance change (marginal test; \(F_{3, 707}\) = 18.90, \(p\) =
 0.001) demonstrated that topology trajectories differed among
@@ -799,10 +791,12 @@ scenarios.
 
 \caption{\label{fig-TopoVDynamic}\textbf{Differences between topological
 and dynamic estimates of network robustness.} Boxplot showing aggregated
-realised topological and dynamic robustness for the different network
-types. Each extinction scenario is presented in the supp matt but note
-that the with the exception of the random basal extinctions this pattern
-remains consistent}
+realised topological and dynamic robustness across the different
+communities and extinction scenarios for the different network types.
+See the {[}\emph{SUPP MATT}{]} for by extinction scenario breakdowns.
+Note that the pattern of `conservative-ness' is persistent across all
+extinction scenarios with the exception of random, basal extinctions in
+which the difference was diminished and in some cases reversed}
 
 \end{figure}%
 
@@ -817,7 +811,7 @@ here.
 
 \#~Dynamic extinctions re-enforce ecological assumptions
 
-To evaluate how interaction filtering influences dynamic behavior, we
+To evaluate how interaction filtering influences dynamic behaviour, we
 calculated pairwise contrasts of inferred robustness (\(R_{50}\)) across
 all combinations of community, extinction mechanism, and network type.
 In aggregate, topological extinctions (evaluated both at network
@@ -1047,6 +1041,11 @@ Petchey, O. L., Eklöf, A., Borrvall, C., \& Ebenman, B. (2008).
 Trophically {Unique Species Are Vulnerable} to {Cascading Extinction}.
 \emph{The American Naturalist}, \emph{171}(5), 568--579.
 \url{https://doi.org/10.1086/587068}
+
+\bibitem[\citeproctext]{ref-roopnarineEcologicalModellingPaleocommunity2017}
+Roopnarine, P. D. (2017). Ecological {Modelling} of {Paleocommunity Food
+Webs}. In \emph{Conservation {Paleobiology}: {Using} the {Past} to
+{Manage} for the {Future}} (pp. 201--226). University of Chicago Press.
 
 \bibitem[\citeproctext]{ref-roopnarineExtinctionCascadesCatastrophe2006}
 Roopnarine, P. D. (2006). Extinction {Cascades} and {Catastrophe} in
