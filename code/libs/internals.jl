@@ -768,7 +768,10 @@ function record_species_stage!(store, run_id, net_name, stage, A, bodysizes, par
     BM = (biomasses !== nothing && survivors !== nothing) ? biomasses[indices] : biomasses
 
     #bodysizes - if we have survivors then we need to subset by indices else full 'list'
-    BS = (survivors !== nothing) ? bodysizes[indices] : bodysizes
+    BS = (survivors !== nothing) ? params.M[indices] : params.M
+
+    #metabolism - subset by survivors but then also return nothing if not assigned
+    MB = (params !== nothing && hasproperty(params, :metabolism)) ? params.metabolism[indices] : fill(:nothing, length(indices))
 
     # Get Trophic Classes for the active matrix block
     TC = get_trophic_class(A)
@@ -783,7 +786,8 @@ function record_species_stage!(store, run_id, net_name, stage, A, bodysizes, par
         trophic_level=TL,
         trophic_class=TC,
         biomass=BM,
-        bodysize=BS
+        bodysize=BS,
+        metabolism=MB
     )
     append!(store, df)
 end
