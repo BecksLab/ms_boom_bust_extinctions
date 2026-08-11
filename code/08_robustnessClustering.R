@@ -2,8 +2,8 @@
 
 library(tidyverse)
 library(ggdendro)
-library(ggplot2)
 library(patchwork)
+library(genzplyr)
 
 source("libs/plotting_themes.R")
 source("libs/helpers.R")
