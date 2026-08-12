@@ -7,7 +7,7 @@ format:
     number-sections: true
 ---
 
-## Network creation/simulation sanity checks
+# Network creation/simulation sanity checks
 
 Reaching of target connectance
 
@@ -17,6 +17,64 @@ Trophic level distributions and bodysize?
 
 ## Reaching of target Connectance
 
+
+# Downsampling and burn-in alter network topology in method-dependent ways
+
+## Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1
+
+![](../figures/downsampleDeltaCo.png){#fig-downCo}
+
+The effect of $\Delta Co$ on network structure differed among network types (net type $\times$ $\Delta Co$ interaction: $F_{3, 712}$ = 4.81, $p$ = 0.0025). RDA1 declined with increasing $\Delta Co$ across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, p = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the $\Delta Co$ gradient.
+
+## Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb
+
+![](../figures/burninDisplacement.png){#fig-burnDisp}
+
+Here, we show the mean displacement of the different network types during burn-in. Displacement was calculated as the Euclidean distance between each network's position at creation and burn-in in three-dimensional PCA space. Points represent model-estimated mean displacements, with error bars showing 95% confidence intervals; different letters indicate significant differences between network types. Note that barring random downsampling we see that the downsampled networks move through the PCA space in a way that is more similar to the niche model than to the metaweb, which implies that they underwent similar restructuring during burn-in.
+
+# Differences in inferred robustness of topological and dynamic are unaffected by network type
+
+## Table S1: Model outputs
+
+```{r}
+#| echo: false
+#| warning: false
+library(knitr)
+library(tidyverse)
+
+readr::read_csv("../tables/robustnessTopoVDynamic.csv") %>%
+kable()
+
+```
+
+# Differences in inferred robustness of topological and dynamic are unaffected by network type
+
+(A) Estimated robustness ($R_{50}$) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates ($\Delta R_{50} = R_{50, dynamic} - R_{50, topological}$) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.
+
+![](../figures/robustnessTopoVDynamic_allScenario.png){#fig-TopoVDynamic}
+
+# Dynamic extinctions re-enforce ecological assumptions
+
+## Contrasts
+
+![](../figures/contrasts/robustnessContrasts_topo_creation.png)
+
+![](../figures/contrasts/robustnessContrasts_topo_realised.png)
+
+![](../figures/contrasts/robustnessContrasts_dyn_realised.png)
+
+
+## Indistinguishable
+
+![]("../figures/robustnessIndistinguishable.png")
+
+## Cluster
+
+![](../figures/clustering/robustnessClusters_topo_creation.png)
+
+![](../figures/clustering/robustnessClusters_topo_realised.png)
+
+![](../figures/clustering/robustnessClusters_dyn_realised.png)
 
 # Downsampling and burn-in alter inferred topological robustness
 
@@ -29,11 +87,3 @@ Under body-mass ordered extinction, reductions in connectance produced increasin
 Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that the process of dynamic modelling altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B @fig-robDownsample). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.
 
 Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed the downsampling approach increasingly imposes these assumptions, different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.
-
-
-# Differences in inferred robustness of topological and dynamic are unaffected by network type
-
-(A) Estimated robustness ($R_50$) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates ($\Delta R_50 = R_{50, dynamic} - R_{50, topological}$) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.
-
-![](../figures/robustnessTopoVDynamic_allScenario.png){#fig-TopoVDynamic}
-

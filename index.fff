@@ -9,17 +9,11 @@
 \caption{\label{fig-downsample}\textbf{Downsampling approach influences
 both network topology and subsequent structural reorganisation during
 burn-in.} (A) Redundancy analysis (RDA) ordination showing differences
-in network topology among downsampling approaches across the connectance
-gradient after accounting for community-level variation. (B) Estimated
-slopes (±95\% confidence intervals) describing the relationship between
-the primary RDA axis and connectance change for each downsampling
-approach; letters denote post-hoc groupings from estimated marginal
-trend comparisons. (C) Principal component trajectories illustrating
-structural change between network creation and burn-in for each
-downsampling approach. (D) Mean Euclidean displacement through PCA space
-during burn-in (±95\% confidence intervals); letters indicate pairwise
-differences among network types from estimated marginal means. Networks
-sharing the same letter are not significantly different.}
+in network topology among downsampling approaches across the downsamping
+(\(\Delta Co\)) gradient after accounting for community-level variation.
+(B) Principal component trajectories illustrating structural change
+between network creation and burn-in for each downsampling approach. (C)
+Loadings of the top ten contributing structure metrics.}
 
 \end{figure}
 \efloatseparator
@@ -48,10 +42,17 @@ which the difference was diminished and in some cases reversed}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessHighLevel.png}}
+\pandocbounded{\includegraphics[keepaspectratio]{figures/robustnessClusters.png}}
 
 }
 
-\caption{\label{fig-robDynamic}TODO}
+\caption{\label{fig-robDynamic}\textbf{Clustering of network types based
+on similarity in inferred robustness (\(R_{50}\)).} Dendrograms show
+hierarchical clustering of network types based on their estimated
+marginal mean (\(R_{50}\)) values across community (\times) extinction
+scenario combinations. Clustering was performed separately for each
+extinction time point after standardising estimated marginal means
+across network types, using Euclidean distances and Ward's (\(D^2\))
+method. Branch colours indicate three clusters of network types}
 
 \end{figure}
