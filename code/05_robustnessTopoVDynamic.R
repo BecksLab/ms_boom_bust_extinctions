@@ -127,11 +127,16 @@ anova_table <-
             anova = map(anova, broom::tidy)) %>%
   unnest(anova) %>%
   yeet(term == "net_type") %>%
-  glow_up(F_text = sprintf(
-    "$F_{%d,%d}$ = %.1f",
-    df,
-    df_res,
-    statistic))
+  glow_up(F_text = sprintf("$F_{%d,%d}$ = %.1f",df,
+                           df_res,
+                           statistic),
+          p.value = if_else(p.value < 0.05,
+                            "<0.05",
+                            as.character(p.value)))
+
+write.csv(anova_table,
+          "../tables/robustnessTopoVDynamic.csv",
+          row.names = FALSE)
 
 # ------------------------------------------------------------------------------
 # CLD colours
