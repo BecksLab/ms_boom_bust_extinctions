@@ -157,7 +157,10 @@ for t in t_values
                 temp_metadata = DataFrame()
 
                 # Let the function record metadata into our temporary DataFrame
-                record_species_stage!(temp_metadata, i, net_name, "creation", fw.A, df.bodymass, nothing, nothing, B_init)
+                # we can set default params
+                params = default_model(fw)
+
+                record_species_stage!(temp_metadata, i, net_name, "creation", fw.A, params.M, params, nothing, B_init)
 
                 # Inject the current t-value into the temporary DataFrame
                 temp_metadata[!, :t_val] .= t
@@ -251,7 +254,7 @@ for t in t_values
                     net_name,
                     "post_burn_in",
                     A_realised,
-                    df.bodymass,
+                    params.M,
                     params,
                     survivors,
                     final_biomasses
@@ -371,6 +374,7 @@ deg_rows = DataFrame(
     spp_id=Any[],
     gen=Any[],
     vul=Any[],
+    can=Any[],
     net_id=Any[],
     net_type=Any[],
     community=Any[],
@@ -387,6 +391,7 @@ for i in 1:nrow(networks)
         spp_id=collect(keys(gen)),
         gen=collect(values(gen)),
         vul=collect(values(vul)),
+        can=string.(diag(Matrix(N.edges.edges))),
         net_id=fill(networks.net_id[i], length(gen)),
         net_type=fill(networks.net_type[i], length(gen)),
         stage=fill(networks.stage[i], length(gen)),
