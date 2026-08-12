@@ -26,6 +26,41 @@
         margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
         vertical-align: middle;
       }
+      /* CSS for syntax highlighting */
+      html { -webkit-text-size-adjust: 100%; }
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      .sourceCode { overflow: visible; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+        }
+      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+      }
     </style>
 
     <style>
@@ -129,7 +164,7 @@
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-7fca231f0f6bfd3bec1af756033c583c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-b89755862c00f08386c47aeabbd074f3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -187,8 +222,15 @@
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#network-creationsimulation-sanity-checks" id="toc-network-creationsimulation-sanity-checks" class="nav-link active" data-scroll-target="#network-creationsimulation-sanity-checks">Network creation/simulation sanity checks</a></li>
+  <li><a href="#network-creationsimulation-sanity-checks" id="toc-network-creationsimulation-sanity-checks" class="nav-link active" data-scroll-target="#network-creationsimulation-sanity-checks">Network creation/simulation sanity checks</a>
+  <ul class="collapse">
   <li><a href="#reaching-of-target-connectance" id="toc-reaching-of-target-connectance" class="nav-link" data-scroll-target="#reaching-of-target-connectance">Reaching of target Connectance</a></li>
+  </ul></li>
+  <li><a href="#downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" id="toc-downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" class="nav-link" data-scroll-target="#downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways">Downsampling and burn-in alter network topology in method-dependent ways</a>
+  <ul class="collapse">
+  <li><a href="#figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" id="toc-figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" class="nav-link" data-scroll-target="#figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1">Figure S1: Increasing <span class="math inline">\(\Delta Co\)</span> is associated with increasing differences among network types in RDA1</a></li>
+  <li><a href="#figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb" id="toc-figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb" class="nav-link" data-scroll-target="#figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb">Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb</a></li>
+  </ul></li>
   <li><a href="#downsampling-and-burn-in-alter-inferred-topological-robustness" id="toc-downsampling-and-burn-in-alter-inferred-topological-robustness" class="nav-link" data-scroll-target="#downsampling-and-burn-in-alter-inferred-topological-robustness">Downsampling and burn-in alter inferred topological robustness</a></li>
   <li><a href="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" id="toc-differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" class="nav-link" data-scroll-target="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type">Differences in inferred robustness of topological and dynamic are unaffected by network type</a></li>
   </ul>
@@ -198,14 +240,201 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-       <section id="network-creationsimulation-sanity-checks" class="level2">
-<h2 class="anchored" data-anchor-id="network-creationsimulation-sanity-checks">Network creation/simulation sanity checks</h2>
+       <section id="network-creationsimulation-sanity-checks" class="level1">
+<h1>Network creation/simulation sanity checks</h1>
 <p>Reaching of target connectance</p>
 <p>Species richness/retention</p>
 <p>Trophic level distributions and bodysize?</p>
-</section>
 <section id="reaching-of-target-connectance" class="level2">
 <h2 class="anchored" data-anchor-id="reaching-of-target-connectance">Reaching of target Connectance</h2>
+</section>
+</section>
+<section id="downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" class="level1">
+<h1>Downsampling and burn-in alter network topology in method-dependent ways</h1>
+<section id="figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" class="level2">
+<h2 class="anchored" data-anchor-id="figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1">Figure S1: Increasing <span class="math inline">\(\Delta Co\)</span> is associated with increasing differences among network types in RDA1</h2>
+<div id="fig-downCo" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-downCo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../figures/downsampleDeltaCo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../figures/downsampleDeltaCo.png" id="fig-downCo" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-downCo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</figcaption>
+</figure>
+</div>
+<p>The effect of <span class="math inline">\(\Delta Co\)</span> on network structure differed among network types (net type <span class="math inline">\(\times\)</span> <span class="math inline">\(\Delta Co\)</span> interaction: <span class="math inline">\(F_{3, 712}\)</span> = 4.81, <span class="math inline">\(p\)</span> = 0.0025). RDA1 declined with increasing <span class="math inline">\(\Delta Co\)</span> across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, p = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the <span class="math inline">\(\Delta Co\)</span> gradient.</p>
+</section>
+<section id="figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb" class="level2">
+<h2 class="anchored" data-anchor-id="figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb">Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb</h2>
+<div id="fig-burnDisp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-burnDisp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../figures/burninDisplacement.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../figures/burninDisplacement.png" id="fig-burnDisp" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-burnDisp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</figcaption>
+</figure>
+</div>
+<p>Here, we show the mean displacement of the different network types during burn-in. Displacement was calculated as the Euclidean distance between each network’s position at creation and burn-in in three-dimensional PCA space. Points represent model-estimated mean displacements, with error bars showing 95% confidence intervals; different letters indicate significant differences between network types. Note that barring random downsampling we see that the downsampled networks move through the PCA space in a way that is more similar to the niche model than to the metaweb, which implies that they underwent similar restructuring during burn-in.</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"../tables/robustnessTopoVDynamic.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 10 Columns: 8
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): scenario, term, F_text
+dbl (5): df_res, sumsq, df, statistic, p.value
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 3%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">scenario</th>
+<th style="text-align: right;">df_res</th>
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">sumsq</th>
+<th style="text-align: right;">df</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+<th style="text-align: left;">F_text</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">bm_high</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.239273</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">22.80821</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 22.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">bm_low</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.832606</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">22.32171</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 22.3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">degree_high</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">2.068539</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">46.70036</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 46.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">degree_low</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.390174</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">30.11352</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 30.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gen_high</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.006585</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">20.98881</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 21.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gen_low</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.422221</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">30.89692</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 30.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rand_basal</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">2.527829</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">109.27774</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 109.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">rand_consumer</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.012126</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">22.85390</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 22.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">vul_high</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.312131</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">30.04199</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 30.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">vul_low</td>
+<td style="text-align: right;">1248</td>
+<td style="text-align: left;">net_type</td>
+<td style="text-align: right;">1.207043</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">26.01296</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;"><span class="math inline">\(F_{6,1248}\)</span> = 26.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</section>
 </section>
 <section id="downsampling-and-burn-in-alter-inferred-topological-robustness" class="level1">
 <h1>Downsampling and burn-in alter inferred topological robustness</h1>
@@ -213,7 +442,7 @@
 <div id="fig-robDownsample" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="../figures/robustnessDownsampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="TODO."><img src="../figures/robustnessDownsampling.png" class="img-fluid figure-img"></a>
+<a href="../figures/robustnessDownsampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="TODO."><img src="../figures/robustnessDownsampling.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 TODO.
@@ -232,7 +461,7 @@ TODO.
 <div id="fig-TopoVDynamic" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-TopoVDynamic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="../figures/robustnessTopoVDynamic_allScenario.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../figures/robustnessTopoVDynamic_allScenario.png" id="fig-TopoVDynamic" class="img-fluid figure-img"></a>
+<a href="../figures/robustnessTopoVDynamic_allScenario.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../figures/robustnessTopoVDynamic_allScenario.png" id="fig-TopoVDynamic" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-TopoVDynamic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 </figcaption>
