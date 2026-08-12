@@ -54,7 +54,7 @@ using ProgressMeter
 using SpeciesInteractionNetworks
 using Statistics
 
-include("src/internals.jl")
+include("libs/internals.jl")
 
 import Random
 Random.seed!(66)
@@ -222,8 +222,10 @@ for t in t_values
                 # Create a temporary container for this specific record
                 temp_metadata = DataFrame()
 
-                # Let the function record metadata into our temporary DataFrame
-                record_species_stage!(temp_metadata, i, net_name, "creation", fw.A, df.bodymass, nothing, nothing, B_init)
+                # create model object to get internal specifications
+                params = default_model(fw)
+
+                record_species_stage!(temp_metadata, i, net_name, "creation", fw.A, params.M, params, nothing, B_init)
 
                 # Inject the current t-value into the temporary DataFrame
                 temp_metadata[!, :t_val] .= t
@@ -304,7 +306,7 @@ for t in t_values
                     net_name,
                     "post_burn_in",
                     A_realised,
-                    df.bodymass,
+                    params.M,
                     params,
                     survivors,
                     final_biomasses
@@ -335,6 +337,7 @@ for t in t_values
                 network_archive[(community_name, i, net_name)] = Dict("generation" => Dict(
                         "community" => community_name,
                         "burnin_time" => t,
+                        "net_id" => i,
                         "C_target" => C_targ,
                         "bodymass" => copy(df.bodymass),
                         "B0" => copy(B_init)
@@ -377,6 +380,31 @@ archive = Dict(
     "summary" => DataFrame(summary_rows)
 )
 
+# create record of target Co
+
+network_metadata = archive["networks"]
+
+metadata = DataFrame()
+
+for ((community, net_id, net_name), network) in network_metadata
+
+    targ_Co = network["generation"]["C_target"]
+    burnin_time = network["generation"]["burnin_time"]
+
+    d = DataFrame(
+        targ_Co = targ_Co,
+        net_id = net_id,
+        community = community,
+        net_name = net_name,
+        burnin_time = burnin_time
+
+    )
+
+    append!(metadata, d)
+
+end
+
+
 JLD2.save_object(
     "outputs/realised_network_archive.jld2",
     archive
@@ -384,3 +412,4 @@ JLD2.save_object(
 
 CSV.write("outputs/paleo_species_metadata.csv", archive["species_metadata"])
 JLD2.save_object("outputs/adjacency_matrices.jld2", archive["adjacency_store"])
+CSV.write("outputs/downsample_metadata.csv", metadata)
