@@ -48,7 +48,7 @@ using SpeciesInteractionNetworks
 using Statistics
 
 
-include("src/internals.jl")
+include("libs/internals.jl")
 
 import Random
 Random.seed!(66)

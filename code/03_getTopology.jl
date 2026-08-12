@@ -11,8 +11,8 @@ using ProgressMeter
 using SpeciesInteractionNetworks
 using Statistics
 
-include("src/topology.jl")
-include("src/internals.jl")
+include("libs/topology.jl")
+include("libs/internals.jl")
 
 import Random
 Random.seed!(66)
