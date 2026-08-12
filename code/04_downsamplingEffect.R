@@ -13,6 +13,7 @@ source("libs/plotting_themes.R")
 
 topology <-
   read_csv("outputs/paleo_topology.csv") %>%
+  vibe_check(-complexity) %>%
   yeet(community != "russia") %>%
   drop_na() %>%
   glow_up(stage = factor(stage,
