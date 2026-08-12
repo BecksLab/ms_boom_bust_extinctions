@@ -20,30 +20,29 @@ df_long <- read.csv("outputs/extinction_summary.csv") %>%
 mods <- df_long %>%
   group_by(extinction, time_pnt) %>%
   nest() %>%
-  mutate(
-    model = map(data, ~ lm(value ~ net_type, data = .x))
-  )
+  glow_up(model = map(data, ~ lmer(value ~ net_type + (1|community), 
+                                   data = .x)))
 
 anova_tbl <- mods %>%
-  mutate(anova = map(model, broom::tidy)) %>%
+  glow_up(anova = map(model,
+                      ~ anova(.x, type = 3))) %>%
   vibe_check(extinction, time_pnt, anova) %>%
   unnest(anova)
 
 emm_tbl <- mods %>%
-  mutate(emm = map(model, ~ emmeans(.x, "net_type") |> as.data.frame())) %>%
+  glow_up(
+    emm = map(model,~ emmeans(.x, ~ net_type) %>%
+                as.data.frame())) %>%
   vibe_check(extinction, time_pnt, emm) %>%
   unnest(emm)
 
 letters_tbl <- mods %>%
-  mutate(
-    letters = map(model, ~ {
-      cld(
-        emmeans(.x, "net_type"),
-        Letters = letters
-      ) %>%
-        as.data.frame()
-    })
-  ) %>%
+  glow_up(letters = map(model, ~ 
+                          {cld(
+                            emmeans(.x, "net_type"),
+                            Letters = letters) %>%
+                              as.data.frame()
+                          })) %>%
   vibe_check(extinction, time_pnt, letters) %>%
   unnest(letters)
 
@@ -97,15 +96,16 @@ plot_contrasts <- function(comm) {
     geom_point(size = 3,
                show.legend = FALSE) +
     geom_errorbar(
-      aes(ymin = lower.CL, 
-          ymax = upper.CL),
+      aes(ymin = asymp.LCL, 
+          ymax = asymp.UCL),
       width = 0.15) + 
-    geom_text(aes(y = upper.CL + 0.01, 
+    geom_text(aes(y = asymp.UCL + 0.01, 
                   label = cont_group), 
               size = 4.5, fontface = "bold", vjust = 0 ) +
     scale_colour_identity() +
     scale_shape_manual(values = net_shapes) +
-    labs(x = "Network type",
+    ylim(0, 0.5) +
+    labs(x = NULL,
          y = "Robustness",
          title = stringr::str_to_title(comm)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
