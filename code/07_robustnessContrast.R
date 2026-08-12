@@ -101,46 +101,279 @@ plot_tbl <- plot_tbl_base %>%
 saveRDS(plot_tbl,
         file = "outputs/derived/robustnessEmmTbl.rds")
 
-# --- 5. PLOTTING CLD RESULTS (WITH BLENDED GRADIENTS) ---
 
-plot_contrasts <- function(comm) {
-  
+# ============================================================
+# CONTRAST PLOTS — SAME BREAKDOWN SCHEMA AS CLUSTERING
+# ============================================================
+
+# 1. Build one contrast plot for each community × extinction
+#    scenario
+
+contrast_plots <-
   plot_tbl %>%
-    filter(scenario == comm) %>%
-    ggplot(aes(x = net_type,
-               y = emmean,
-               colour = blended_color,
-               shape = net_group)) +
-    geom_point(size = 3,
-               show.legend = FALSE) +
-    geom_errorbar(
-      aes(ymin = lower.CL, 
-          ymax = upper.CL),
-      width = 0.15) + 
-    geom_text(aes(y = upper.CL + 0.015, 
-                  label = cont_group), 
-              size = 4.5, fontface = "bold", vjust = 0 ) +
-    scale_colour_identity() +
-    scale_shape_manual(values = net_shapes) +
-    facet_grid(ext_scen ~ print_name) +
-    labs(x = "Network type",
-         y = "Robustness",
-         title = stringr::str_to_title(comm)) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-}
+  mutate(
+    plot = map2(
+      print_name,
+      ext_scen,
+      \(comm, ext) {
+        
+        x <-
+          plot_tbl %>%
+          filter(
+            print_name == comm,
+            ext_scen == ext
+          )
+        
+        ggplot(
+          x,
+          aes(
+            x = net_type,
+            y = emmean,
+            colour = blended_color,
+            shape = net_group
+          )
+        ) +
+          geom_point(
+            size = 3,
+            show.legend = FALSE
+          ) +
+          geom_errorbar(
+            aes(
+              ymin = lower.CL,
+              ymax = upper.CL
+            ),
+            width = 0.15
+          ) +
+          geom_text(
+            aes(
+              y = upper.CL + 0.015,
+              label = cont_group
+            ),
+            size = 4.5,
+            fontface = "bold",
+            vjust = 0
+          ) +
+          scale_colour_identity() +
+          scale_shape_manual(
+            values = net_shapes
+          ) +
+          labs(
+            x = "Network type",
+            y = "Robustness",
+            title = ext
+          ) +
+          theme_minimal() +
+          theme(
+            axis.text.x = element_text(
+              angle = 45,
+              hjust = 1
+            )
+          )
+        
+      }
+    )
+  ) %>%
+  # Keep only one copy of each actual plot
+  distinct(
+    print_name,
+    ext_scen,
+    .keep_all = TRUE
+  )
 
-p_contrast <- plot_tbl %>%
-  distinct(scenario) %>%
-  pull(scenario) %>%
-  map(plot_contrasts)
 
-wrap_plots(p_contrast, ncol = 1)
+# ============================================================
+# 2. Export one figure per COMMUNITY
+# ============================================================
 
-ggsave("../figures/robustnessContrasts.png",
-       width = 7000, 
-       height = 15000, 
-       units = "px", dpi = 500)
+plot_tbl %>%
+  periodt(print_name) %>%
+  main_character(print_name) %>%
+  walk(\(comm) {
+    
+    p <-
+      plot_tbl %>%
+      yeet(print_name == comm) %>%
+      slay(
+        factor(
+          ext_scen,
+          levels = names(ext_scen_labs)
+        )
+      ) %>%
+      group_by(scenario) %>%
+      nest() %>%
+      glow_up(
+        plot = map2(
+          data,
+          scenario,
+          \(x, nm) {
+            
+            ggplot(
+              x,
+              aes(
+                x = net_type,
+                y = emmean,
+                colour = blended_color,
+                shape = net_group
+              )
+            ) +
+              geom_point(
+                size = 3,
+                show.legend = FALSE
+              ) +
+              geom_errorbar(
+                aes(
+                  ymin = lower.CL,
+                  ymax = upper.CL
+                ),
+                width = 0.15
+              ) +
+              geom_text(
+                aes(
+                  y = upper.CL + 0.015,
+                  label = cont_group
+                ),
+                size = 4.5,
+                fontface = "bold",
+                vjust = 0
+              ) +
+              scale_colour_identity() +
+              scale_shape_manual(
+                values = net_shapes
+              ) +
+              facet_grid(rows = vars(ext_scen)) +
+              labs(
+                x = NULL,
+                y = "Robustness",
+                title = stringr::str_to_title(nm)
+              ) +
+              coord_cartesian(ylim = c(NA, 0.6)) +
+              theme(axis.text.x = element_text(angle = 45, hjust = 1))
+            
+          }
+        )
+      ) %>%
+      main_character(plot) %>%
+      wrap_plots(ncol = 2)+
+      plot_annotation(title = comm)
+    
+    
+    short_name <-
+      comm %>%
+      str_extract("^[^,]+") %>%
+      str_to_lower() %>%
+      str_replace_all(" ", "_")
+    
+    
+    ggsave(
+      paste0(
+        "../figures/contrasts/robustnessContrasts_",
+        short_name,
+        ".png"
+      ),
+      p,
+      width = 5000,
+      height = 12000,
+      units = "px",
+      dpi = 500
+    )
+    
+  })
+
+# ============================================================
+# 3. Export one figure per EXTINCTION / TIME POINT
+# ============================================================
+
+
+plot_tbl %>%
+  periodt(ext_scen_label) %>%
+  main_character(ext_scen_label) %>%
+  walk(\(t_p) {
+    
+    p <-
+      plot_tbl %>%
+      yeet(ext_scen_label == t_p) %>%
+      slay(print_name) %>%
+      group_by(print_name) %>%
+      nest() %>%
+      glow_up(
+        plot = map(
+          data,
+          \(x) {
+            
+            ggplot(
+              x,
+              aes(
+                x = net_type,
+                y = emmean,
+                colour = blended_color,
+                shape = net_group
+              )
+            ) +
+              geom_point(
+                size = 3,
+                show.legend = FALSE
+              ) +
+              geom_errorbar(
+                aes(
+                  ymin = lower.CL,
+                  ymax = upper.CL
+                ),
+                width = 0.15
+              ) +
+              geom_text(
+                aes(
+                  y = upper.CL + 0.015,
+                  label = cont_group
+                ),
+                size = 4.5,
+                fontface = "bold",
+                vjust = 0
+              ) +
+              scale_colour_identity() +
+              scale_shape_manual(values = net_shapes) +
+              facet_wrap(vars(scenario),
+                              ncol = 10) +
+              labs(x = NULL,
+                   y = "Robustness",
+                   title = unique(print_name)) +
+              coord_cartesian(ylim = c(NA, 0.6)) +
+              theme(axis.text.x = element_text(angle = 45, hjust = 1))
+            
+          }
+        )
+      ) %>%
+      main_character(plot) %>%
+      wrap_plots(ncol = 1) +
+      plot_annotation(title = t_p)
+    
+    
+    short_name <-
+      plot_tbl %>%
+      yeet(ext_scen_label == t_p) %>%
+      pull(ext_scen) %>%
+      unique() %>%
+      paste(collapse = "_") %>%
+      str_to_lower() %>%
+      str_replace_all(
+        "[^a-z0-9_]+",
+        "_"
+      )
+    
+    
+    ggsave(
+      paste0(
+        "../figures/contrasts/robustnessContrasts_",
+        short_name,
+        ".png"
+      ),
+      p,
+      width = 10000,
+      height = 9000,
+      units = "px",
+      dpi = 500
+    )
+    
+  })
 
 # --- 6. PAIRWISE INDISTINGUISHABLE MATRIX ---
 
