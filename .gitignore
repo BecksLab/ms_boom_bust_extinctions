@@ -47,3 +47,4 @@ code/.Rhistory
 .positai
 code/outputs/realised_network_archive.jld2
 code/outputs/extinction_curves.csv
+code/scrap.jl
