@@ -66,6 +66,7 @@ function _network_summary(N::SpeciesInteractionNetwork{<:Partiteness,<:Binary})
         :Clust => clustering(A),
         :trophicCoherence => trophic_coherence(A),
         :trophicVar => trophic_variance(A),
+        :complexity => complexity(N)
     )
     return D
 end
