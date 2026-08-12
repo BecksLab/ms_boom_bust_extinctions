@@ -202,7 +202,11 @@ disp_emm <- emmeans(m_disp, ~ net_type)
 
 cld_disp <- cld(disp_emm,
                 Letters = letters,
-                adjust = "sidak")
+                adjust = "sidak") %>%
+  as_tibble() %>%
+  glow_up(plot_emmean = exp(emmean) - 0.01,
+          plot_lower  = exp(lower.CL) - 0.01,
+          plot_upper  = exp(upper.CL) - 0.01)
 
 # compact letter display
 cld_tble <-
@@ -232,14 +236,14 @@ cld_tble <- cld_tble %>%
 p_pca_contrast <- 
   ggplot(cld_tble,
          aes(y = net_type,
-             x = emmean,
+             x = plot_emmean,
              colour = blended_color,
              shape = net_group)) +
   geom_point(size = 3,
              show.legend = FALSE) +
   geom_errorbar(
-    aes(xmin = lower.CL, 
-        xmax = upper.CL),
+    aes(xmin = plot_lower, 
+        xmax = plot_upper),
     width = 0.15) + 
   geom_text(aes(label = .group), 
             size = 4.5, 
@@ -247,10 +251,17 @@ p_pca_contrast <-
             vjust = 0,
             nudge_y = 0.2) +
   scale_colour_identity() +
+  scale_x_log10() +
   scale_shape_manual(values = net_shapes) +
   labs(y = NULL,
        x = "Displacement",
        title = "Differences in displacement during burn in")
+
+ggsave("../figures/burninDisplacement.png",
+       p_pca_contrast,
+       width = 4500, 
+       height = 3000, 
+       units = "px", dpi = 500)
 
 # ------------------------------------------------------------------------------
 # PCA loadings
@@ -328,7 +339,6 @@ anova(rda_model, by = "margin")
 
 # Canonical axes
 anova(rda_model, by = "axis")
-
 
 rda_sites <-
   scores(rda_model,
@@ -445,8 +455,16 @@ p_contrast <-
   scale_colour_identity()  +
   scale_shape_manual(values = net_shapes) +
   labs(y = NULL,
-       x = "Δ connectance 'effect size'",
+       x = "Effect of Δ connectance on RDA1",
        title = "Role of Δ connectance in driving differences")
+
+ggsave("../figures/downsampleDeltaCo.png",
+       p_contrast,
+       width = 4500, 
+       height = 3000, 
+       units = "px", dpi = 500)
+
+# patchwork
 
 
 design <- "
