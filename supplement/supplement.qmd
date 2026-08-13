@@ -20,19 +20,19 @@ Interestingly, though, we see that there is a large degree of overlap in the spe
 
 ![](../figures/bodysize/propOverlap.png)
 
-This is qualitatively supported if we look at some of the species traits. Below, we show the distribution of biomass, generality (number of prey), metabolism (a trait informed by body size), trophic level, and vulnerability (number of prey), coloured by whether they survive the burn-in or not. Here, we can see similar patterns between the two body size specifications (**e.g.,** in metawebs, species with a high generality are the ones going extinct), and it is just exacerbated in the empirical body size webs. The only differences are in metabolism, where we see species with high metabolic rates going extinct in empirical body size webs and species with 'intermediate' metabolic rates going extinct in internally specified body size webs. Note also that, when looking at trophic levels, we see the loss of intermediate species in empirical body size webs. Overall, this suggests that body size specification can have massive implications for the behaviour of the dynamic model and suggests that it largely influences the indirect effect such as top-down control.
+This is qualitatively supported if we look at some of the species traits. Below, we show the distribution of biomass, generality (number of prey), metabolism (a trait informed by body size), trophic level, and vulnerability (number of prey), coloured by whether they survive the burn-in or not. Here, we can see similar patterns between the two body size specifications (*e.g.,* in metawebs, species with a high generality are the ones going extinct), and it is just exacerbated in the empirical body size webs. The only differences are in metabolism, where we see species with high metabolic rates going extinct in empirical body size webs and species with 'intermediate' metabolic rates going extinct in internally specified body size webs. Note also that, when looking at trophic levels, we see the loss of intermediate species in empirical body size webs. Overall, this suggests that body size specification can have massive implications for the behaviour of the dynamic model and suggests that it largely influences the indirect effect such as top-down control.
 
 ![](../figures/bodysize/distributions.png)
 
 # Downsampling and burn-in alter network topology in method-dependent ways
 
-## Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1
+**Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1**
 
 ![](../figures/downsampleDeltaCo.png)
 
 The effect of $\Delta Co$ on network structure differed among network types (net type $\times$ $\Delta Co$ interaction: $F_{3, 712}$ = 4.81, $p$ = 0.0025). RDA1 declined with increasing $\Delta Co$ across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, $p$ = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the $\Delta Co$ gradient.
 
-## Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb
+**Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb**
 
 ![](../figures/burninDisplacement.png)
 
@@ -40,7 +40,7 @@ Here, we show the mean displacement of the different network types during burn-i
 
 # Differences in inferred robustness of topological and dynamic are unaffected by network type
 
-## Table S1: Model outputs
+**Table S1: Model outputs**
 
 ```{r}
 #| echo: false
@@ -66,9 +66,15 @@ Estimated robustness ($R_{50}$) of realised networks under topological (green) a
 
 For each community $\times$ extinction scenario $\times$ time point, $R_{50}$ was modelled as a function of network type, and estimated marginal means were compared using Tukey-adjusted pairwise contrasts. Network-type pairs with adjusted $p \geq$ 0.05 were considered indistinguishable. We summarised the number and proportion of extinction scenarios in which each pair of network types was statistically indistinguishable, providing a complementary measure of similarity in inferred robustness.
 
+**Pairwise contrasts of topological extinction $R_{50}$ at network creation between network types for the different extinction scenarios for the different communities**
+
 ![](../figures/contrasts/robustnessContrasts_topo_creation.png)
 
+**Pairwise contrasts of topological extinction $R_{50}$ after burn-in between network types for the different extinction scenarios for the different communities**
+
 ![](../figures/contrasts/robustnessContrasts_topo_realised.png)
+
+**Pairwise contrasts of dynamic extinction $R_{50}$ between network types for the different extinction scenarios for the different communities**
 
 ![](../figures/contrasts/robustnessContrasts_dyn_realised.png)
 
@@ -84,13 +90,19 @@ We used hierarchical clustering of estimated marginal mean $R_{50}$ values to as
 
 Together, these results show that the similarity among network types in inferred robustness depends on both network construction and the processes applied after network creation. In particular, dynamic simulations altered the grouping of network types relative to their initial topological structure, with the niche-based downsampling approach converging towards the behaviour of the synthetic niche model.
 
+**Cluster analyses for topological extinction $R_{50}$ at network creation for the different communities**
+
 ![](../figures/clustering/robustnessClusters_topo_creation.png)
+
+**Cluster analyses for topological extinction $R_{50}$ after burn-in for the different communities**
 
 ![](../figures/clustering/robustnessClusters_topo_realised.png)
 
+**Cluster analyses for dynamic extinction $R_{50}$ for the different communities**
+
 ![](../figures/clustering/robustnessClusters_dyn_realised.png)
 
-# Downsampling and burn-in alter inferred topological robustness
+# Downsampling and burn-in alter inferred topological robustness
 
 To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference 'states' (metaweb, ATN, and niche model) changed with increasing degree of downsampling ($\Delta_{connectance}$). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered.
 
