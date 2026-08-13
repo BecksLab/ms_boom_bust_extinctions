@@ -53,3 +53,5 @@ supplement/supplement.log
 supplement/supplement.pdf
 supplement/supplement.tex
 supplement/supplement.toc
+
+/.luarc.json
