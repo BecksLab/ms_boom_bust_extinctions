@@ -1,10 +1,6 @@
 ---
 title: "Supplementary Materials"
 author: "Put ms title here"
-format: 
-  pdf:
-    toc: true
-    number-sections: true
 ---
 
 # Network creation/simulation sanity checks
@@ -40,10 +36,10 @@ Here, we show the mean displacement of the different network types during burn-i
 #| warning: false
 #| message: false
 
-library(knitr)
-library(tidyverse)
+suppressMessages(library(knitr, quietly = TRUE))
+suppressMessages(library(tidyverse, quietly = TRUE))
 
-readr::read_csv("../tables/robustnessTopoVDynamic.csv") |>
+suppressMessages(readr::read_csv("../tables/robustnessTopoVDynamic.csv")) %>%
   knitr::kable()
 ```
 
