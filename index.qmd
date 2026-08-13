@@ -58,7 +58,7 @@ We additionally generated niche-model networks parameterised using the species r
 
 ## Downsampling approaches {#sec-downsample}
 
-We treat downsampling as a process of **ecological realisation** rather than observation. Starting from a metaweb containing all potential trophic interactions, each downsampling approach represents an alternative ecological hypothesis describing how local ecological processes filter these potential interactions into the subset that is realised within a particular community. The different approaches therefore differ not only in their implementation, but also in the ecological assumptions they embed about how realised food webs emerge from a common regional interaction pool.
+We treat downsampling as a process of ecological realisation rather than observation. Starting from a metaweb containing all potential trophic interactions, each downsampling approach represents an alternative ecological hypothesis describing how local ecological processes filter these potential interactions into the subset that is realised within a particular community. The different approaches therefore differ not only in their implementation, but also in the ecological assumptions they embed about how realised food webs emerge from a common regional interaction pool.
 
 ### Niche
 
@@ -114,7 +114,7 @@ Interactions closest to the consumer's niche centre are therefore most likely to
 
 ### Power-law
 
-The power-law approach assumes that interaction realisation depends primarily on **consumer trophic breadth**. Following @roopnarineExtinctionCascadesCatastrophe2006, the retention probability for consumer $i$ is
+The power-law approach assumes that interaction realisation depends primarily on consumer trophic breadth. Following @roopnarineExtinctionCascadesCatastrophe2006, the retention probability for consumer $i$ is
 
 $$
 P_i \propto \exp\left(\frac{k_i}{E}\right)
@@ -190,7 +190,7 @@ Together, these analyses demonstrate that downsampling approach influences netwo
 
 To determine whether the qualitative differences between topological and dynamic extinction simulations previously demonstrated using niche-model food webs generalise across alternative network reconstructions, we compared the difference in robustness ($\Delta R_{50}$) among network types for each extinction scenario while accounting for community-level variation. Network type significantly affected $\Delta R_{50}$ across extinction scenarios (model summaries in Table S1), indicating that the magnitude of the difference between topological and dynamic robustness depended on network reconstruction.
 
-Despite these quantitative differences, the qualitative pattern identified by @curtsdotterRobustnessSecondaryExtinctions2011 was largely maintained. Under all but random basal removal, topological extinction inferred greater robustness than dynamic extinctions for every network type, although the magnitude of this discrepancy varied among reconstruction methods [@fig-TopoVDynamic]. Random basal extinction represented the only notable departure from this general pattern. Here, the discrepancy between topological and dynamic robustness was substantially reduced, with power-law and degree-product downsampled networks exhibiting a slightly higher $\Delta R_{50, \space dynamic}$ and random downsampled networks showing little difference between the two approaches. Thus, the conclusion that topological analyses provide more conservative estimates of robustness, although not universal, remain remarkably robust across reconstruction methods and extinction scenarios.
+Despite these quantitative differences, the qualitative pattern identified by @curtsdotterRobustnessSecondaryExtinctions2011 was largely maintained. Under all but random basal removal, topological extinction inferred greater robustness than dynamic extinctions for every network type, although the magnitude of this discrepancy varied among reconstruction methods [@fig-TopoVDynamic]. Random basal extinction represented the only notable departure from this general pattern. Here, the discrepancy between topological and dynamic robustness was substantially reduced, with power-law and degree-product downsampled networks exhibiting a slightly higher $\Delta R_{50}$ and random downsampled networks showing little difference between the two approaches. Thus, the conclusion that topological analyses provide more conservative estimates of robustness, although not universal, remain remarkably robust across reconstruction methods and extinction scenarios.
 
 ![**Differences between topological and dynamic estimates of network robustness.** Boxplot showing aggregated realised topological and dynamic robustness across the different communities and extinction scenarios for the different network types. See the \[*SUPP MATT*\] for by extinction scenario breakdowns. Note that the pattern of 'conservative-ness' is persistent across all extinction scenarios with the exception of random, basal extinctions in which the difference was diminished and in some cases reversed](figures/robustnessTopoVDynamic.png){#fig-TopoVDynamic}
 
