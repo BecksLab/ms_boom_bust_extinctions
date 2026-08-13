@@ -12,7 +12,8 @@ make_cluster_plot <- function(hc,
           y = y,
           xend = xend,
           yend = yend),
-      linewidth = 0.8) +
+      linewidth = 0.8,
+      colour = minni_black) +
     geom_label(
       data = dend$labels %>%
         left_join(col_df),
@@ -23,6 +24,7 @@ make_cluster_plot <- function(hc,
           fill = col),
       size = 4,
       hjust = 0,
+      label.padding = unit(0.5, "lines"),
       show.legend = FALSE) +
     scale_colour_identity() +
     scale_fill_identity() +
