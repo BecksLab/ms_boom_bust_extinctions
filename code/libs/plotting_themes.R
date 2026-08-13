@@ -6,7 +6,7 @@ library(RColorBrewer)
 
 # for accents
 minni_silver <- "#687982"
-minni_black <-  "#1F2C33"
+minni_black <-  "#292726"
 minni_wheat <-  "#F2E4C7"
 minni_tan   <-  "#5E4735"
 
@@ -38,16 +38,6 @@ set_theme(figure_theme)
 
 # for network types
 net_type_col_pal <- c(
-  "down_power" = "#A6192E", 
-  "metaweb"    = "#154734", 
-  #"niche".    = "#4A8770",
-  "niche"      = "#EAAA00",
-  "down_rand"  = "#A61983",
-  "down_link"  = "#33212F",
-  "down_niche" = "#A6505D",
-  "atn"        = "#A89968")
-
-net_type_col_pal <- c(
   "down_power" = "#59BD96", 
   "metaweb"    = "#5DB6E7", 
   "niche"      = "#EAAA00",
@@ -56,13 +46,24 @@ net_type_col_pal <- c(
   "down_niche" = "#154734",
   "atn"        = "#A89968")
 
+net_type_col_pal <- c(
+  "down_power" = "#28634D",
+  "metaweb"    = "#154734",
+  "niche"      = "#A6192E",
+  "down_rand"  = "#4C8064",
+  "down_link"  = "#739675",
+  "down_niche" = "#A0A47A",
+  "atn"        = "#EAAA00"
+)
+
+
 net_type_col_pal_contrast <- c(
-  "down_power" = minni_black, 
-  "metaweb"    = minni_black, 
-  "niche"      = minni_black,
+  "down_power" = minni_wheat, 
+  "metaweb"    = minni_wheat, 
+  "niche"      = minni_wheat,
   "down_rand"  = minni_wheat,
-  "down_link"  = minni_black,
-  "down_niche" = minni_wheat,
+  "down_link"  = minni_wheat,
+  "down_niche" = minni_black,
   "atn"        = minni_black)
 
 col_df <-
@@ -79,14 +80,14 @@ col_pal <- c(
   "gold_metallic"   = "#A89968",
   "forest_green"    = "#154734",
   "minnesota_wheat" = "#DDCBA4",
-  "light_green"     = "#C5E86C"
+  "minnesota_sage"  = "#91A47A"
 )
 
 # extinction colours
 extinction_pal <- c(
   "topo_realised"  = "#046A38", 
   "dyn_realised"   = "#FFB81C",
-  "topo_creation"  = "#63d4a9"
+  "topo_creation"  = "#739675"
 )
 
 
