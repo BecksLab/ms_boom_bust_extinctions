@@ -61,7 +61,26 @@
       @media screen {
       pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
       }
-    </style>
+      /* CSS for citations */
+      div.csl-bib-body { }
+      div.csl-entry {
+        clear: both;
+      }
+      .hanging-indent div.csl-entry {
+        margin-left:2em;
+        text-indent:-2em;
+      }
+      div.csl-left-margin {
+        min-width:2em;
+        float:left;
+      }
+      div.csl-right-inline {
+        margin-left:2em;
+        padding-left:1em;
+      }
+      div.csl-indent {
+        margin-left: 2em;
+      }    </style>
 
     <style>
       body.hypothesis-enabled #quarto-embed-header {
@@ -222,10 +241,7 @@
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#network-creationsimulation-sanity-checks" id="toc-network-creationsimulation-sanity-checks" class="nav-link active" data-scroll-target="#network-creationsimulation-sanity-checks">Network creation/simulation sanity checks</a>
-  <ul class="collapse">
-  <li><a href="#reaching-of-target-connectance" id="toc-reaching-of-target-connectance" class="nav-link" data-scroll-target="#reaching-of-target-connectance">Reaching of target Connectance</a></li>
-  </ul></li>
+  <li><a href="#internal-vs-empirical-body-size-specification-and-the-impact-on-survivorship" id="toc-internal-vs-empirical-body-size-specification-and-the-impact-on-survivorship" class="nav-link active" data-scroll-target="#internal-vs-empirical-body-size-specification-and-the-impact-on-survivorship">Internal vs Empirical body size specification and the impact on survivorship</a></li>
   <li><a href="#downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" id="toc-downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" class="nav-link" data-scroll-target="#downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways">Downsampling and burn-in alter network topology in method-dependent ways</a>
   <ul class="collapse">
   <li><a href="#figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" id="toc-figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" class="nav-link" data-scroll-target="#figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1">Figure S1: Increasing <span class="math inline">\(\Delta Co\)</span> is associated with increasing differences among network types in RDA1</a></li>
@@ -236,12 +252,13 @@
   <li><a href="#table-s1-model-outputs" id="toc-table-s1-model-outputs" class="nav-link" data-scroll-target="#table-s1-model-outputs">Table S1: Model outputs</a></li>
   </ul></li>
   <li><a href="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type-1" id="toc-differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type-1" class="nav-link" data-scroll-target="#differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type-1">Differences in inferred robustness of topological and dynamic are unaffected by network type</a></li>
-  <li><a href="#dynamic-extinctions-re-enforce-ecological-assumptions" id="toc-dynamic-extinctions-re-enforce-ecological-assumptions" class="nav-link" data-scroll-target="#dynamic-extinctions-re-enforce-ecological-assumptions">Dynamic extinctions re-enforce ecological assumptions</a>
+  <li><a href="#dynamic-extinctions-reinforce-ecological-assumptions" id="toc-dynamic-extinctions-reinforce-ecological-assumptions" class="nav-link" data-scroll-target="#dynamic-extinctions-reinforce-ecological-assumptions">Dynamic extinctions reinforce ecological assumptions</a>
   <ul class="collapse">
   <li><a href="#contrasts" id="toc-contrasts" class="nav-link" data-scroll-target="#contrasts">Contrasts</a></li>
-  <li><a href="#indistinguishable" id="toc-indistinguishable" class="nav-link" data-scroll-target="#indistinguishable">Indistinguishable</a></li>
-  <li><a href="#cluster" id="toc-cluster" class="nav-link" data-scroll-target="#cluster">Cluster</a></li>
+  <li><a href="#ability-to-distinguish-between-network-types" id="toc-ability-to-distinguish-between-network-types" class="nav-link" data-scroll-target="#ability-to-distinguish-between-network-types">Ability to distinguish between network types</a></li>
+  <li><a href="#clustering" id="toc-clustering" class="nav-link" data-scroll-target="#clustering">Clustering</a></li>
   </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
 </div>
@@ -249,26 +266,29 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-       <section id="network-creationsimulation-sanity-checks" class="level1">
-<h1>Network creation/simulation sanity checks</h1>
-<p>Reaching of target connectance</p>
-<p>Species richness/retention</p>
-<p>Trophic level distributions and bodysize?</p>
-<section id="reaching-of-target-connectance" class="level2">
-<h2 class="anchored" data-anchor-id="reaching-of-target-connectance">Reaching of target Connectance</h2>
-</section>
+       <section id="internal-vs-empirical-body-size-specification-and-the-impact-on-survivorship" class="level1">
+<h1>Internal vs Empirical body size specification and the impact on survivorship</h1>
+<p>For the simulations, we opted to assign body sizes using the internal predator-prey body mass distribution specification from the <code>EcologicalNetworksDynamics.jl</code> package. Here, body mass (<span class="math inline">\(M_i\)</span>) is assigned deterministically from the trophic level (<span class="math inline">\(TL\)</span>) as follows: <span class="math inline">\(M_{i} = Z^{TL_{i}-1}\)</span>, where <span class="math inline">\(Z\)</span> represents the assumed constant predator–prey body-mass ratio, here set to 10. This is because we had an extremely high rate of species loss during the burn-in phase, losing ~75% of all species before starting any extinction simulations.</p>
+<p>For simplicity, here we are presenting only the community results from Türkiye for the metaweb, downsampled niche web, ATN and niche model. Here, we have the same network and the only differences are that, for the dynamic modelling component, we either use the ‘empirical’ body size (Empirical) or the predator-prey body mass distribution (Internal). Owing to the species-agnostic nature of the Niche model, we are not able to assign empirical body sizes. What is of interest here is that, although the ATN is constructed using the empirical body sizes, if we use those body sizes in the dynamic model we get a high extinction rate. Using the predator-prey body mass distribution specification, we instead see much higher survivorship.</p>
+<p><a href="../figures/bodysize/survivorship.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../figures/bodysize/survivorship.png" class="img-fluid"></a></p>
+<p>By comparing <span class="math inline">\(\log_{10}(body size)\)</span> to the trophic level, we are able to see how much the empirical body sizes deviate from the expected predator-prey body mass distribution. Unsurprisingly, we see that the internally specified body sizes perfectly map onto the 1:1 line, while we do see some deviation for the empirical body sizes. Two things are worth noting. First, the ‘deviation’ from the predator-prey body mass relationship for the empirical ATN is not large, yet we still see a large rate of species loss. Secondly, across all the network types, the species that do survive in the Empirical webs are the ones that deviate from the predator-prey body mass relationship. Overall, this suggests that the dynamic model is incredibly sensitive to body size specifications and does suggest further investigation if we are to confidently use real-world body sizes as opposed to theoretical relationships.</p>
+<p><a href="../figures/bodysize/expectedBM.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../figures/bodysize/expectedBM.png" class="img-fluid"></a></p>
+<p>Interestingly, though, we see that there is a large degree of overlap in the specific species that go extinct. Below, we show the proportion of species that go extinct when we specify the body size internally that also go extinct when we specify the body sizes using the empirical data. This suggests that there are certain species that are ‘destined’ for extinction and that the burn-in phase is simply pruning them <span class="citation" data-cites="curtsdotterRobustnessSecondaryExtinctions2011">(<a href="#ref-curtsdotterRobustnessSecondaryExtinctions2011" role="doc-biblioref">Curtsdotter et al. 2011</a>)</span>, while the additional deviation in the body size specification is what is driving the additional extinctions we see in the empirical body size networks.</p>
+<p><a href="../figures/bodysize/propOverlap.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="../figures/bodysize/propOverlap.png" class="img-fluid"></a></p>
+<p>This is qualitatively supported if we look at some of the species traits. Below, we show the distribution of biomass, generality (number of prey), metabolism (a trait informed by body size), trophic level, and vulnerability (number of prey), coloured by whether they survive the burn-in or not. Here, we can see similar patterns between the two body size specifications (<strong>e.g.,</strong> in metawebs, species with a high generality are the ones going extinct), and it is just exacerbated in the empirical body size webs. The only differences are in metabolism, where we see species with high metabolic rates going extinct in empirical body size webs and species with ‘intermediate’ metabolic rates going extinct in internally specified body size webs. Note also that, when looking at trophic levels, we see the loss of intermediate species in empirical body size webs. Overall, this suggests that body size specification can have massive implications for the behaviour of the dynamic model and suggests that it largely influences the indirect effect such as top-down control.</p>
+<p><a href="../figures/bodysize/distributions.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../figures/bodysize/distributions.png" class="img-fluid"></a></p>
 </section>
 <section id="downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" class="level1">
 <h1>Downsampling and burn-in alter network topology in method-dependent ways</h1>
 <section id="figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1" class="level2">
 <h2 class="anchored" data-anchor-id="figure-s1-increasing-delta-co-is-associated-with-increasing-differences-among-network-types-in-rda1">Figure S1: Increasing <span class="math inline">\(\Delta Co\)</span> is associated with increasing differences among network types in RDA1</h2>
-<p><a href="../figures/downsampleDeltaCo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../figures/downsampleDeltaCo.png" class="img-fluid"></a></p>
-<p>The effect of <span class="math inline">\(\Delta Co\)</span> on network structure differed among network types (net type <span class="math inline">\(\times\)</span> <span class="math inline">\(\Delta Co\)</span> interaction: <span class="math inline">\(F_{3, 712}\)</span> = 4.81, <span class="math inline">\(p\)</span> = 0.0025). RDA1 declined with increasing <span class="math inline">\(\Delta Co\)</span> across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, p = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the <span class="math inline">\(\Delta Co\)</span> gradient.</p>
+<p><a href="../figures/downsampleDeltaCo.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="../figures/downsampleDeltaCo.png" class="img-fluid"></a></p>
+<p>The effect of <span class="math inline">\(\Delta Co\)</span> on network structure differed among network types (net type <span class="math inline">\(\times\)</span> <span class="math inline">\(\Delta Co\)</span> interaction: <span class="math inline">\(F_{3, 712}\)</span> = 4.81, <span class="math inline">\(p\)</span> = 0.0025). RDA1 declined with increasing <span class="math inline">\(\Delta Co\)</span> across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, <span class="math inline">\(p\)</span> = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the <span class="math inline">\(\Delta Co\)</span> gradient.</p>
 </section>
 <section id="figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb" class="level2">
 <h2 class="anchored" data-anchor-id="figure-s2-displacement-of-downsampled-networks-is-more-similar-to-that-of-the-niche-model-than-the-original-metaweb">Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb</h2>
-<p><a href="../figures/burninDisplacement.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../figures/burninDisplacement.png" class="img-fluid"></a></p>
-<p>Here, we show the mean displacement of the different network types during burn-in. Displacement was calculated as the Euclidean distance between each network’s position at creation and burn-in in three-dimensional PCA space. Points represent model-estimated mean displacements, with error bars showing 95% confidence intervals; different letters indicate significant differences between network types. Note that barring random downsampling we see that the downsampled networks move through the PCA space in a way that is more similar to the niche model than to the metaweb, which implies that they underwent similar restructuring during burn-in.</p>
+<p><a href="../figures/burninDisplacement.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="../figures/burninDisplacement.png" class="img-fluid"></a></p>
+<p>Here, we show the mean displacement of the different network types during burn-in. Displacement was calculated as the Euclidean distance between each network’s position at creation and after burn-in in three-dimensional PCA space. Points represent model-estimated mean displacements, with error bars showing 95% confidence intervals; different letters indicate significant differences between network types. Note that, with the exception of random downsampling, the downsampled networks move through PCA space in a way that is more similar to the niche model than to the metaweb, which implies that they underwent similar restructuring during burn-in.</p>
 </section>
 </section>
 <section id="differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" class="level1">
@@ -416,40 +436,44 @@
 <section id="differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type-1" class="level1">
 <h1>Differences in inferred robustness of topological and dynamic are unaffected by network type</h1>
 <p>Estimated robustness (<span class="math inline">\(R_{50}\)</span>) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates (<span class="math inline">\(\Delta R_{50} = R_{50, dynamic} - R_{50, topological}\)</span>) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.</p>
-<p><a href="../figures/robustnessTopoVDynamic_allScenario.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="../figures/robustnessTopoVDynamic_allScenario.png" class="img-fluid"></a></p>
+<p><a href="../figures/robustnessTopoVDynamic_allScenario.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="../figures/robustnessTopoVDynamic_allScenario.png" class="img-fluid"></a></p>
 </section>
-<section id="dynamic-extinctions-re-enforce-ecological-assumptions" class="level1">
-<h1>Dynamic extinctions re-enforce ecological assumptions</h1>
+<section id="dynamic-extinctions-reinforce-ecological-assumptions" class="level1">
+<h1>Dynamic extinctions reinforce ecological assumptions</h1>
 <section id="contrasts" class="level2">
 <h2 class="anchored" data-anchor-id="contrasts">Contrasts</h2>
-<p><a href="../figures/contrasts/robustnessContrasts_topo_creation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../figures/contrasts/robustnessContrasts_topo_creation.png" class="img-fluid"></a></p>
-<p><a href="../figures/contrasts/robustnessContrasts_topo_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="../figures/contrasts/robustnessContrasts_topo_realised.png" class="img-fluid"></a></p>
-<p><a href="../figures/contrasts/robustnessContrasts_dyn_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="../figures/contrasts/robustnessContrasts_dyn_realised.png" class="img-fluid"></a></p>
+<p>For each community <span class="math inline">\(\times\)</span> extinction scenario <span class="math inline">\(\times\)</span> time point, <span class="math inline">\(R_{50}\)</span> was modelled as a function of network type, and estimated marginal means were compared using Tukey-adjusted pairwise contrasts. Network-type pairs with adjusted <span class="math inline">\(p \geq\)</span> 0.05 were considered indistinguishable. We summarised the number and proportion of extinction scenarios in which each pair of network types was statistically indistinguishable, providing a complementary measure of similarity in inferred robustness.</p>
+<p><a href="../figures/contrasts/robustnessContrasts_topo_creation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="../figures/contrasts/robustnessContrasts_topo_creation.png" class="img-fluid"></a></p>
+<p><a href="../figures/contrasts/robustnessContrasts_topo_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="../figures/contrasts/robustnessContrasts_topo_realised.png" class="img-fluid"></a></p>
+<p><a href="../figures/contrasts/robustnessContrasts_dyn_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="../figures/contrasts/robustnessContrasts_dyn_realised.png" class="img-fluid"></a></p>
 </section>
-<section id="indistinguishable" class="level2">
-<h2 class="anchored" data-anchor-id="indistinguishable">Indistinguishable</h2>
-<p><a href="../figures/robustnessIndistinguishable.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7"><img src="../figures/robustnessIndistinguishable.png" class="img-fluid"></a></p>
+<section id="ability-to-distinguish-between-network-types" class="level2">
+<h2 class="anchored" data-anchor-id="ability-to-distinguish-between-network-types">Ability to distinguish between network types</h2>
+<p>Pairwise comparisons provided a complementary measure of similarity among network types. For each community and extinction stage, we quantified the proportion of extinction scenarios in which each pair of network types had statistically indistinguishable estimates of <span class="math inline">\(R_{50}\)</span> (adjusted <span class="math inline">\(p \geq\)</span> 0.05). Similarity was generally greater among the downsampled networks than between downsampled and synthetic/reference network types, although the pattern varied among communities and extinction stages.</p>
+<p><a href="../figures/robustnessIndistinguishable.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="../figures/robustnessIndistinguishable.png" class="img-fluid"></a></p>
 </section>
-<section id="cluster" class="level2">
-<h2 class="anchored" data-anchor-id="cluster">Cluster</h2>
-<p><a href="../figures/clustering/robustnessClusters_topo_creation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8"><img src="../figures/clustering/robustnessClusters_topo_creation.png" class="img-fluid"></a></p>
-<p><a href="../figures/clustering/robustnessClusters_topo_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="../figures/clustering/robustnessClusters_topo_realised.png" class="img-fluid"></a></p>
-<p><a href="../figures/clustering/robustnessClusters_dyn_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="../figures/clustering/robustnessClusters_dyn_realised.png" class="img-fluid"></a></p>
+<section id="clustering" class="level2">
+<h2 class="anchored" data-anchor-id="clustering">Clustering</h2>
+<p>We used hierarchical clustering of estimated marginal mean <span class="math inline">\(R_{50}\)</span> values to assess broader patterns of similarity among network types. At network creation, the metaweb and three of the downsampled network types (degree-distribution, niche, and random) formed a single cluster, while the niche model and ATN formed a second cluster; interestingly, the power-law downsampled networks formed a third cluster. Following burn-in, topological robustness showed a similar overall separation, but here we see the power-law downsampled network grouping with the rest of the empirical webs, ATN forming an intermediate cluster, and the niche model remaining distinct. Under dynamic extinctions, the grouping changed substantially: the metaweb and degree-distribution, power-law, and random networks remained clustered, whereas the downsampled niche networks grouped with the synthetic niche model, and ATN formed a separate cluster.</p>
+<p>Together, these results show that the similarity among network types in inferred robustness depends on both network construction and the processes applied after network creation. In particular, dynamic simulations altered the grouping of network types relative to their initial topological structure, with the niche-based downsampling approach converging towards the behaviour of the synthetic niche model.</p>
+<p><a href="../figures/clustering/robustnessClusters_topo_creation.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12"><img src="../figures/clustering/robustnessClusters_topo_creation.png" class="img-fluid"></a></p>
+<p><a href="../figures/clustering/robustnessClusters_topo_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13"><img src="../figures/clustering/robustnessClusters_topo_realised.png" class="img-fluid"></a></p>
+<p><a href="../figures/clustering/robustnessClusters_dyn_realised.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14"><img src="../figures/clustering/robustnessClusters_dyn_realised.png" class="img-fluid"></a></p>
 <p>#&nbsp;Downsampling and burn-in alter inferred topological robustness</p>
-<p>To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference ‘states’ (metaweb, ATN, and niche model) changed with increasing degree of downsampling (<span class="math inline">\(\Delta_{connectance}\)</span>). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered (Panel A; <span class="citation" data-cites="fig-robDownsample">@fig-robDownsample</span>).</p>
-<div id="fig-robDownsample" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="../figures/robustnessDownsampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="../figures/robustnessDownsampling.png" id="fig-robDownsample" class="img-fluid figure-img"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-robDownsample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-</figcaption>
-</figure>
-</div>
-<p>Under body-mass ordered extinction, reductions in connectance produced increasingly divergent robustness responses relative to the metaweb, while trajectories relative to the niche and ATN reference states were weaker and more variable. This pattern was reflected in a strong interaction between connectance reduction and reference state (<span class="math inline">\(\chi^2\)</span> = 384, <span class="math inline">\(p\)</span> &lt; 0.001). Similar reference-dependent trajectories occurred under degree-based extinction (<span class="math inline">\(\Delta_{connectance}\)</span> <span class="math inline">\(\times\)</span> reference <span class="math inline">\(\times\)</span> downsampling approach: <span class="math inline">\(\chi^2\)</span> = 98.7, <span class="math inline">\(p\)</span> &lt; 0.001) and random consumer removal (<span class="math inline">\(\chi^2\)</span> = 22.1, <span class="math inline">\(p\)</span> = 0.001), whereas random basal removal showed little evidence that the mechanism of downsampling altered robustness trajectories (<span class="math inline">\(\chi^2\)</span> = 0.54, <span class="math inline">\(p\)</span> = 0.997)</p>
-<p>Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that the process of dynamic modelling altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B <span class="citation" data-cites="fig-robDownsample">@fig-robDownsample</span>). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.</p>
-<p>Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed the downsampling approach increasingly imposes these assumptions, different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.</p>
+<p>To determine how ecological assumptions underlying downsampling influence emergent robustness, we examined how differences in robustness between downsampled networks and three reference ‘states’ (metaweb, ATN, and niche model) changed with increasing degree of downsampling (<span class="math inline">\(\Delta_{connectance}\)</span>). As the degree of downsampling increased, robustness trajectories increasingly diverged from the original metaweb, but the direction of this divergence depended on both the ecological mechanism used to remove interactions and the extinction scenario considered.</p>
+<p><a href="../figures/robustnessDownsampling.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15"><img src="../figures/robustnessDownsampling.png" class="img-fluid"></a></p>
+<p>Under body-mass ordered extinction, reductions in connectance produced increasingly divergent robustness responses relative to the metaweb, while trajectories relative to the niche and ATN reference states were weaker and more variable. This pattern was reflected in a strong interaction between connectance reduction and reference state (<span class="math inline">\(\chi^2\)</span> = 384, <span class="math inline">\(p\)</span> &lt; 0.001). Similar reference-dependent trajectories occurred under degree-based extinction (<span class="math inline">\(\Delta_{connectance}\)</span> <span class="math inline">\(\times\)</span> reference <span class="math inline">\(\times\)</span> downsampling approach: <span class="math inline">\(\chi^2\)</span> = 98.7, <span class="math inline">\(p\)</span> &lt; 0.001) and random consumer removal (<span class="math inline">\(\chi^2\)</span> = 22.1, <span class="math inline">\(p\)</span> = 0.001), whereas random basal removal showed little evidence that the mechanism of downsampling altered robustness trajectories (<span class="math inline">\(\chi^2\)</span> = 0.54, <span class="math inline">\(p\)</span> = 0.997).</p>
+<p>Interestingly, burn-in further modified the relationship between downsampled networks and realised reference states. Comparison of robustness before and after burn-in showed that the process of dynamic modelling altered the magnitude and direction of divergence between downsampled networks and the metaweb, ATN, and niche references (Panel B; <span class="citation" data-cites="fig-robDownsample">(<a href="#ref-fig-robDownsample" role="doc-biblioref"><strong>fig-robDownsample?</strong></a>)</span>). Thus, the ecological assumptions imposed during downsampling do not fully determine the final properties of a realised network; subsequent dynamical processes provide an additional filter that can either reinforce or reduce differences among reconstruction approaches.</p>
+<p>Together, these results demonstrate that reducing the connectance of a metaweb alone does not determine how inferred robustness changes; rather, the ecological assumptions governing which interactions are retained determine which structural properties of the metaweb are preserved and which are lost. As more links are removed, the downsampling approach increasingly imposes these assumptions, and different downsampling approaches produce distinct robustness trajectories, with the magnitude of these differences depending on the extinction scenario considered. Furthermore, dynamic burn-in modifies these relationships, demonstrating that the robustness of a reconstructed network at creation does not necessarily represent the robustness of the dynamically realised community. Therefore, conclusions drawn from extinction simulations depend not only on the extinction mechanism itself, but also on the ecological assumptions used to translate potential interactions within a metaweb into realised network structure.</p>
 </section>
+</section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-curtsdotterRobustnessSecondaryExtinctions2011" class="csl-entry" role="listitem">
+Curtsdotter, Alva, Amrei Binzer, Ulrich Brose, et al. 2011. <span>“Robustness to Secondary Extinctions: <span>Comparing</span> Trait-Based Sequential Deletions in Static and Dynamic Food Webs.”</span> <em>Basic and Applied Ecology</em> 12 (7): 571–80. <a href="https://doi.org/10.1016/j.baae.2011.09.008">https://doi.org/10.1016/j.baae.2011.09.008</a>.
+</div>
+</div>
 </section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
