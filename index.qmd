@@ -1,5 +1,5 @@
 ---
-title: "Realising food webs: downsampling assumptions propagate into dynamic extinction models"
+title: "How food webs are built shapes how they behave"
 authors:
   - name: Tanya Strydom
     id: ts
@@ -12,6 +12,16 @@ authors:
     affiliation:
       - id: sheffield
         name: School of Biosciences, University of Sheffield, Sheffield, UK
+  - name: Baran Karapunar
+    id: bk
+    orcid: 0000-0001-9711-1492
+    corresponding: false
+    role: 
+    - conceptualization: lead
+    - methodology: supporting
+    affiliations:
+      - id: leeds
+        name: School of Earth, Environment and Sustainability, University of Leeds, Leeds, UK, LS2 9JT
   - name: Andrew P. Beckerman
     id: apb
     orcid: 0000-0002-4797-9143
@@ -21,8 +31,24 @@ authors:
     - methodology: supporting
     affiliations:
       - ref: sheffield
+  - name: Alexander M. Dunhill
+    id: ad
+    orcid: 0000-0002-8680-9163
+    corresponding: false
+    role: 
+    - conceptualization: lead
+    - methodology: supporting
+    affiliations:
+      - ref: leeds
 keywords:
   - food webs
+  - ecological networks
+  - network reconstruction
+  - network realisation
+  - metawebs
+  - dynamical modelling
+  - extinction cascades
+  - ecological model uncertainty
 abstract: |
   Dynamic food-web models provide a mechanistic framework for understanding ecological stability, extinction cascades, and responses to environmental change, but their predictions depend on the network supplied as model input. Empirical metawebs provide rich information on potential species interactions, yet contain interactions that may not occur simultaneously within any particular community. Converting these interaction pools into realised networks therefore requires assumptions about which interactions are likely to co-occur, potentially introducing uncertainty before population dynamics are simulated. Here, we investigate how alternative approaches to network realisation influence network structure and subsequent ecological dynamics. Using empirical metawebs, we generated realised food webs using four ecologically motivated downsampling approaches, alongside networks generated using Niche and allometric trophic network models as reference approaches. We then compared network topology, structural change during dynamical burn-in, and inferred robustness under topological and dynamic extinction simulations. Downsampling approach altered network topology, with differences becoming increasingly pronounced as greater proportions of interactions were removed. Dynamical burn-in further reorganised network structure, but did not erase the signatures introduced during network construction; instead, downsampled networks underwent structural changes that were often more similar to the niche model than the original metaweb. Despite these differences, the broad tendency for topological extinction simulations to infer greater robustness than dynamic simulations was consistent across network reconstruction approaches. However, dynamic simulations revealed differences in network behaviour that were not apparent from topology alone, including convergence of niche-based downsampling towards the behaviour of the synthetic niche model. These results demonstrate that network realisation is not simply a preprocessing step, but an additional source of ecological model uncertainty. Dynamic food-web predictions are therefore shaped by successive assumptions about which interactions are realised and which of those realised networks can persist dynamically, highlighting the importance of explicitly considering network reconstruction when using empirical interaction data to make mechanistic predictions about ecological change.
 date: last-modified
