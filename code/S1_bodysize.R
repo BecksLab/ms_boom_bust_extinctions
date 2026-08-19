@@ -1,6 +1,7 @@
 library(tidyverse)
 library(genzplyr)
 library(patchwork)
+library(ggridges)
 
 source("libs/plotting_themes.R")
 
@@ -49,7 +50,7 @@ trait_df %>%
        fill = "Survived")
 
 ggsave("../figures/bodysize/distributions.png",
-       width = 7000,
+       width = 10000,
        height = 3500,
        units = "px",
        dpi = 500)
@@ -152,7 +153,7 @@ trait_df %>%
           bm_expected = 10^(trophic_level - 1),
           log10_bm = log10(bodysize),
           log10_bm_expected = trophic_level - 1,
-          bm_residual <- log10_bm - log10_bm_expected) %>%
+          bm_residual = log10_bm - log10_bm_expected) %>%
   ggplot(aes(x = trophic_level, 
              y = log10(bodysize))) +
   geom_point(aes(shape = trophic_class,
@@ -289,3 +290,79 @@ ggsave("../figures/bodysize/propOverlap.png",
        height = 3000,
        units = "px",
        dpi = 500)
+
+trait_df %>%
+  yeet(stage == "creation") %>%
+  yeet(net_type != "niche") %>%
+  left_join(survivors) %>%
+  glow_up(survived = factor(if_else(is.na(survived), "no", "yes")),
+          stage = factor(stage,
+                         levels = c("creation", "burnin"))) %>%
+  vibe_check(net_id, net_type, stage, species_id, original_id, survived,
+             bm_specification, S4_consumer, S5_consumer, S4_resource,
+             S5_resource) %>%
+  pivot_longer(-c(net_id, net_type, stage, species_id, original_id, survived,
+                  bm_specification)) %>%
+  ggplot() +
+  geom_boxplot(aes(x = net_type,
+                   y = value,
+                   colour = survived))  +
+  facet_grid(cols = vars(name),
+             rows = vars(bm_specification))
+
+mod_dat <-
+  trait_df %>%
+  left_join(survivors) %>%
+  glow_up(survived = if_else(is.na(survived), 0, 1),
+          bm_expected = 10^(trophic_level - 1),
+          log10_bm = log10(bodysize),
+          log10_bm_expected = trophic_level - 1,
+          bm_residual = log10_bm - log10_bm_expected) %>%
+  glow_up(metabolism_z = as.numeric(scale(metabolism)),
+          bm_deviation_z = as.numeric(scale(bm_residual)),
+          S4_consumer_z = as.numeric(scale(S4_consumer)),
+          S4_resource_z = as.numeric(scale(S4_resource)))
+
+library(lme4)
+
+m1 <- glmer(survived ~
+              metabolism_z +
+              S4_consumer_z +
+              S4_resource_z +
+              net_type +
+              bm_specification +
+              (1 | net_id),
+            data = mod_dat,
+            family = binomial)
+
+m_emp <- glmer(survived ~
+                 metabolism_z +
+                 bm_deviation_z +
+                 S4_consumer_z +
+                 S4_resource_z +
+                 net_type +
+                 (1 | net_id),
+               data = mod_dat %>%
+                 filter(bm_specification == "Empirical"),
+               family = binomial)
+
+m_emp_int <- glmer(survived ~
+                     metabolism_z +
+                     bm_deviation_z +
+                     S4_consumer_z * bm_deviation_z +
+                     S4_resource_z * bm_deviation_z +
+                     net_type +
+                     (1 | net_id),
+                   data = mod_dat %>%
+                     filter(bm_specification == "Empirical"),
+                   family = binomial)
+
+anova(m_emp, m_emp_int, test = "Chisq")
+
+aic_tab <- AIC(m1, m_emp, m_emp_int)
+
+aic_tab %>%
+  glow_up(delta_AIC = AIC - min(AIC),
+          weight = exp(-0.5 * delta_AIC) /
+            sum(exp(-0.5 * delta_AIC))) %>%
+  slay(AIC)
