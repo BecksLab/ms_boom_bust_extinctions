@@ -156,7 +156,7 @@ net_levs <- c("metaweb",
 # ---- Community ordering ----
 
 comm_ord <- 
-  topology %>% 
+  read_csv("outputs/paleo_topology.csv") %>% 
   yeet(stage == "creation", 
        net_type == "metaweb") %>% 
   vibe_check(community, connectance) %>% 
