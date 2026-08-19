@@ -378,7 +378,11 @@ deg_rows = DataFrame(
     net_id=Any[],
     net_type=Any[],
     community=Any[],
-    stage=Any[])
+    stage=Any[],
+    S4_consumer=Any[],
+    S4_resource=Any[],
+    S5_consumer=Any[],
+    S5_resource=Any[])
 
 for i in 1:nrow(networks)
 
@@ -386,6 +390,18 @@ for i in 1:nrow(networks)
 
     gen = SpeciesInteractionNetworks.generality(N)
     vul = SpeciesInteractionNetworks.vulnerability(N)
+
+    # also get motif membership
+    spp = SpeciesInteractionNetworks.species(N)
+    S4 = findmotif(motifs(Unipartite, 3)[4], N)
+    S5 = findmotif(motifs(Unipartite, 3)[5], N)
+
+    S4_counts = [count(t -> t[i] == s, S4)
+              for s in spp, i in 1:3]
+
+    
+    S5_counts = [count(t -> t[i] == s, S5)
+              for s in spp, i in 1:3]
 
     d = DataFrame(
         spp_id=collect(keys(gen)),
@@ -395,7 +411,11 @@ for i in 1:nrow(networks)
         net_id=fill(networks.net_id[i], length(gen)),
         net_type=fill(networks.net_type[i], length(gen)),
         stage=fill(networks.stage[i], length(gen)),
-        community=fill(networks.community[i], length(gen))
+        community=fill(networks.community[i], length(gen)),
+        S4_consumer=S4_counts[:, 1] .+ S4_counts[:, 3],
+        S4_resource=S4_counts[:, 2],
+        S5_consumer=S5_counts[:, 1],
+        S5_resource=S5_counts[:, 2] .+ S5_counts[:, 3]
     )
 
     # send to df
