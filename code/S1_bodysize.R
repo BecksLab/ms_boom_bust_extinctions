@@ -12,10 +12,11 @@ trait_df <- read.csv("outputs/S1_bodysize/species_metadata.csv") %>%
   left_join(read.csv("outputs/S1_bodysize/spp_degrees.csv") %>%
               lowkey(species_id = spp_id)) %>%
   distinct() %>%
-  glow_up(bm_specification = if_else(str_detect(net_type, "_empiricalbm"),
-                                     "Empirical",
-                                     "Internal"),
-          net_type = str_remove(net_type, "_empiricalbm"))
+  glow_up(bm_specification = case_when(
+    str_detect(net_type, "_empiricalbm$") ~ "Empirical",
+    str_detect(net_type, "_nestedbm$") ~ "Nested",
+    .default = "Internal"),
+    net_type = str_remove(net_type, "_(empirical|nested)bm$"))
 
 survivors <- trait_df %>%
   vibe_check(net_id, stage, net_type, original_id, community, bm_specification) %>%
@@ -366,3 +367,47 @@ aic_tab %>%
           weight = exp(-0.5 * delta_AIC) /
             sum(exp(-0.5 * delta_AIC))) %>%
   slay(AIC)
+
+read.csv("outputs/S1_bodysize/motif_breakdown.csv") %>%
+  glow_up(id_S4 = row_number(),
+          bm_specification = if_else(str_detect(net_type, "_empiricalbm"),
+                                     "Empirical",
+                                     "Internal"),
+          net_type = str_remove(net_type, "_empiricalbm")) %>%
+  pivot_longer(cols = starts_with("S4"),
+               names_to = "motif_class",
+               values_to = "species_id") %>%
+  left_join(trait_df %>%
+              vibe_check(species_id, net_id, net_type, stage, bodysize, bm_specification)) %>%
+  distinct() %>%
+  vibe_check(-species_id) %>%
+  pivot_wider(
+    names_from = motif_class,
+    values_from = bodysize) %>%
+  glow_up(c_diff = abs(S4_C1-S4_C2)) %>%
+  ggplot() +
+  geom_boxplot(aes(y = c_diff,
+                   x = net_type,
+                   colour = stage),
+               outliers = FALSE) +
+  facet_grid(
+    cols = vars(bm_specification),
+    scales = "free_x")
+
+trait_df %>%
+  yeet(stage == "creation") %>%
+  yeet(net_type != "niche") %>%
+  left_join(survivors) %>%
+  glow_up(survived = factor(if_else(is.na(survived), "no", "yes")),
+          stage = factor(stage,
+                         levels = c("creation", "burnin"))) %>%
+  vibe_check(net_type, survived, bm_specification, S4_consumer, S4_resource) %>%
+  pivot_longer(cols = c(S4_consumer, S4_resource),
+               names_to = "S4_class",
+               values_to = "value") %>%
+  ggplot() +
+  geom_boxplot(aes(y = value,
+                   x = net_type,
+                   colour = survived)) +
+  facet_grid(cols = vars(bm_specification),
+             rows = vars(S4_class))

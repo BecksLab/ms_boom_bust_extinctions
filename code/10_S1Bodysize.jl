@@ -23,6 +23,7 @@ using SpeciesInteractionNetworks
 using Statistics
 
 include("libs/internals.jl")
+include("libs/bodysize.jl")
 
 import Random
 Random.seed!(66)
@@ -68,6 +69,7 @@ global_dist = LogNormal(log(30), 1.5)
 
 size_bounds = Dict(
     "primary" => (0.01, 0.1),
+    "zooplankton" => (0.01, 0.1),
     "tiny" => (0.1, 10.0),
     "small" => (10.0, 50.0),
     "medium" => (50.0, 100.0),
@@ -102,8 +104,8 @@ for t in t_values
                 end
                 for s in y
             ]
-
-            traits[!, :bodymass] = bodysize
+                
+            traits.bodymass = bodysize
             traits.biomass = fill(missing, nrow(traits))
             df = vcat(traits, plankton)
 
@@ -112,7 +114,6 @@ for t in t_values
             B_init = rand(nrow(df))
 
             # --- 3. Base Networks Generation (Creation) ---
-            mass_rule = (res, con) -> con >= 0.5 * res ? 1 : 0
 
             pfim_meta = PFIM(df, feeding_rules; return_type=:matrix)
 
@@ -139,7 +140,10 @@ for t in t_values
                 "metaweb" => Foodweb(pfim_meta),
                 "down_niche_empiricalbm" => pfim_niche_down,
                 "atn_empiricalbm" => atn_fw,
-                "metaweb_empiricalbm" => Foodweb(pfim_meta)
+                "metaweb_empiricalbm" => Foodweb(pfim_meta),
+                "down_niche_nestedbm" => pfim_niche_down,
+                "atn_nestedbm" => atn_fw,
+                "metaweb_nestedbm" => Foodweb(pfim_meta)
             )
 
             # Dictionary to keep initial S and C values for summary reference
@@ -197,10 +201,28 @@ for t in t_values
                         threshold=survival_threshold,
                         B0=B_init
                     )
-                else
+                elseif net_name ∈ ["metaweb", "down_niche", "atn", "niche"]
                     # and then we do the normal (internal bodysize specification)
                     realised = realise_network(
                         fw;
+                        t=t,
+                        threshold=survival_threshold,
+                        B0=B_init
+                    )                      
+                else
+                    # nested bodymass
+                    bm_nested = nested_bodymasses(
+                        df,
+                        Matrix(fw.A),
+                        size_bounds;
+                        μ = 6.1,
+                        σ = 5.75,
+                        iterations = 20_000
+                    )
+
+                    realised = realise_network(
+                        fw;
+                        bodymasses=bm_nested,
                         t=t,
                         threshold=survival_threshold,
                         B0=B_init
@@ -412,10 +434,10 @@ for i in 1:nrow(networks)
         net_type=fill(networks.net_type[i], length(gen)),
         stage=fill(networks.stage[i], length(gen)),
         community=fill(networks.community[i], length(gen)),
-        S4_consumer=S4_counts[:, 1] .+ S4_counts[:, 3],
-        S4_resource=S4_counts[:, 2],
-        S5_consumer=S5_counts[:, 1],
-        S5_resource=S5_counts[:, 2] .+ S5_counts[:, 3]
+        S4_consumer=(S4_counts[:, 1] .+ S4_counts[:, 3])/length(S4),
+        S4_resource=S4_counts[:, 2]/length(S4),
+        S5_consumer=S5_counts[:, 1]/length(S5),
+        S5_resource=(S5_counts[:, 2] .+ S5_counts[:, 3])/length(S5)
     )
 
     # send to df
@@ -424,3 +446,37 @@ for i in 1:nrow(networks)
 end
 
 CSV.write("outputs/S1_bodysize/spp_degrees.csv", deg_rows)
+
+
+motif_breakdown = DataFrame(
+    net_id=Any[],
+    net_type=Any[],
+    stage=Any[],
+    S4_C1=Any[],
+    S4_R1=Any[],
+    S4_C2=Any[])
+
+for i in 1:nrow(networks)
+
+    N = build_network(Matrix(networks.adjacency[i]))
+
+
+    # also get motif membership
+    spp = SpeciesInteractionNetworks.species(N)
+    S4 = findmotif(motifs(Unipartite, 3)[4], N)
+
+    d = DataFrame(
+        net_id=fill(networks.net_id[i], length(S4)),
+        net_type=fill(networks.net_type[i], length(S4)),
+        stage=fill(networks.stage[i], length(S4)),
+        S4_C1=[t[1] for t in S4],
+        S4_R1=[t[2] for t in S4],
+        S4_C2=[t[3] for t in S4]
+    )
+
+    # send to df
+    append!(motif_breakdown, d)
+
+end
+
+CSV.write("outputs/S1_bodysize/motif_breakdown.csv", motif_breakdown)
