@@ -5,6 +5,9 @@ library(lme4)
 library(emmeans)
 library(multcomp)
 library(readr)
+library(FactoMineR)
+library(lme4)
+library(vegan)
 
 source("libs/plotting_themes.R")
 
@@ -118,15 +121,16 @@ ggplot(scores,
            Dim.2,
            colour = net_type)) +
   geom_vline(xintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_hline(yintercept = 0,
-             colour = minni_silver) +
+             colour = minni_wheat) +
   stat_ellipse(
     data = yeet(scores,
                 !net_type %in% c("niche", "atn"))) +
   geom_point(aes(shape = stage),
              alpha = 0.4) +
-  scale_colour_manual(values = net_type_col_pal)
+  scale_colour_manual(values = net_type_col_pal,
+                      labels = net_type_dict)
 
 # ------------------------------------------------------------------------------
 # Trajectories through PCA space
@@ -161,7 +165,8 @@ p_traj <-
        x = glue::glue("PC1 ({round(variance$`percentage of variance`[1],1)}%)"),
        y = glue::glue("PC2 ({round(variance$`percentage of variance`[2],1)}%)")) +
   facet_wrap(~community) +
-  scale_colour_manual(values = net_type_col_pal)
+  scale_colour_manual(values = net_type_col_pal,
+                      labels = net_type_dict)
 
 p_traj_all <- 
   ggplot(traj %>%
@@ -181,7 +186,8 @@ p_traj_all <-
        x = glue::glue("PC1 ({round(variance$`percentage of variance`[1],1)}%)"),
        y = glue::glue("PC2 ({round(variance$`percentage of variance`[2],1)}%)"),
        colour = "Network Type") +
-  scale_colour_manual(values = net_type_col_pal)
+  scale_colour_manual(values = net_type_col_pal,
+                      labels = net_type_dict)
 
 # ------------------------------------------------------------------------------
 # Trajectory test
@@ -254,6 +260,7 @@ p_pca_contrast <-
             nudge_y = 0.2) +
   scale_colour_identity() +
   scale_x_log10() +
+  scale_y_discrete(labels = net_type_dict) +
   scale_shape_manual(values = net_shapes) +
   labs(y = NULL,
        x = "Displacement",
@@ -455,6 +462,7 @@ p_contrast <-
             vjust = 0,
             nudge_y = 0.15) +
   scale_colour_identity()  +
+  scale_y_discrete(labels = net_type_dict) +
   scale_shape_manual(values = net_shapes) +
   labs(y = NULL,
        x = "Effect of Δ connectance on RDA1",

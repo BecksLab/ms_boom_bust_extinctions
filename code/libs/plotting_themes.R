@@ -69,6 +69,15 @@ net_type_col_pal_contrast <- c(
 
 # ---- Pretty network names ----
 
+# dictionary
+net_type_dict = c("down_rand" = expression(Metaweb[random]),
+                  "down_niche" = expression(Metaweb[niche]),
+                  "down_link" = expression(Metaweb[plain('degree')]),
+                  "down_power" = expression(Metaweb[power-law]),
+                  "niche" = expression(Niche), 
+                  "atn" = expression(ATN),
+                  "metaweb" = expression(Metaweb))
+
 assign_net_name <- function(net_type) {
   
   case_when(net_type == "down_rand" ~ "Metaweb[random]",

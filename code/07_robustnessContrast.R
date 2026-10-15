@@ -111,74 +111,47 @@ saveRDS(plot_tbl,
 
 contrast_plots <-
   plot_tbl %>%
-  mutate(
-    plot = map2(
-      print_name,
-      ext_scen,
-      \(comm, ext) {
-        
-        x <-
-          plot_tbl %>%
-          filter(
-            print_name == comm,
-            ext_scen == ext
-          )
-        
-        ggplot(
-          x,
-          aes(
-            x = net_type,
-            y = emmean,
-            colour = blended_color,
-            shape = net_group
-          )
-        ) +
-          geom_point(
-            size = 3,
-            show.legend = FALSE
-          ) +
-          geom_errorbar(
-            aes(
-              ymin = lower.CL,
-              ymax = upper.CL
-            ),
-            width = 0.15
-          ) +
-          geom_text(
-            aes(
-              y = upper.CL + 0.015,
-              label = cont_group
-            ),
-            size = 4.5,
-            fontface = "bold",
-            vjust = 0
-          ) +
-          scale_colour_identity() +
-          scale_shape_manual(
-            values = net_shapes
-          ) +
-          labs(
-            x = "Network type",
-            y = "Robustness",
-            title = ext
-          ) +
-          theme_minimal() +
-          theme(
-            axis.text.x = element_text(
-              angle = 45,
-              hjust = 1
-            )
-          )
-        
-      }
-    )
-  ) %>%
-  # Keep only one copy of each actual plot
-  distinct(
+  glow_up(plot = map2(
     print_name,
     ext_scen,
-    .keep_all = TRUE
-  )
+    \(comm, ext) {
+      x <-
+        plot_tbl %>%
+        filter(
+          print_name == comm,
+          ext_scen == ext
+        )
+      ggplot(x,
+             aes(x = net_type,
+                 y = emmean,
+                 colour = blended_color,
+                 shape = net_group)) +
+        geom_point(size = 3,
+                   show.legend = FALSE) +
+        geom_errorbar(aes(ymin = lower.CL,
+                          ymax = upper.CL),
+                      width = 0.15) +
+        geom_text(aes(y = upper.CL + 0.015,
+                      label = cont_group),
+                  size = 4.5,
+                  fontface = "bold",
+                  vjust = 0) +
+        scale_colour_identity() +
+        scale_x_discrete(labels = net_type_dict) +
+        scale_shape_manual(values = net_shapes) +
+        labs(x = "Network type",
+             y = "Robustness",
+             title = ext) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(angle = 45,
+                                         hjust = 1))
+      
+    }
+  )) %>%
+  # Keep only one copy of each actual plot
+  periodt(print_name,
+          ext_scen,
+          .keep_all = TRUE)
 
 
 # ============================================================
@@ -193,67 +166,44 @@ plot_tbl %>%
     p <-
       plot_tbl %>%
       yeet(print_name == comm) %>%
-      slay(
-        factor(
-          ext_scen,
-          levels = names(ext_scen_labs)
-        )
-      ) %>%
-      group_by(scenario) %>%
+      slay(factor(ext_scen,
+                  levels = names(ext_scen_labs))) %>%
+      squad_up(scenario) %>%
       nest() %>%
-      glow_up(
-        plot = map2(
-          data,
-          scenario,
-          \(x, nm) {
-            
-            ggplot(
-              x,
-              aes(
-                x = net_type,
-                y = emmean,
-                colour = blended_color,
-                shape = net_group
-              )
-            ) +
-              geom_point(
-                size = 3,
-                show.legend = FALSE
-              ) +
-              geom_errorbar(
-                aes(
-                  ymin = lower.CL,
-                  ymax = upper.CL
-                ),
-                width = 0.15
-              ) +
-              geom_text(
-                aes(
-                  y = upper.CL + 0.015,
-                  label = cont_group
-                ),
-                size = 4.5,
-                fontface = "bold",
-                vjust = 0
-              ) +
-              scale_colour_identity() +
-              scale_shape_manual(
-                values = net_shapes
-              ) +
-              facet_grid(rows = vars(ext_scen)) +
-              labs(
-                x = NULL,
-                y = "Robustness",
-                title = stringr::str_to_title(nm)
-              ) +
-              coord_cartesian(ylim = c(NA, 0.6)) +
-              theme(axis.text.x = element_text(angle = 45, hjust = 1))
-            
-          }
-        )
-      ) %>%
+      glow_up(plot = map2(
+        data,
+        scenario,
+        \(x, nm) {
+          
+          ggplot(x,
+                 aes(x = net_type,
+                     y = emmean,
+                     colour = blended_color,
+                     shape = net_group)) +
+            geom_point(size = 3,
+                       show.legend = FALSE) +
+            geom_errorbar(aes(ymin = lower.CL,
+                              ymax = upper.CL),
+                          width = 0.15) +
+            geom_text(aes(y = upper.CL + 0.015,
+                          label = cont_group),
+                      size = 4.5,
+                      fontface = "bold",
+                      vjust = 0) +
+            scale_colour_identity() +
+            scale_x_discrete(labels = net_type_dict) +
+            scale_shape_manual(values = net_shapes) +
+            facet_grid(rows = vars(ext_scen)) +
+            labs(x = NULL,
+                 y = "Robustness",
+                 title = stringr::str_to_title(nm)) +
+            coord_cartesian(ylim = c(NA, 0.6)) +
+            theme(axis.text.x = element_text(angle = 45, hjust = 1))
+          
+        }
+      )) %>%
       main_character(plot) %>%
-      wrap_plots(ncol = 2)+
+      wrap_plots(ncol = 2) +
       plot_annotation(title = comm)
     
     
@@ -264,18 +214,14 @@ plot_tbl %>%
       str_replace_all(" ", "_")
     
     
-    ggsave(
-      paste0(
-        "../figures/contrasts/robustnessContrasts_",
-        short_name,
-        ".png"
-      ),
-      p,
-      width = 5000,
-      height = 12000,
-      units = "px",
-      dpi = 500
-    )
+    ggsave(paste0("../figures/contrasts/robustnessContrasts_",
+                  short_name,
+                  ".png"),
+           p,
+           width = 5000,
+           height = 12000,
+           units = "px",
+           dpi = 500)
     
   })
 
@@ -300,39 +246,26 @@ plot_tbl %>%
           data,
           \(x) {
             
-            ggplot(
-              x,
-              aes(
-                x = net_type,
-                y = emmean,
-                colour = blended_color,
-                shape = net_group
-              )
-            ) +
-              geom_point(
-                size = 3,
-                show.legend = FALSE
-              ) +
-              geom_errorbar(
-                aes(
-                  ymin = lower.CL,
-                  ymax = upper.CL
-                ),
-                width = 0.15
-              ) +
-              geom_text(
-                aes(
-                  y = upper.CL + 0.015,
-                  label = cont_group
-                ),
-                size = 4.5,
-                fontface = "bold",
-                vjust = 0
-              ) +
+            ggplot(x,
+                   aes(x = net_type,
+                       y = emmean,
+                       colour = blended_color,
+                       shape = net_group)) +
+              geom_point(size = 3,
+                         show.legend = FALSE) +
+              geom_errorbar(aes(ymin = lower.CL,
+                                ymax = upper.CL),
+                            width = 0.15) +
+              geom_text(aes(y = upper.CL + 0.015,
+                            label = cont_group),
+                        size = 4.5,
+                        fontface = "bold",
+                        vjust = 0) +
               scale_colour_identity() +
+              scale_x_discrete(labels = net_type_dict) +
               scale_shape_manual(values = net_shapes) +
               facet_wrap(vars(scenario),
-                              ncol = 10) +
+                         ncol = 10) +
               labs(x = NULL,
                    y = "Robustness",
                    title = unique(print_name)) +
@@ -340,8 +273,7 @@ plot_tbl %>%
               theme(axis.text.x = element_text(angle = 45, hjust = 1))
             
           }
-        )
-      ) %>%
+        )) %>%
       main_character(plot) %>%
       wrap_plots(ncol = 1) +
       plot_annotation(title = t_p)
@@ -354,10 +286,8 @@ plot_tbl %>%
       unique() %>%
       paste(collapse = "_") %>%
       str_to_lower() %>%
-      str_replace_all(
-        "[^a-z0-9_]+",
-        "_"
-      )
+      str_replace_all("[^a-z0-9_]+",
+                      "_")
     
     
     ggsave(
@@ -379,13 +309,11 @@ plot_tbl %>%
 
 # Pairwise comparisons
 pairs_tbl <- mods %>%
-  mutate(
-    pairs = map(model, ~ {
-      emmeans(.x, "net_type") %>%
-        contrast(method = "pairwise", adjust = "tukey") %>%
-        as.data.frame()
-    })
-  ) %>%
+  glow_up(pairs = map(model, ~ {
+    emmeans(.x, "net_type") %>%
+      contrast(method = "pairwise", adjust = "tukey") %>%
+      as.data.frame()
+  })) %>%
   unnest(pairs) %>%
   separate(contrast,
            into = c("net_type_1", "net_type_2"),
@@ -396,12 +324,10 @@ pairs_tbl <- mods %>%
 
 indistinguishable_counts <- pairs_tbl %>%
   squad_up(extinction, time_pnt, community, net_type_1, net_type_2) %>%
-  no_cap(
-    count_indistinguishable = sum(indistinguishable),
-    total_scenarios = n(),
-    prop_indistinguishable = count_indistinguishable / total_scenarios,
-    .groups = "drop"
-  ) %>%
+  no_cap(count_indistinguishable = sum(indistinguishable),
+         total_scenarios = n(),
+         prop_indistinguishable = count_indistinguishable / total_scenarios,
+         .groups = "drop") %>%
   glow_up(ext_scen = paste0(extinction, "_", time_pnt)) %>%
   left_join(comm_ord) %>%
   glow_up(print_name = factor(print_name, levels = comm_levs),
@@ -432,6 +358,8 @@ plot_indistinguishable_counts <- function(ext_scenario) {
          x = NULL,
          y = NULL) +
     theme_minimal() +
+    scale_y_discrete(labels = net_type_dict) +
+    scale_x_discrete(labels = net_type_dict) +
     theme(plot.title = element_text(face = "bold",hjust = 0.5,size = 16),
           axis.text.x = element_text(angle = 45, hjust = 1),
           panel.grid = element_blank())

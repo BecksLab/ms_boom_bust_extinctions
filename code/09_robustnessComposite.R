@@ -103,6 +103,7 @@ plot_contrasts <- function(comm) {
                   label = cont_group), 
               size = 4.5, fontface = "bold", vjust = 0 ) +
     scale_colour_identity() +
+    scale_x_discrete(labels = net_type_dict) +
     scale_shape_manual(values = net_shapes) +
     ylim(0, 0.5) +
     labs(x = NULL,
@@ -144,6 +145,6 @@ wrap_plots(
 
 ggsave("../figures/robustnessHighLevel.png",
        width = 5000, 
-       height = 6000, 
+       height = 7000, 
        units = "px", dpi = 500)
 

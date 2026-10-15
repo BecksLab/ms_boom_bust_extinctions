@@ -20,7 +20,8 @@ extinction_df <- read.csv("outputs/extinction_summary.csv") %>%
                                    levels = c("topo_creation", 
                                               "topo_realised", 
                                               "dyn_realised")),
-          net_group = assign_net_group(net_type))
+          net_group = assign_net_group(net_type),
+          net_type_lab = assign_net_name(net_type))
 
 # ------------------------------------------------------------------------------
 # Calculate topology-dynamic difference
@@ -29,7 +30,7 @@ extinction_df <- read.csv("outputs/extinction_summary.csv") %>%
 diff_df <-
   extinction_df %>% 
   yeet(time_pnt == "realised") %>% 
-  vibe_check(community, net_id, net_type, scenario, extinction, value) %>% 
+  vibe_check(community, net_id, net_type, net_type_lab, scenario, extinction, value) %>% 
   pivot_wider(names_from = extinction, 
               values_from = value) %>% 
   glow_up(delta_R50 = dyn - topo)
@@ -164,7 +165,8 @@ cld_df <-
   squad_up(scenario) %>%
   arrange(net_group, 
           .by_group = TRUE) %>%
-  glow_up(net_type = factor(net_type, levels = net_levs)) %>%
+  glow_up(net_type = factor(net_type, levels = net_levs),
+          net_type_lab = assign_net_name(net_type)) %>%
   disband()
 
 
@@ -191,6 +193,7 @@ p_contrast <-
             fontface = "bold",
             vjust = 1,
             nudge_y = -0.025) +
+  scale_x_discrete(labels = net_type_dict) +
   scale_fill_identity() +
   scale_colour_identity() +
   scale_shape_manual(values = net_shapes,
@@ -216,9 +219,11 @@ p_lollipop <-
              y = value, 
              colour = extincion_point)) +
   geom_boxplot() +
-  scale_colour_manual(values = extinction_pal) +
+  scale_colour_manual(values = extinction_pal,
+                      labels = c("Dynamic", "Topological")) +
   scale_shape_manual(values = net_shapes,
                      guide = "none") +
+  scale_x_discrete(labels = net_type_dict) +
   facet_wrap(~scenario,
              ncol = 2) +
   labs(x = "Network type",
@@ -261,7 +266,9 @@ p_lollipop_collapsed <-
              y = value, 
              colour = extinction)) +
   geom_boxplot(outliers = FALSE) +
-  scale_colour_manual(values = extinction_pal) +
+  scale_colour_manual(values = extinction_pal,
+                      labels = c("Dynamic", "Topological")) +
+  scale_x_discrete(labels = net_type_dict) +
   labs(x = NULL,
        y = expression(Robustness~(R[50])),
        colour = "Extinction scenario") +
