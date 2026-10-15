@@ -13,25 +13,27 @@ make_cluster_plot <- function(hc,
           xend = xend,
           yend = yend),
       linewidth = 0.8,
-      colour = minni_black) +
+      colour = minni_tan) +
     geom_label(
       data = dend$labels %>%
         left_join(col_df),
       aes(x = x,
           y = -0.02 * max(dend$segments$y),
-          label = label,
+          label = label_rich,
           colour = contrast,
           fill = col),
       size = 4,
       hjust = 0,
       label.padding = unit(0.5, "lines"),
-      show.legend = FALSE) +
+      show.legend = FALSE,
+      parse = TRUE) +
     scale_colour_identity() +
     scale_fill_identity() +
     coord_flip(clip = "off") +
     scale_y_reverse(expand = expansion(mult = c(0.05, 0.02))) +
     labs(title = title) +
     theme_void() +
-    theme(plot.title = element_text( hjust = 0.5, face = "bold", size = 16),
-          plot.margin = margin(t = 10, r = 80, b = 10, l = 10))
+    theme(plot.title = element_text(hjust = 0.5, face = "bold", 
+                                    size = 16, colour = minni_black),
+          plot.margin = margin(t = 10, r = 90, b = 10, l = 10))
 }

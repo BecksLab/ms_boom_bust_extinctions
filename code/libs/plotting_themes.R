@@ -28,7 +28,8 @@ figure_theme =
         text = element_text(color = minni_black),
         plot.margin = margin(10, 5, 5, 10),
         legend.margin = margin(1, 2, 1, 2),
-        plot.title = element_text( hjust = 0.5, face = "bold", size = 16)
+        plot.title = element_text(hjust = 0.5, face = "bold", 
+                                  size = 16, colour = minni_black)
   )
 
 # this set the theme once so dont need to call every time when plotting
@@ -66,12 +67,29 @@ net_type_col_pal_contrast <- c(
   "down_niche" = minni_black,
   "atn"        = minni_black)
 
+# ---- Pretty network names ----
+
+assign_net_name <- function(net_type) {
+  
+  case_when(net_type == "down_rand" ~ "Metaweb[random]",
+            net_type == "down_niche" ~ "Metaweb[niche]",
+            net_type == "down_link" ~ "Metaweb[plain('degree')]",
+            net_type == "down_power" ~ "Metaweb[power-law]",
+            net_type == "niche" ~ "Niche", 
+            net_type == "atn" ~ "ATN",
+            net_type == "metaweb" ~ "Metaweb",
+            TRUE ~ net_type)
+}
+
+
+
 col_df <-
   cbind(net_type_col_pal,net_type_col_pal_contrast) %>%
   as_tibble() %>%
   lowkey(col = net_type_col_pal,
          contrast = net_type_col_pal_contrast) %>%
-  glow_up(label = names(net_type_col_pal_contrast))
+  glow_up(label_rich = assign_net_name(names(net_type_col_pal_contrast)),
+          label = names(net_type_col_pal_contrast))
 
 # General colour vibes
 col_pal <- c(
@@ -114,20 +132,9 @@ get_cld_color <- Vectorize(blend_cld_colors, vectorize.args = "letter_string")
 # we can specify chapes for metawebs, downsampled, and realised webs to help
 # with a consistent visual language so to say
 
-net_shapes <- c(
-  "Downsampled web" = 15, 
-  "Realised web"     = 16, 
-  "Metaweb"    = 17)
-
-# ---- Assign network types ----
-# helper function that can be quickly deployed to set the network types
-assign_net_group <- function(net_type) {
-  
-  case_when(str_detect(net_type, "down") ~ "Downsampled web",
-            net_type %in% c("niche", "atn") ~ "Realised web",
-            net_type %in% c("metaweb") ~ "Metaweb",
-            TRUE ~ net_type)
-}
+net_shapes <- c("Downsampled web"  = 15, 
+                "Realised web"     = 16, 
+                "Metaweb"          = 17)
 
 # helper function that can be quickly deployed to set the extinction scenario
 # as well as network stage
@@ -152,6 +159,17 @@ net_levs <- c("metaweb",
               "down_niche",
               "niche",
               "atn")
+
+# ---- Assign network types ----
+
+# helper function that can be quickly deployed to set the network types
+assign_net_group <- function(net_type) {
+  
+  case_when(str_detect(net_type, "down") ~ "Downsampled web",
+            net_type %in% c("niche", "atn") ~ "Realised web",
+            net_type %in% c("metaweb") ~ "Metaweb",
+            TRUE ~ net_type)
+}
 
 # ---- Community ordering ----
 
