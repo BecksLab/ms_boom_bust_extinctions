@@ -186,7 +186,7 @@ cluster_tbl_comm %>%
              ".png"),
       p,
       width = 5000,
-      height = 9000,
+      height = 10000,
       units = "px",
       dpi = 500)
     
