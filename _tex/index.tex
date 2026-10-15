@@ -229,7 +229,7 @@ they behave}
 2%
 }%
 }
-\date{2026-10-14}
+\date{2026-10-15}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -333,103 +333,133 @@ researchers to investigate community stability, biomass dynamics,
 extinction cascades, and responses to perturbation by explicitly
 simulating energy transfer among interacting species (Brose et al.,
 2006; Curtsdotter et al., 2011; Delmas et al., 2017; Yodzis \& Innes,
-1992). By incorporating processes such as resource limitation,
-interaction strengths, and feedbacks, these models provide a means of
-linking network structure to ecological dynamics. Their predictions,
-however, depend not only on the dynamical model itself, but also on the
-food web supplied as input.
+1992). By incorporating resource limitation, interaction strengths, and
+feedbacks, these models provide a means of linking network structure to
+ecological dynamics. Their predictions, however, depend not only on the
+equations governing population dynamics, but also on the network
+supplied as model input.
 
-Constructing suitable networks for dynamic modelling presents a
+Constructing appropriate networks for dynamic modelling presents a
 fundamental challenge. Synthetic food web models, such as the niche
 model, provide tractable representations of trophic structure and can be
 readily coupled to population dynamics (Williams \& Martinez, 2000).
-Other approaches use biological information, including body size and
-energetic constraints, to generate more mechanistically informed
-networks, as in allometric trophic network models (Brose et al., 2006;
-Petchey et al., 2008). However, these approaches represent particular
-assumptions about how trophic interactions are organised and do not
-necessarily recover the specific interactions occurring within a given
-community. Empirical metawebs offer an alternative by compiling
+Other approaches incorporate biological information, including
+consumer--resource body-size relationships, to generate mechanistically
+informed networks, as in allometric models (Brose et al., 2006; Petchey
+et al., 2008). However, these approaches embody particular assumptions
+about how trophic interactions are organised and do not necessarily
+recover the specific interactions occurring within a given community,
+limiting their applicability to species-specific, real world
+tangibility. Empirical metawebs offer an alternative by compiling
 potential trophic interactions among species from observations,
-literature, or trait-based inference (Dunne, 2006). Yet, because these
+literature, or trait-based inference (Dunne, 2006). Because these
 interactions may have been observed or inferred across different
-locations, seasons, or environmental conditions, a metaweb does not
-necessarily represent a set of interactions that can occur
-simultaneously within a single community. Converting an empirical
-metaweb into a plausible community-level food web therefore requires an
-additional step: selecting which potential interactions are realised
-together.
+locations, seasons, or environmental conditions, however, a metaweb does
+not necessarily represent a set of interactions that can occur
+simultaneously within a single community. Using empirical interaction
+pools in dynamic models therefore requires an additional step: selecting
+which potential interactions are realised together to construct a
+plausible community-level food web.
 
-This process of network realisation introduces assumptions about the
-ecological processes that determine which interactions persist within a
-community. Different approaches may favour interactions involving
-particular species, retain central portions of consumers' potential
-trophic niches, or select links without reference to their ecological
-characteristics. These alternatives can produce networks with different
-structural properties even when they originate from the same empirical
-interaction pool. Consequently, network reconstruction is not simply a
-technical step for reducing network size or connectance; it is an
-ecological modelling decision that may influence subsequent predictions.
-Although food web reconstruction and the reuse of interaction networks
-can substantially affect ecological inference (Brimacombe et al., 2023),
-the extent to which assumptions introduced during network realisation
-propagate through dynamic modelling remains an important question.
+This process of network realisation introduces assumptions about how
+ecological processes filter potential interactions into realised
+communities. Different approaches may favour interactions near the
+centre of a consumer's trophic niche, assign retention probabilities
+according to consumer trophic breadth, favour links involving particular
+combinations of highly connected species, or remove interactions without
+reference to their ecological characteristics. Although these approaches
+can operate on the same empirical metaweb, they may produce networks
+with different structural properties. Such differences may become
+particularly important when substantial reductions in connectance are
+required, because the choice of which interactions to retain
+increasingly determines the architecture of the resulting network.
+Network reconstruction is therefore not simply a technical step for
+reducing network size or connectance, but an ecological modelling
+decision that can influence subsequent inference. More broadly, concerns
+about the comparability and reuse of interaction networks highlight the
+potential for methodological choices to propagate into ecological
+conclusions (Brimacombe et al., 2023). Yet how reconstruction
+assumptions influence both the subsequent structural reorganisation and
+the dynamical behaviour of food webs remains insufficiently understood.
 
-Network construction is also followed by a second filtering process.
-Dynamic food web models typically undergo a burn-in period during which
-biomass changes and species that cannot persist under the specified
-model conditions are lost. This process transforms the initial network
-into a dynamically viable community, potentially altering its structure
-before any perturbation is imposed. The resulting network therefore
-reflects two successive sets of assumptions: first, those determining
-which potential interactions are included, and second, those determining
-which species and interactions persist under the modelled dynamics.
-These stages may have distinct or interacting effects on network
-topology and ecological behaviour. In particular, it remains unclear
-whether structural signatures introduced during network construction
-persist following dynamical burn-in, and whether differences among
-reconstructed networks translate into differences in extinction
-responses. This distinction matters because topological extinction
-analyses assess consequences of network structure alone, whereas dynamic
-extinction simulations additionally incorporate biomass-dependent
-ecological processes (Curtsdotter et al., 2011).
+Network construction is followed by a second filtering process when the
+resulting food web is subjected to population dynamics. Dynamic models
+typically undergo a burn-in period during which biomass changes and
+species unable to persist under the specified model conditions are lost.
+This process transforms the initial network into a dynamically viable
+community, potentially altering its structure before any perturbation is
+imposed. Network realisation thus occurs in two stages: the initial
+selection of potential interactions and the subsequent filtering of the
+constructed network through dynamical persistence. These stages may have
+different consequences for ecological inference. Initial reconstruction
+may determine much of the network architecture inherited by subsequent
+simulations, whereas dynamical filtering may introduce additional
+differences through biomass-dependent and rate-dependent processes. It
+is therefore important to establish whether structural differences
+introduced during network construction persist through burn-in, and
+whether networks that differ in their initial topology also differ in
+their responses to extinction.
 
-Resolving these uncertainties is particularly relevant when dynamic
-models are used to investigate ecological change in systems for which
-empirical interaction data are incomplete. Palaeoecological records, for
-example, offer opportunities to examine community responses to major
-extinction events, but reconstructed fossil assemblages rarely provide a
-complete representation of a single realised food web (Dunhill et al.,
-2024; Fricke et al., 2022; Karapunar et al., 2026; Roopnarine, 2017;
-Roopnarine, 2006). Instead, they may be more appropriately represented
-as empirically constrained pools of potential interactions from which
-plausible community networks must be inferred. Developing approaches
-that translate these interaction pools into dynamically viable food webs
-could therefore support mechanistic investigations of ecological change
-through comparisons across extinction events and hindcasting exercises
-(Strydom, Catchen, et al., 2021). However, such applications require an
-understanding of how the assumptions used to reconstruct networks
-influence the structure and dynamics of the resulting communities.
+This distinction is particularly relevant when comparing topological and
+dynamic approaches to extinction robustness. Topological extinction
+simulations infer secondary extinctions from network structure, whereas
+dynamic simulations additionally account for changes in biomass and the
+ecological processes governing species persistence. Previous work has
+shown that these approaches can yield different estimates of food web
+robustness (Curtsdotter et al., 2011), but the extent to which this
+difference generalises across alternative network reconstruction
+approaches remains unclear. Moreover, similarities in topological
+extinction responses need not imply similarities in dynamic behaviour,
+because networks with comparable structural properties may interact
+differently with their functional parameterisation. Comparing network
+types across both approaches can therefore distinguish conclusions that
+are relatively insensitive to reconstruction choices from those that
+depend on how networks are constructed and dynamically parameterised.
+
+Understanding these dependencies is particularly important for
+ecological systems in which empirical interaction data are incomplete,
+including palaeoecological communities. Fossil records provide
+opportunities to investigate ecological change across major extinction
+events, but reconstructed assemblages rarely provide a complete
+observation of a single realised food web (Dunhill et al., 2024; Fricke
+et al., 2022; Karapunar et al., 2026; Roopnarine, 2017; Roopnarine,
+2006). Instead, they may be more appropriately represented as
+empirically constrained pools of potential interactions from which
+plausible community networks must be inferred. Translating these
+interaction pools into dynamically viable food webs could provide a
+route towards testing mechanistic explanations of ecological change,
+including through comparisons across extinction events and hindcasting
+exercises (Strydom, Catchen, et al., 2021). Such applications, however,
+require an understanding of how assumptions made during network
+reconstruction influence the ecological behaviour subsequently inferred
+from dynamic models.
 
 Here, we investigate how alternative approaches to network realisation
 influence food web structure, dynamical burn-in, and inferred extinction
-robustness. Using empirical metawebs, we generate realised food webs
-with four ecologically motivated downsampling approaches and compare
-them with networks generated using the niche and allometric trophic
-network models. We ask three questions: (1) how does the choice of
-network construction approach influence initial food web topology, and
-how do these differences change during dynamical burn-in? (2) To what
-extent do alternative reconstruction approaches influence the
-relationship between topological and dynamic estimates of extinction
-robustness? And (3) do network reconstruction approaches that differ
-structurally also produce distinct dynamical responses to extinction, or
-do these responses converge during subsequent simulations? Rather than
+robustness. Using empirical metawebs, we generate networks with four
+ecologically motivated downsampling approaches and compare them with
+networks constructed using the niche and allometric trophic network
+models. Specifically, we ask three questions. First, how does
+downsampling approach influence network topology, and to what extent do
+these differences persist following dynamical burn-in? Second, does the
+difference between topological and dynamic estimates of extinction
+robustness generalise across network reconstruction approaches and
+extinction scenarios? Third, do alternative network types retain similar
+relationships in inferred robustness under topological and dynamic
+extinction simulations, or does incorporating population dynamics reveal
+differences that are not apparent from topology alone? Rather than
 identifying a single optimal reconstruction method, we use these
-comparisons to evaluate whether assumptions introduced during network
-construction remain detectable throughout dynamic modelling. We argue
-that network realisation should be treated as an explicit source of
-ecological model uncertainty when empirical interaction data are used to
-generate mechanistic predictions about ecological change.
+comparisons to investigate how assumptions introduced during network
+construction propagate through subsequent dynamical modelling. We show
+that reconstruction approaches produce increasingly distinct topologies
+as greater proportions of interactions are removed, that dynamical
+burn-in acts as an additional structural filter, and that the
+relationship between topological and dynamic robustness is broadly
+consistent across network types despite differences in their inferred
+behaviour. Together, these results demonstrate that network realisation
+is an important source of ecological model uncertainty, while also
+identifying conclusions that remain comparatively robust across
+alternative representations of food web structure.
 
 \section{Methods}\label{methods}
 
