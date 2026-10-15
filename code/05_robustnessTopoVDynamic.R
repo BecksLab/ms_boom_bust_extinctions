@@ -2,6 +2,7 @@ library(tidyverse)
 library(broom)
 library(emmeans)
 library(genzplyr)
+library(multcomp)
 
 source("libs/plotting_themes.R")
 

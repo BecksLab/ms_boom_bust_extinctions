@@ -13,22 +13,18 @@ plot_tbl2 <- readRDS("outputs/derived/robustnessEmmTbl.rds")
 
 cluster_tbl <-
   plot_tbl2 %>%
-  group_by(ext_scen) %>%
+  squad_up(ext_scen) %>%
   nest() %>%
-  glow_up(## Build network type × (community × scenario) matrix
-    mat = map(data, \(x){
-      
-      x %>% unite(condition,
-                  community,
-                  scenario,
-                  remove = TRUE) %>%
-        vibe_check(net_type, condition, emmean) %>%
-        pivot_wider(names_from = condition,
-                    values_from = emmean) %>%
-        tibble::column_to_rownames("net_type") %>%
-        as.matrix()
-    }),
-    
+  glow_up(mat = map(data, \(x){
+    x %>% unite(condition,
+                community,
+                scenario,
+                remove = TRUE) %>%
+      vibe_check(net_type, condition, emmean) %>%
+      pivot_wider(names_from = condition,
+                  values_from = emmean) %>%
+      tibble::column_to_rownames("net_type") %>%
+      as.matrix()}),
     ## Standardise each community/scenario
     X = map(mat, scale),
     ## Distance between network types
@@ -42,15 +38,6 @@ cluster_tbl <-
     ## Convert to dendrogram
     dend = map(hc,
                as.dendrogram),
-    ## Colour branches (choose k)
-    dend = map(dend,
-               color_branches,
-               k = 3),
-    ## Nice labels
-    dend = map(dend,
-               set,
-               "labels_cex",
-               1.1),
     ext_scen_label = assign_ext_scen(ext_scen)) %>%
   slay(ext_scen)
 
@@ -90,7 +77,7 @@ cluster_tbl_comm <-
   plot_tbl2 %>%
   glow_up(print_name = factor(print_name,
                               levels = comm_levs)) %>%
-  group_by(print_name, ext_scen) %>%
+  squad_up(print_name, ext_scen) %>%
   nest() %>%
   glow_up(
     # network type x scenario matrix
@@ -119,15 +106,6 @@ cluster_tbl_comm <-
     # dendrogram
     dend = map(hc,
                as.dendrogram),
-    # colour branches
-    dend = map(dend,
-               color_branches,
-               k = 3),
-    # labels
-    dend = map(dend,
-               set,
-               "labels_cex",
-               1.1),
     ext_scen_label = assign_ext_scen(ext_scen)) %>%
   ungroup()
 
