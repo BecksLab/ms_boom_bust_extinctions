@@ -229,7 +229,7 @@ they behave}
 2%
 }%
 }
-\date{2026-10-15}
+\date{2026-10-16}
 
 \usepackage{setspace}
 \usepackage[left]{lineno}
@@ -435,16 +435,16 @@ reconstruction influence the ecological behaviour subsequently inferred
 from dynamic models.
 
 Here, we investigate how alternative approaches to network realisation
-influence food web structure, dynamical burn-in, and inferred extinction
+influence food web structure, burn-in, and inferred extinction
 robustness. Using empirical metawebs, we generate networks with four
 ecologically motivated downsampling approaches and compare them with
 networks constructed using the niche and allometric trophic network
 models. Specifically, we ask three questions. First, how does
 downsampling approach influence network topology, and to what extent do
-these differences persist following dynamical burn-in? Second, does the
-difference between topological and dynamic estimates of extinction
-robustness generalise across network reconstruction approaches and
-extinction scenarios? Third, do alternative network types retain similar
+these differences persist following burn-in? Second, does the difference
+between topological and dynamic estimates of extinction robustness
+generalise across network reconstruction approaches and extinction
+scenarios? Third, do alternative network types retain similar
 relationships in inferred robustness under topological and dynamic
 extinction simulations, or does incorporating population dynamics reveal
 differences that are not apparent from topology alone? Rather than
@@ -452,70 +452,71 @@ identifying a single optimal reconstruction method, we use these
 comparisons to investigate how assumptions introduced during network
 construction propagate through subsequent dynamical modelling. We show
 that reconstruction approaches produce increasingly distinct topologies
-as greater proportions of interactions are removed, that dynamical
-burn-in acts as an additional structural filter, and that the
-relationship between topological and dynamic robustness is broadly
-consistent across network types despite differences in their inferred
-behaviour. Together, these results demonstrate that network realisation
-is an important source of ecological model uncertainty, while also
-identifying conclusions that remain comparatively robust across
-alternative representations of food web structure.
+as greater proportions of interactions are removed, that burn-in acts as
+an additional structural filter, and that the relationship between
+topological and dynamic robustness is broadly consistent across network
+types despite differences in their inferred behaviour. Together, these
+results demonstrate that network realisation is an important source of
+ecological model uncertainty, while also identifying conclusions that
+remain comparatively robust across alternative representations of food
+web structure.
 
 \section{Methods}\label{methods}
 
-\subsection{Data}\label{data}
+\subsection{Fossil data}\label{fossil-data}
 
-We used community data from seven locations compiled by Karapunar et al.
-(2026). The dataset comprises community-level trophic data representing
-potentially interacting taxa across these locations. We used guild-level
-rather than species-level data to keep network size manageable and
-within the range examined by Curtsdotter et al. (2011). To extend the
-basal component of the networks and better represent a realised
-community, we additionally incorporated plankton and zooplankton data
-from the outputs of the EcoGEnIE models (Ward et al., 2018) used in
-Karapunar et al. (2026). Each location was treated as a community of
-potentially interacting taxa, with interactions represented at the guild
-level. We excluded the community from Russia because it contained no
-intermediate species and was therefore unsuitable for the subsequent
-network analyses. Detailed descriptions of the underlying community
-data, including trait assignment, their composition and spatial
-structure, are provided by Karapunar et al. (2026).
+We used community data from seven locations spanning the
+Permian-Triassic mass extinction (PTME) event compiled by Karapunar et
+al. (2026). This dataset comprises community-level trophic data
+representing potentially interacting taxa across seven locations across
+the Permian-Triassic mass extinction (PTME; \textasciitilde250 Ma)
+event. Here we used the guild-level assemblages from the pre-extinction
+(Permian) time point along with the plankton and zooplankton data from
+the outputs of the EcoGEnIE models (Ward et al., 2018) also used in
+Karapunar et al. (2026). These represent distinct communities of
+potentially interacting guilds. We excluded the community from Russia
+because it contained no intermediate species and was therefore
+unsuitable for the subsequent extinction analyses as it would produce
+distinct results. The seven locations act as replicates to better
+determine if observed extinction patterns are driven by specific network
+structures (location) or if results are more generalisable. Detailed
+descriptions of the underlying community data, including trait
+assignment, their composition and spatial structure, are provided in
+Karapunar et al. (2026).
 
 \subsection{Network construction}\label{network-construction}
 
-For the empirical networks, we used the Paleo Food Web Inference Model
-(PFWIM; Shaw et al. (2024)) to infer trophic interactions from discrete
-ecological trait categories. PFWIM applies a set of mechanistic
-feasibility rules to consumer--resource pairs, with an interaction
-inferred only when the relevant trait combinations satisfy the specified
-rules. To maximise the breadth of plausible interactions given the
-available trait data, we used fully categorical rules rather than
-imposing more restrictive continuous or quantitative thresholds. The
-resulting PFWIM networks were used as community-specific metawebs, from
-which networks were subsequently downsampled to specified target
-connectances (see Section~\ref{sec-downsample} for details on
-downsampling).
-
-We additionally generated niche-model networks parameterised using the
-species richness and target connectance of each community (Williams \&
-Martinez, 2000). Finally, we constructed allometric trophic network
-(ATN) model (Brose et al., 2006), providing a complementary mechanistic
-representation of trophic interactions based on consumer--resource
-body-size relationships. For the ATN networks we generated a range of
-networks by varying they probability parameter and selected the network
-that best matched the target connectance.
+Metawebs were constructed using the Paleo Food Web Inference Model
+(PFWIM; Shaw et al. (2024)). The PFWIM applies a set of mechanistic
+feasibility rules to consumer--resource pairs based on different trait
+classes. An interaction is deemed as being feasible only when all trait
+combinations satisfy the specified rules. These metawebs were
+subsequently downsampled to the specified target connectance (see
+Section~\ref{sec-downsample} for details on downsampling). Using the
+community data we also constructed networks using the allometric trophic
+network (ATN) model (Brose et al., 2006), which represents a realised
+but empirically grounded network. For the ATN species body masses were
+sampled independently from a truncated log-normal distribution
+constrained by species categorical body-size classifications.
+Interaction probabilities were generated by varying the feeding
+threshold between 0.01 and 0.12 and selecting the network whose
+connectance most closely matched a target connectance. Finally for each
+community we also constructed a niche model network (Williams \&
+Martinez, 2000) using the guild richness and target connectance as input
+parameters (see Section~\ref{sec-simulations} for details on
+parametrisation)
 
 \subsection{Downsampling approaches}\label{sec-downsample}
 
-We treat downsampling as a process of ecological realisation rather than
-observation. Starting from a metaweb containing all potential trophic
-interactions, each downsampling approach represents an alternative
-ecological hypothesis describing how local ecological processes filter
-these potential interactions into the subset that is realised within a
-particular community. The different approaches therefore differ not only
-in their implementation, but also in the ecological assumptions they
-embed about how realised food webs emerge from a common regional
-interaction pool.
+We treat downsampling as an assumption on the process of ecological
+realisation rather than observation. Starting from a metaweb containing
+all potential trophic interactions, each downsampling approach
+represents an alternative ecological hypothesis describing how local
+ecological processes may filter these potential interactions into the
+subset that is realised within a particular community. The different
+approaches therefore differ not only in their implementation, but also
+in the ecological assumptions they embed about how realised food webs
+emerge from a common regional interaction pool.
 
 \subsubsection{Niche}\label{niche}
 
@@ -671,59 +672,63 @@ realisation of one potential interaction over another, such that
 realised food webs constitute an unbiased subset of the regional metaweb
 that is ultimately only constrained by the number of links.
 
-\subsection{Simulations}\label{simulations}
+\subsection{Simulations}\label{sec-simulations}
 
-\subsubsection{Network construction}\label{network-construction-1}
+For each empirical community, we generated 30 network replicates (\(n\)
+= 30 replicates \(\times\) 7 network types \(\times\) 6 locations). For
+each replicate a target connectance was independently sampled from a
+truncated normal distribution bounded between 0.05 and 0.15. This target
+connectance was used to determine the `degree of downsampling' of the
+metaweb for each downsampling approach as well as constraining the ATN
+and Niche networks. These represent the `creation' networks
 
-For each empirical community, we generated 30 network replicates.
-Species body masses were sampled independently from truncated log-normal
-distributions constrained by their categorical body-size classifications
-but were only used in the construction of the ATNs; for the dynamic
-simulations body masses were assigned using the predator-prey body mass
-distribution where body mass (\(M_i\)) is assigned deterministically
-from the trophic level (\(TL\)) as follows \(M_{i} = Z^{TL_{i}-1}\),
-where \(Z\) represents the assumed constant predator--prey body-mass
-ratio, here set to 10. Initial biomasses were drawn from a uniform
-distribution. These trait values were used to construct a series of
-alternative networks.
+For the dynamic simulations body masses were assigned using the
+predator-prey body mass distribution where body mass (\(M_i\)) is
+assigned deterministically from the trophic level (\(TL\)) as follows
+\(M_{i} = Z^{TL_{i}-1}\), where \(Z\) represents the assumed constant
+predator--prey body-mass ratio, here set to 10. Note that even for the
+ATN networks we used this theoretical body size specification despite
+the network itself being constructed with empirical bodysizes. This is
+because we found that for networks which had empirically specified body
+sizes the community would almost completely collapse (see Supp Mat),
+which suggests the dynamic model itself is sensitive to this
+specification. Initial biomasses were drawn from a uniform distribution.
+These trait values were used to construct a series of alternative
+networks.
 
-For the ATN, interaction probabilities were generated by varying the
-feeding threshold between 0.01 and 0.12 and selecting the network whose
-connectance most closely matched a target connectance. Target
-connectance was independently sampled for each replicate from a
-truncated normal distribution bounded between 0.05 and 0.15. The target
-connectance and richness of the metaweb were used to build a niche model
-and the metaweb was downsampled until the target connectance was reach.
-These represent the `creation' networks.
-
-Each creation network was then parameterised using the END package
-(Delmas et al., 2017) and simulated for up to 5000 time steps. Species
-whose biomass declined below the survival threshold (\(10^{-12}\))
-during this burn-in period were considered extinct and removed from the
-network. The surviving species and their interactions constituted the
-corresponding `realised' networks.
+Each creation network was then parameterised using the default
+parameters (Delmas et al., 2017) and ran the model until we had stable
+biomass fluctuation or up to 5000 time steps. Species whose biomass
+declined below the survival threshold (\(10^{-12}\)) during this burn-in
+period were considered extinct and removed from the network. The
+surviving species and their interactions constituted the corresponding
+`realised' networks.
 
 \subsubsection{Extinction simulations}\label{extinction-simulations}
 
-Extinction experiments were subsequently performed on both the creation
-and realised networks. Topological extinction simulations were conducted
-on both network stages, whereas dynamic extinction simulations were
-performed only on realised networks. In all simulations, primary
-extinctions followed one of the prescribed extinction scenarios. During
-topological simulations, secondary extinctions occurred when species
-lost all prey, these were allowed to cascade. During dynamic
-simulations, primary extinctions were imposed by setting the biomass of
-the focal species to the survival threshold (\(10^{-12}\)), after which
-the community was simulated for a further 5000 time steps to allow
-biomass dynamics to relax. Species whose biomass subsequently declined
-below the survival threshold were recorded as secondary extinctions.
+or extinctions we followed the framework of Curtsdotter et al. (2011)
+and simulated both topological and dynamic extinctions. Topological
+extinctions were done on both the `creation' as well as `realised'
+networks. For each type of extinction simulation we used the same ten
+extinction scenarios from Curtsdotter et al. (2011) to determine the
+order of species to be removed for primary extinctions. For topological
+extinctions secondary extinctions occurred when species lost all prey,
+these secondary extinctions were allowed to cascade before the next
+primary extinction occurred. For dynamic extinctions primary extinctions
+were imposed by setting the biomass of the focal species to the survival
+threshold (\(10^{-12}\)), after which the community was simulated for a
+further 5000 time steps to allow for the downstream effects of the
+primary extinction to propagate through the system. Species whose
+biomass subsequently declined below the survival threshold were recorded
+as secondary extinctions and removed at the end of the 5000 time steps.
 This procedure was repeated until the entire community collapsed.
 
 For each extinction scenario, robustness was quantified from the
 resulting extinction curves as the proportion of primary extinctions
-required to produce a 50\% reduction in species richness (\(R_{50}\)
-(Jonsson et al., 2015)), estimated by linear interpolation between
-extinction events.
+required to produce a 50\% reduction in total species richness
+(\(R_{50}\) (Jonsson et al., 2015)). In instances when a primary
+extinction would `overshoot' the 50\% robustness estimated by linear
+interpolation between extinction events.
 
 \subsection{Software}\label{software}
 
@@ -733,8 +738,8 @@ v1.12.6 (Bezanson et al., 2017), we used
 dynamic simulations, \texttt{PFIM.jl} {[}REF{]} for construction of
 metawebs, \texttt{FoodWebTools.jl} {[}REF{]} for network downsampling,
 and Extinctions.jl {[}REF{]} for extinctions and robustness
-calculations. Statistical analyses were run in R v4.5.2 {[}REF{]}. All
-code can be found at \emph{TODO}
+calculations. Statistical analyses were run in R v4.5.2 (R Core Team,
+2024). All code can be found at \emph{TODO}
 
 \section{Downsampling and burn-in alter network topology in
 method-dependent
@@ -780,42 +785,41 @@ We next asked whether these structurally distinct networks responded
 differently during the burn-in phase (Figure~\ref{fig-downsample}, panel
 B). Structural reorganisation was quantified as the Euclidean
 displacement between network positions before and after burn-in in the
-first three principal component dimensions, with community included as a
-random effect to account for the substantial variation among
-communities. Burn-in displacement differed significantly among network
-types (\(F\) = 62.0, \(p\) \textless{} 0.001). Metawebs underwent the
-greatest structural reorganisation, whereas ATNs exhibited the smallest
+first three principal component dimensions, with location included as a
+random effect to account for the substantial variation among location.
+Burn-in displacement differed significantly among network types (\(F\) =
+62.0, \(p\) \textless{} 0.001). Metawebs underwent the greatest
+structural reorganisation, whereas ATNs exhibited the smallest
 displacement. Among the downsampled networks, all but the randomly
-downsampled networks had displacement similar to that of the Niche model
-(Figure S2), while all downsampled networks showed displacement distinct
-from the original metaweb. When looking at the loadings of the first two
-PC axes (Figure~\ref{fig-downsample}, panel C), the primary changes in
-structure were related to node-level measures and, unsurprisingly, the
-number of links. This is to be expected since there is no rewiring of
-links permitted in this system, and as such any changes should be driven
-by the loss of nodes rather than a major reorganisation of network
-structure.
+downsampled networks had a displacement similar to that of the Niche
+model (Figure SXX), while all downsampled networks showed displacement
+distinct from the original metaweb. When looking at the loadings of the
+first two PC axes (Figure~\ref{fig-downsample}, panel C), the primary
+changes in structure were related to node-level measures and,
+unsurprisingly, the number of links. This is to be expected since there
+is no rewiring of links permitted in this system, and as such any
+changes should be driven by the loss of nodes rather than a major
+reorganisation of network structure.
 
 Together, these analyses demonstrate that downsampling approach
 influences network topology both during the initial downsampling step
 and during the subsequent burn-in phase. Differences among downsampling
 methods become increasingly pronounced as greater proportions of
 interactions are removed, consistent with the expectation that the
-ecological assumptions underlying each removal strategy would exert a
-stronger influence under more aggressive downsampling. Importantly,
-despite generating distinct initial topologies, the different
-downsampling approaches underwent remarkably similar structural
-reorganisation during burn-in, changing in ways more similar to the
-niche model than the original metaweb. This suggests that ecologically
-informed downsampling of metawebs allows us to produce networks whose
-subsequent structure more closely resembles that of the niche model,
-while also suggesting that the burn-in phase is, in and of itself, an
-additional network realisation step. Notably, the two realised models
-(niche model and ATN) do not behave similarly and still end up at
-different `end points' following burn-in compared with the empirical
-webs, highlighting that network reconstruction approach will still have
-a strong effect on the inferred dynamics and behaviour of the system
-(Strydom et al., 2026).
+ecological assumptions underlying each removal strategy would become
+more embedded as more links are removed. Importantly, despite generating
+distinct initial topologies, the different downsampling approaches
+underwent remarkably similar structural reorganisation during burn-in,
+changing in ways more similar to the niche model than the original
+metaweb. This suggests that ecologically informed downsampling of
+metawebs allows us to produce networks whose subsequent structure more
+closely resembles that of the niche model, while also suggesting that
+the burn-in phase is, in and of itself, an additional network
+realisation step. Notably, the two realised models (niche model and ATN)
+do not behave similarly and still end up at different `end points'
+following burn-in compared with the empirical webs, highlighting that
+network reconstruction approach will still have a strong effect on the
+inferred dynamics and behaviour of the system (Strydom et al., 2026).
 
 \section{Differences in inferred robustness of topological and dynamic
 are unaffected by network
@@ -836,12 +840,12 @@ identified by Curtsdotter et al. (2011) was largely maintained. Under
 all but random basal removal, topological extinction inferred greater
 robustness than dynamic extinction for every network type, although the
 magnitude of this discrepancy varied among reconstruction methods
-Figure~\ref{fig-TopoVDynamic}. Random basal extinction represented the
-only notable departure from this general pattern. Here, the discrepancy
-between topological and dynamic robustness was substantially reduced,
-with power-law and degree-product downsampled networks exhibiting a
-slightly higher \(\Delta R_{50}\) and random downsampled networks
-showing little difference between the two approaches. Thus, the
+(Figure~\ref{fig-TopoVDynamic}). Random basal extinction represented the
+only notable departure from this general pattern (Figure SXX). Here, the
+discrepancy between topological and dynamic robustness was substantially
+reduced, with power-law and degree-product downsampled networks
+exhibiting a slightly higher \(\Delta R_{50}\) and random downsampled
+networks showing little difference between the two approaches. Thus, the
 conclusion that topological analyses provide more conservative estimates
 of robustness, although not universal, remains remarkably robust across
 reconstruction methods and extinction scenarios.
@@ -884,9 +888,8 @@ marginal means were compared using Tukey-adjusted pairwise contrasts
 considered indistinguishable, and the frequency of indistinguishable
 comparisons was summarised across scenarios {[}SUPP MATT{]}. To identify
 broader groupings of network types, estimated marginal means were
-standardised within extinction time point, Euclidean distances among
-network types were calculated, and hierarchical clustering was performed
-using Ward's \(D^2\) method.
+standardised, Euclidean distances among network types were calculated,
+and hierarchical clustering was performed using Ward's \(D^2\) method.
 
 \begin{figure}
 
@@ -907,59 +910,55 @@ method. Branch colours indicate three clusters of network types}
 
 \end{figure}%
 
-In terms of topological robustness, empirically derived networks
-consistently formed a distinct cluster separate from the two synthetic
+In terms of topological robustness, metaweb derived networks
+consistently formed a distinct cluster separate from the two realised
 networks (niche model and ATN; Figure~\ref{fig-robDynamic}, top two
 rows). However, under dynamic extinction simulations, this grouping
 broke down, with a reshuffling of the relative similarity among network
 types (Figure~\ref{fig-robDynamic}, bottom row). Most notably, the
-downsampled niche networks yielded robustness estimates that converged
-with those of the synthetic niche model, whereas the remaining
-empirically derived networks maintained their mutual similarity.
-Additionally, the ATN networks shifted to appear more similar in
-robustness to the empirical cluster.
+downsampled niche networks converged with those of the niche model,
+whereas the remaining empirically derived networks maintained their
+mutual similarity. Additionally, the ATN networks shifted to appear more
+similar in robustness to the empirical cluster.
 
 Topological extinction simulations primarily interrogate network
 architecture and therefore retain the common structural signature
-inherited from the metaweb. Dynamic simulations introduce a second layer
-of ecological structure through biomass- and rate-dependent
-interactions, revealing differences among networks that are not apparent
-from topology alone. When examining topological extinctions, it is clear
-why empirically derived networks behave similarly to one another: they
-share a common baseline architecture inherited from the regional metaweb
-(Figure~\ref{fig-downsample}, panel B), and topological cascades depend
-strictly on network topology. For dynamic extinctions, however, network
-behaviour is not determined solely by initial structure. Instead,
-higher-order differences emerge from how functional parameterisation
-interacts with network topology. In the bio-energetic food web (BEFW)
+inherited from the metaweb. Dynamic simulations introduce biomass- and
+rate-dependent interactions, revealing differences among networks that
+are not apparent from topology alone. When examining topological
+extinctions, it is clear why empirically derived networks behave
+similarly to one another: they share a common baseline architecture
+inherited from the regional metaweb (Figure~\ref{fig-downsample}, panel
+B), and topological cascades depend strictly on network topology. For
+dynamic extinctions, however, network behaviour is not determined solely
+by initial structure. Instead, higher-order differences emerge from how
+functional parameterisation interacts with network topology. In the BEFW
 framework, species body mass dictates some of the key functional
 parameters, including metabolic and consumption rates (Delmas et al.,
-2017), and it is therefore plausible that these differences contribute
-to the observed similarity in behaviour of the two niche-type networks.
-Thus, network structure appears sufficient to explain much of the
-similarity in responses to topological extinctions, but is insufficient
-to predict responses to dynamic extinctions, where functional
-parameterisation introduces additional sources of variation. Although
-the clustering pattern was not universal across communities {[}SUPP MATT
-REF{]}, suggesting that network structure still exerts an initial
-influence, it was not by itself sufficient to determine dynamic
-robustness.
+2017), and it is therefore plausible that this contributes to the
+observed similarity in behaviour of the two niche-type networks. Thus,
+network structure appears sufficient to explain much of the similarity
+in responses to topological extinctions, but is insufficient to predict
+responses to dynamic extinctions, where functional parameterisation
+introduces additional sources of variation. Although the clustering
+pattern was not universal across communities {[}SUPP MATT REF{]},
+suggesting that network structure still exerts an initial influence.
 
-This raises an important question about the role of network connectance:
-to what extent does specifying connectance constrain the structural and
-dynamical properties of generated networks? Work from Poisot \& Gravel
-(2014) and Strydom, Dalla Riva, et al. (2021) shows that less-connected
-networks can exhibit greater structural complexity, because there are
-many ways to arrange a small number of links but progressively fewer
-ways to arrange links as a network approaches full connectivity. At low
-connectance, we therefore expect a much larger number of possible
-network configurations, meaning that specifying connectance we place
-constraints on the precise structure of the resulting network. This
-provides one possible explanation for why increasingly aggressive
-downsampling can amplify differences among reconstruction approaches: as
-fewer interactions are retained, the ecological assumptions used to
-determine which interactions remain have greater scope to shape the
-resulting network.
+This raises an important question about the role of network connectance
+-- to what extent does specifying connectance constrain the structural
+and dynamical properties of generated networks? Work from Poisot \&
+Gravel (2014) and Strydom, Dalla Riva, et al. (2021) shows that
+less-connected networks can exhibit greater structural complexity,
+because there are many ways to arrange a small number of links but
+progressively fewer ways to arrange links as a network becomes fully
+connected. At low connectance, we therefore expect a much larger number
+of possible network configurations, meaning that in specifying
+connectance we place constraints on the precise structure of the
+resulting network. This provides one possible explanation for why
+increasingly aggressive downsampling can amplify differences among
+reconstruction approaches: as fewer interactions are retained, the
+ecological assumptions used to determine which interactions remain have
+greater scope to shape the resulting network.
 
 \section{Conclusions}\label{conclusions}
 
@@ -981,7 +980,7 @@ network construction. Instead, the dynamical model acted as an
 additional filter, determining which structurally feasible networks
 could persist given its assumptions about biomass, interaction
 strengths, and species persistence. The ecological behaviour of a
-simulated community is therefore shaped by successive filters - first,
+simulated community is therefore shaped by successive filters -- first,
 how potential interactions are realised into a network, and second, how
 that network is realised as a dynamically viable community.
 
@@ -1011,6 +1010,11 @@ interactions can persist. Network realisation therefore represents a
 necessary but currently underappreciated bridge between empirical
 interaction data and mechanistic dynamic modelling.
 
+\begin{quote}
+make this paragraph more general. downsampling is a way fro ust to take
+the commonly available metaweb and make it dynamic
+\end{quote}
+
 This distinction may be particularly important for systems in which
 empirical interaction data are necessarily incomplete, including
 palaeoecological communities. Fossil records can provide unusually
@@ -1024,6 +1028,12 @@ ecological change rather than relying solely on topological
 reconstructions. Our results provide a first step towards this goal,
 while demonstrating that the assumptions required to construct the
 network can remain detectable throughout the modelling process.
+
+\begin{quote}
+maybe also include something here about the similarity in behaviour of
+the the niche networks and suggest how it might be an alignment with the
+BEFW?
+\end{quote}
 
 Rather than identifying a single correct method for constructing
 realised networks, we therefore argue that network realisation should be
@@ -1128,6 +1138,11 @@ Poisot, T., \& Gravel, D. (2014). When is an ecological network complex?
 {Connectance} drives degree distribution and emerging network
 properties. \emph{PeerJ}, \emph{2}, e251.
 \url{https://doi.org/10.7717/peerj.251}
+
+\bibitem[\citeproctext]{ref-RCoreTeam2024}
+R Core Team. (2024). \emph{R: {A Language} and {Environment} for
+{Statistical Computing}} {[}Computer software{]}. R Foundation for
+Statistical Computing. \url{https://www.r-project.org/}
 
 \bibitem[\citeproctext]{ref-roopnarineEcologicalModellingPaleocommunity2017}
 Roopnarine, P. D. (2017). Ecological {Modelling} of {Paleocommunity Food

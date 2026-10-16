@@ -271,6 +271,104 @@
 <p><a href="../figures/bodysize/propOverlap.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="../figures/bodysize/propOverlap.png" class="img-fluid"></a></p>
 <p>This is qualitatively supported if we look at some of the species traits. Below, we show the distribution of biomass, generality (number of prey), metabolism (a trait informed by body size), trophic level, and vulnerability (number of prey), coloured by whether they survive the burn-in or not. Here, we can see similar patterns between the two body size specifications (<em>e.g.,</em> in metawebs, species with a high generality are the ones going extinct), and it is just exacerbated in the empirical body size webs. The only differences are in metabolism, where we see species with high metabolic rates going extinct in empirical body size webs and species with ‘intermediate’ metabolic rates going extinct in internally specified body size webs. Note also that, when looking at trophic levels, we see the loss of intermediate species in empirical body size webs. Overall, this suggests that body size specification can have massive implications for the behaviour of the dynamic model and suggests that it largely influences the indirect effect such as top-down control.</p>
 <p><a href="../figures/bodysize/distributions.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../figures/bodysize/distributions.png" class="img-fluid"></a></p>
+<p>#&nbsp;Network Topology</p>
+<p><strong>Table S1: Network structural measures used</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 27%">
+<col style="width: 24%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Label</th>
+<th>Definition</th>
+<th>Structural interpretation</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Top</td>
+<td>Proportion of taxa with zero generality (no resources).</td>
+<td>Describes the relative prevalence of terminal consumers in the network.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Links (L)</td>
+<td>Total number of trophic interactions (edges).</td>
+<td>Describes interaction density independent of network size.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Connectance</td>
+<td><span class="math inline">\(L/S^2\)</span>, where <span class="math inline">\(S\)</span> is the number of species and <span class="math inline">\(L\)</span> the number of links</td>
+<td>Measures the proportion of realised interactions relative to all possible interactions.</td>
+<td>Dunne et al.&nbsp;2002</td>
+</tr>
+<tr class="even">
+<td>Path</td>
+<td>Mean shortest path length between all species pairs.</td>
+<td>Describes the average distance between taxa within the network.</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Omnivory</td>
+<td>Proportion of taxa feeding on resources at multiple trophic levels.</td>
+<td>Describes vertical coupling of energy channels.</td>
+<td><span class="citation" data-cites="mccannDiversityStabilityDebate2000">McCann (<a href="#ref-mccannDiversityStabilityDebate2000" role="doc-biblioref">2000</a>)</span></td>
+</tr>
+<tr class="even">
+<td>GenSD</td>
+<td>Normalised standard deviation of generality.</td>
+<td>Captures heterogeneity in the number of resources per taxon.</td>
+<td><span class="citation" data-cites="williamsLimitsTrophicLevels2004">Williams and Martinez (<a href="#ref-williamsLimitsTrophicLevels2004" role="doc-biblioref">2004</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>VulSD</td>
+<td>Normalised standard deviation of vulnerability.</td>
+<td>Captures heterogeneity in the number of consumers per taxon.</td>
+<td><span class="citation" data-cites="williamsLimitsTrophicLevels2004">Williams and Martinez (<a href="#ref-williamsLimitsTrophicLevels2004" role="doc-biblioref">2004</a>)</span></td>
+</tr>
+<tr class="even">
+<td>Intervality</td>
+<td>Degree to which taxa can be ordered along a single niche dimension.</td>
+<td>Measures the extent of niche ordering in trophic interactions.</td>
+<td><span class="citation" data-cites="stoufferRobustMeasureFood2006">Stouffer et al. (<a href="#ref-stoufferRobustMeasureFood2006" role="doc-biblioref">2006</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>S1 (Linear chain)</td>
+<td>Frequency of three-node linear chains (A → B → C) with no additional links.</td>
+<td>Captures the prevalence of simple, unbranched energy-transfer pathways.</td>
+<td><span class="citation" data-cites="stoufferRobustMeasureFood2006">Stouffer et al. (<a href="#ref-stoufferRobustMeasureFood2006" role="doc-biblioref">2006</a>)</span> <span class="citation" data-cites="miloNetworkMotifsSimple2002">Milo et al. (<a href="#ref-miloNetworkMotifsSimple2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="even">
+<td>S2 (Omnivory)</td>
+<td>Frequency of three-node motifs forming a feed-forward loop (A → B → C, A → C).</td>
+<td>Describes vertical coupling of trophic levels within small subnetworks.</td>
+<td><span class="citation" data-cites="stoufferRobustMeasureFood2006">Stouffer et al. (<a href="#ref-stoufferRobustMeasureFood2006" role="doc-biblioref">2006</a>)</span> <span class="citation" data-cites="miloNetworkMotifsSimple2002">Milo et al. (<a href="#ref-miloNetworkMotifsSimple2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>S4 (Direct competition)</td>
+<td>Frequency of motifs where two consumers share a single resource (A ← B → C).</td>
+<td>Describes the occurrence of shared-resource structures among consumers.</td>
+<td><span class="citation" data-cites="stoufferRobustMeasureFood2006">Stouffer et al. (<a href="#ref-stoufferRobustMeasureFood2006" role="doc-biblioref">2006</a>)</span> <span class="citation" data-cites="miloNetworkMotifsSimple2002">Milo et al. (<a href="#ref-miloNetworkMotifsSimple2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="even">
+<td>S5 (Apparent competition)</td>
+<td>Frequency of motifs where one consumer feeds on two resources (A → B ← C).</td>
+<td>Captures the prevalence of shared-predator structures among resources.</td>
+<td><span class="citation" data-cites="stoufferRobustMeasureFood2006">Stouffer et al. (<a href="#ref-stoufferRobustMeasureFood2006" role="doc-biblioref">2006</a>)</span> <span class="citation" data-cites="miloNetworkMotifsSimple2002">Milo et al. (<a href="#ref-miloNetworkMotifsSimple2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>TrophicCoherence</td>
+<td>Measure how well the species in a food web fit into discrete trophic levels.</td>
+<td>Highly coherent, neatly layered food webs are more stable to perturbations</td>
+<td><span class="citation" data-cites="johnsonTrophicCoherenceDetermines2014">Johnson et al. (<a href="#ref-johnsonTrophicCoherenceDetermines2014" role="doc-biblioref">2014</a>)</span></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="downsampling-and-burn-in-alter-network-topology-in-method-dependent-ways" class="level1">
 <h1>Downsampling and burn-in alter network topology in method-dependent ways</h1>
@@ -283,7 +381,7 @@
 </section>
 <section id="differences-in-inferred-robustness-of-topological-and-dynamic-are-unaffected-by-network-type" class="level1">
 <h1>Differences in inferred robustness of topological and dynamic are unaffected by network type</h1>
-<p><strong>Table S1: Model outputs</strong></p>
+<p><strong>Table S2: Model outputs</strong></p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(knitr, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
@@ -468,6 +566,21 @@
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-curtsdotterRobustnessSecondaryExtinctions2011" class="csl-entry" role="listitem">
 Curtsdotter, Alva, Amrei Binzer, Ulrich Brose, et al. 2011. <span>“Robustness to Secondary Extinctions: <span>Comparing</span> Trait-Based Sequential Deletions in Static and Dynamic Food Webs.”</span> <em>Basic and Applied Ecology</em> 12 (7): 571–80. <a href="https://doi.org/10.1016/j.baae.2011.09.008">https://doi.org/10.1016/j.baae.2011.09.008</a>.
+</div>
+<div id="ref-johnsonTrophicCoherenceDetermines2014" class="csl-entry" role="listitem">
+Johnson, Samuel, Virginia Domínguez-García, Luca Donetti, and Miguel A. Muñoz. 2014. <span>“Trophic Coherence Determines Food-Web Stability.”</span> <em>Proceedings of the National Academy of Sciences</em> 111 (50): 17923–28. <a href="https://doi.org/10.1073/pnas.1409077111">https://doi.org/10.1073/pnas.1409077111</a>.
+</div>
+<div id="ref-mccannDiversityStabilityDebate2000" class="csl-entry" role="listitem">
+McCann, Kevin Shear. 2000. <span>“The Diversity–Stability Debate.”</span> <em>Nature</em> 405 (6783): 228–33. <a href="https://doi.org/10.1038/35012234">https://doi.org/10.1038/35012234</a>.
+</div>
+<div id="ref-miloNetworkMotifsSimple2002" class="csl-entry" role="listitem">
+Milo, R., S. Shen-Orr, S. Itzkovitz, N. Kashtan, D. Chklovskii, and U. Alon. 2002. <span>“Network <span>Motifs</span>: <span>Simple Building Blocks</span> of <span>Complex Networks</span>.”</span> <em>Science</em> 298 (5594): 824–27. <a href="https://doi.org/10.1126/science.298.5594.824">https://doi.org/10.1126/science.298.5594.824</a>.
+</div>
+<div id="ref-stoufferRobustMeasureFood2006" class="csl-entry" role="listitem">
+Stouffer, Daniel B., Juan Camacho, and Luís A. Nunes Amaral. 2006. <span>“A Robust Measure of Food Web Intervality.”</span> <em>Proceedings of the National Academy of Sciences</em> 103 (50): 19015–20. <a href="https://doi.org/10.1073/pnas.0603844103">https://doi.org/10.1073/pnas.0603844103</a>.
+</div>
+<div id="ref-williamsLimitsTrophicLevels2004" class="csl-entry" role="listitem">
+Williams, Richard J., and Neo D. Martinez. 2004. <span>“Limits to <span>Trophic Levels</span> and <span>Omnivory</span> in <span>Complex Food Webs</span>: <span>Theory</span> and <span>Data</span>.”</span> <em>The American Naturalist</em> 163 (3): 458–68. <a href="https://doi.org/10.1086/381964">https://doi.org/10.1086/381964</a>.
 </div>
 </div>
 </section>
