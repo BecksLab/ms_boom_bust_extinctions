@@ -283,7 +283,10 @@ p_realisation <-
             linewidth = 1) +
   scale_alpha_identity() +
   scale_colour_manual(values = net_type_col_pal) +
-  facet_grid(scenario ~ net_type)
+  facet_grid(scenario ~ net_type,
+             labeller = labeller(net_type = net_type_dict)) +
+  labs(y = "Predicted robustness distance",
+       x = "Degree of downsampling (Δ connectance)")
 
 p_creation + p_realisation +
   plot_annotation(tag_levels = "A") +
