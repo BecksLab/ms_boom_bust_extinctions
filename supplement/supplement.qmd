@@ -24,36 +24,55 @@ This is qualitatively supported if we look at some of the species traits. Below,
 
 ![](../figures/bodysize/distributions.png)
 
-# Network Topology
+# Network Topology
 
 **Table S1: Network structural measures used**
 
+Metrics in bold are those that show strong correlations with the PCA axis identified in Figure 1
+
 | Label | Definition | Structural interpretation | Reference |
 |------------------|------------------|--------------------|------------------|
-| Top | Proportion of taxa with zero generality (no resources). | Describes the relative prevalence of terminal consumers in the network. |  |
-| Links (L) | Total number of trophic interactions (edges). | Describes interaction density independent of network size. |  |
-| Connectance | $L/S^2$, where $S$ is the number of species and $L$ the number of links | Measures the proportion of realised interactions relative to all possible interactions. | Dunne et al. 2002 |
-| Path | Mean shortest path length between all species pairs. | Describes the average distance between taxa within the network. |  |
-| Omnivory | Proportion of taxa feeding on resources at multiple trophic levels. | Describes vertical coupling of energy channels. | @mccannDiversityStabilityDebate2000 |
+| Basal | Proportion of taxa with zero vulnerability (no consumers). | Quantifies the proportion of species representing basal energy inputs to the network. |  |
+| **Top** | Proportion of taxa with zero generality (no resources). | Describes the relative prevalence of terminal consumers in the network. |  |
+| Intermediate | Proportion of taxa with both consumers and resources. | Captures the proportion of species participating in both upward and downward energy transfer. |  |
+| Richness (S) | Number of taxa (nodes) in the network. | Describes network size. |  |
+| **Links (L)** | Total number of trophic interactions (edges). | Describes interaction density independent of network size. |  |
+| **Connectance** | $L/S^2$, where $S$ is the number of species and $L$ the number of links | Measures the proportion of realised interactions relative to all possible interactions. | Dunne et al. 2002 |
+| L/S | Mean number of links per species. | Captures average interaction density per taxon. |  |
+| **Cannibal** | Proportion of taxa with self-loops. | Quantifies the prevalence of cannibalistic interactions. |  |
+| Herbivore | Proportion of taxa feeding exclusively on basal species. | Describes the representation of primary consumers. |  |
+| Trophic level (TL) | Prey-weighted trophic level averaged across taxa. | Captures the vertical organisation of energy transfer. | @williamsLimitsTrophicLevels2004 |
+| MaxSim | Mean maximum trophic similarity of each taxon to all others. | Quantifies functional similarity based on shared predators and prey. | @yodzisSearchOperationalTrophospecies1999 |
+| Centrality | Sum of differences between the maximum node centrality and all node centralities (Freeman's centrality). | Captures how unevenly influence or connectivity is distributed among species. | @estradaUsingNetworkCentrality2008 |
+| ChLen | Mean length of all food chains from basal to top taxa. | Describes the average number of steps in energy-transfer pathways. |  |
+| ChSD | Standard deviation of food chain length. | Captures variability in pathway lengths. |  |
+| ChNum | Log-transformed number of distinct food chains. | Quantifies the multiplicity of alternative energy pathways. |  |
+| **Path** | Mean shortest path length between all species pairs. | Describes the average distance between taxa within the network. |  |
+| Diameter | Maximum shortest path length between any two taxa. | Captures the largest network distance between species. |  |
+| **Omnivory** | Proportion of taxa feeding on resources at multiple trophic levels. | Describes vertical coupling of energy channels. | @mccannDiversityStabilityDebate2000 |
+| Loop | Proportion of taxa involved in trophic loops. | Quantifies the prevalence of cyclic interaction pathways. |  |
+| Prey:Predator | Ratio of prey taxa (basal + intermediate) to predator taxa (intermediate + top). | Describes the overall shape of the trophic structure. |  |
+| Clust | Mean clustering coefficient. | Measures the tendency for taxa sharing interaction partners to also interact with each other. | @wattsCollectiveDynamicsSmallworld1998 |
 | GenSD | Normalised standard deviation of generality. | Captures heterogeneity in the number of resources per taxon. | @williamsLimitsTrophicLevels2004 |
-| VulSD | Normalised standard deviation of vulnerability. | Captures heterogeneity in the number of consumers per taxon. | @williamsLimitsTrophicLevels2004 |
+| **VulSD** | Normalised standard deviation of vulnerability. | Captures heterogeneity in the number of consumers per taxon. | @williamsLimitsTrophicLevels2004 |
+| LinkSD | Normalised standard deviation of total links per taxon. | Quantifies variation in species connectivity. |  |
 | Intervality | Degree to which taxa can be ordered along a single niche dimension. | Measures the extent of niche ordering in trophic interactions. | @stoufferRobustMeasureFood2006 |
-| S1 (Linear chain) | Frequency of three-node linear chains (A → B → C) with no additional links. | Captures the prevalence of simple, unbranched energy-transfer pathways. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
-| S2 (Omnivory) | Frequency of three-node motifs forming a feed-forward loop (A → B → C, A → C). | Describes vertical coupling of trophic levels within small subnetworks. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
-| S4 (Direct competition) | Frequency of motifs where two consumers share a single resource (A ← B → C). | Describes the occurrence of shared-resource structures among consumers. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
-| S5 (Apparent competition) | Frequency of motifs where one consumer feeds on two resources (A → B ← C). | Captures the prevalence of shared-predator structures among resources. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
-| TrophicCoherence | Measure how well the species in a food web fit into discrete trophic levels. | Highly coherent, neatly layered food webs are more stable to perturbations | @johnsonTrophicCoherenceDetermines2014 |
-
+| **S1** (Linear chain) | Frequency of three-node linear chains (A → B → C) with no additional links. | Captures the prevalence of simple, unbranched energy-transfer pathways. | @stoufferEvidenceExistenceRobust2007 @miloNetworkMotifsSimple2002 |
+| **S2** (Omnivory) | Frequency of three-node motifs forming a feed-forward loop (A → B → C, A → C). | Describes vertical coupling of trophic levels within small subnetworks. | @stoufferEvidenceExistenceRobust2007 @miloNetworkMotifsSimple2002 |
+| S4 (Direct competition) | Frequency of motifs where two consumers share a single resource (A ← B → C). | Describes the occurrence of shared-resource structures among consumers. | @stoufferEvidenceExistenceRobust2007 @miloNetworkMotifsSimple2002 |
+| S5 (Apparent competition) | Frequency of motifs where one consumer feeds on two resources (A → B ← C). | Captures the prevalence of shared-predator structures among resources. | @stoufferEvidenceExistenceRobust2007 @miloNetworkMotifsSimple2002 |
+| trophicVar | Measure of how much the trophic positions of species deviate from the mean trophic level. | Variance is linked to chain length, with low variance indicating few long chains and high variance indicates long chains and varied interactions | @pimmFoodWebs1982 |
+| **TrophicCoherence** | Measure how well the species in a food web fit into discrete trophic levels. | Highly coherent, neatly layered food webs are more stable to perturbations | @johnsonTrophicCoherenceDetermines2014 |
 
 # Downsampling and burn-in alter network topology in method-dependent ways
 
-**Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1**
+## Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1
 
 ![](../figures/downsampleDeltaCo.png)
 
 The effect of $\Delta Co$ on network structure differed among network types (net type $\times$ $\Delta Co$ interaction: $F_{3, 712}$ = 4.81, $p$ = 0.0025). RDA1 declined with increasing $\Delta Co$ across all network types, but the decline was significantly weaker for degree-product downsampled networks than for down-niche, down-power and down-random networks (pairwise differences in slopes, $p$ = 0.011, 0.006 and 0.030, respectively). Thus, differences between degree-product and the other downsampled network types increased along the $\Delta Co$ gradient.
 
-**Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb**
+## Figure S2: Displacement of downsampled networks is more similar to that of the niche model than the original metaweb
 
 ![](../figures/burninDisplacement.png)
 
@@ -75,9 +94,13 @@ suppressMessages(readr::read_csv("../tables/robustnessTopoVDynamic.csv")) %>%
   knitr::kable()
 ```
 
-# Differences in inferred robustness of topological and dynamic are unaffected by network type
+# Differences in inferred robustness of topological and dynamic extinctions are unaffected by network type
 
 Estimated robustness ($R_{50}$) of realised networks under topological (green) and dynamic (yellow) extinction simulations across network types and extinction scenarios. Points represent mean robustness values, with connecting lines highlighting the consistent reduction in robustness estimates when extinction cascades are evaluated dynamically. (B) Difference between dynamic and topological robustness estimates ($\Delta R_{50} = R_{50, dynamic} - R_{50, topological}$) for each network type. Negative values indicate that dynamic simulations produce lower inferred robustness than topological simulations. Bars show estimated marginal means from linear models accounting for differences among empirical communities; letters indicate significant differences among network types based on Sidak-adjusted pairwise comparisons.
+
+## Figure S3: Differences between topological and dynamic estimates of network robustness. 
+
+Panel A shows the realised topological and dynamic robustness across extinction scenarios for the different network types. Panel B shows the post-hoc (Tukey-adjusted pairwise contrasts) differences between different network types for each extinction scenario. Note that the pattern of 'conservative-ness' is persistent across all extinction scenarios with the exception of random, basal extinctions in which the difference was diminished and in some cases reversed
 
 ![](../figures/robustnessTopoVDynamic_allScenario.png)
 
@@ -87,19 +110,19 @@ Estimated robustness ($R_{50}$) of realised networks under topological (green) a
 
 For each community $\times$ extinction scenario $\times$ time point, $R_{50}$ was modelled as a function of network type, and estimated marginal means were compared using Tukey-adjusted pairwise contrasts. Network-type pairs with adjusted $p \geq$ 0.05 were considered indistinguishable. We summarised the number and proportion of extinction scenarios in which each pair of network types was statistically indistinguishable, providing a complementary measure of similarity in inferred robustness.
 
-**Pairwise contrasts of topological extinction $R_{50}$ at network creation between network types for the different extinction scenarios for the different communities**
+## Figure S4: Pairwise contrasts of topological extinction $R_{50}$ at network creation between network types for the different extinction scenarios for the different communities
 
 ![](../figures/contrasts/robustnessContrasts_topo_creation.png)
 
-**Pairwise contrasts of topological extinction $R_{50}$ after burn-in between network types for the different extinction scenarios for the different communities**
+## Figure S6: Pairwise contrasts of topological extinction $R_{50}$ after burn-in between network types for the different extinction scenarios for the different communities
 
 ![](../figures/contrasts/robustnessContrasts_topo_realised.png)
 
-**Pairwise contrasts of dynamic extinction $R_{50}$ between network types for the different extinction scenarios for the different communities**
+## Figure S6: Pairwise contrasts of dynamic extinction $R_{50}$ between network types for the different extinction scenarios for the different communities
 
 ![](../figures/contrasts/robustnessContrasts_dyn_realised.png)
 
-## Ability to distinguish between network types
+## Figure S7: Ability to distinguish between network types
 
 Pairwise comparisons provided a complementary measure of similarity among network types. For each community and extinction stage, we quantified the proportion of extinction scenarios in which each pair of network types had statistically indistinguishable estimates of $R_{50}$ (adjusted $p \geq$ 0.05). Similarity was generally greater among the downsampled networks than between downsampled and synthetic/reference network types, although the pattern varied among communities and extinction stages.
 
@@ -111,15 +134,15 @@ We used hierarchical clustering of estimated marginal mean $R_{50}$ values to as
 
 Together, these results show that the similarity among network types in inferred robustness depends on both network construction and the processes applied after network creation. In particular, dynamic simulations altered the grouping of network types relative to their initial topological structure, with the niche-based downsampling approach converging towards the behaviour of the synthetic niche model.
 
-**Cluster analyses for topological extinction $R_{50}$ at network creation for the different communities**
+## Figure S8: Cluster analyses for topological extinction $R_{50}$ at network creation for the different communities
 
 ![](../figures/clustering/robustnessClusters_topo_creation.png)
 
-**Cluster analyses for topological extinction $R_{50}$ after burn-in for the different communities**
+## Figure S9: Cluster analyses for topological extinction $R_{50}$ after burn-in for the different communities
 
 ![](../figures/clustering/robustnessClusters_topo_realised.png)
 
-**Cluster analyses for dynamic extinction $R_{50}$ for the different communities**
+## Figure S10: Cluster analyses for dynamic extinction $R_{50}$ for the different communities
 
 ![](../figures/clustering/robustnessClusters_dyn_realised.png)
 

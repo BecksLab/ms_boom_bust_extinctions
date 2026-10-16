@@ -29,11 +29,7 @@ Loadings of the top ten contributing structure metrics.}
 \caption{\label{fig-TopoVDynamic}\textbf{Differences between topological
 and dynamic estimates of network robustness.} Boxplot showing aggregated
 realised topological and dynamic robustness across the different
-communities and extinction scenarios for the different network types.
-See the {[}\emph{SUPP MATT}{]} for by extinction scenario breakdowns.
-Note that the pattern of `conservative-ness' is persistent across all
-extinction scenarios with the exception of random, basal extinctions in
-which the difference was diminished and in some cases reversed}
+communities and extinction scenarios for the different network types.}
 
 \end{figure}
 \efloatseparator
