@@ -24,6 +24,27 @@ This is qualitatively supported if we look at some of the species traits. Below,
 
 ![](../figures/bodysize/distributions.png)
 
+# Network Topology
+
+**Table S1: Network structural measures used**
+
+| Label | Definition | Structural interpretation | Reference |
+|------------------|------------------|--------------------|------------------|
+| Top | Proportion of taxa with zero generality (no resources). | Describes the relative prevalence of terminal consumers in the network. |  |
+| Links (L) | Total number of trophic interactions (edges). | Describes interaction density independent of network size. |  |
+| Connectance | $L/S^2$, where $S$ is the number of species and $L$ the number of links | Measures the proportion of realised interactions relative to all possible interactions. | Dunne et al. 2002 |
+| Path | Mean shortest path length between all species pairs. | Describes the average distance between taxa within the network. |  |
+| Omnivory | Proportion of taxa feeding on resources at multiple trophic levels. | Describes vertical coupling of energy channels. | @mccannDiversityStabilityDebate2000 |
+| GenSD | Normalised standard deviation of generality. | Captures heterogeneity in the number of resources per taxon. | @williamsLimitsTrophicLevels2004 |
+| VulSD | Normalised standard deviation of vulnerability. | Captures heterogeneity in the number of consumers per taxon. | @williamsLimitsTrophicLevels2004 |
+| Intervality | Degree to which taxa can be ordered along a single niche dimension. | Measures the extent of niche ordering in trophic interactions. | @stoufferRobustMeasureFood2006 |
+| S1 (Linear chain) | Frequency of three-node linear chains (A → B → C) with no additional links. | Captures the prevalence of simple, unbranched energy-transfer pathways. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
+| S2 (Omnivory) | Frequency of three-node motifs forming a feed-forward loop (A → B → C, A → C). | Describes vertical coupling of trophic levels within small subnetworks. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
+| S4 (Direct competition) | Frequency of motifs where two consumers share a single resource (A ← B → C). | Describes the occurrence of shared-resource structures among consumers. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
+| S5 (Apparent competition) | Frequency of motifs where one consumer feeds on two resources (A → B ← C). | Captures the prevalence of shared-predator structures among resources. | @stoufferRobustMeasureFood2006 @miloNetworkMotifsSimple2002 |
+| TrophicCoherence | Measure how well the species in a food web fit into discrete trophic levels. | Highly coherent, neatly layered food webs are more stable to perturbations | @johnsonTrophicCoherenceDetermines2014 |
+
+
 # Downsampling and burn-in alter network topology in method-dependent ways
 
 **Figure S1: Increasing $\Delta Co$ is associated with increasing differences among network types in RDA1**
@@ -40,7 +61,7 @@ Here, we show the mean displacement of the different network types during burn-i
 
 # Differences in inferred robustness of topological and dynamic are unaffected by network type
 
-**Table S1: Model outputs**
+**Table S2: Model outputs**
 
 ```{r}
 #| echo: false
