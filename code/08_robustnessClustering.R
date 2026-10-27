@@ -131,7 +131,7 @@ cluster_tbl_comm %>%
       slay(factor(ext_scen,
                   levels = names(ext_scen_labs))) %>%
       glow_up(plot = map2(plot,
-                          print_name,
+                          ext_scen_label,
                           \(p, nm)
                           p + labs(title = nm))) %>%
       main_character(plot) %>%
