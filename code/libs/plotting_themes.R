@@ -39,33 +39,24 @@ set_theme(figure_theme)
 
 # for network types
 net_type_col_pal <- c(
-  "down_power" = "#59BD96", 
-  "metaweb"    = "#5DB6E7", 
-  "niche"      = "#EAAA00",
-  "down_rand"  = "#216F52",
-  "down_link"  = "#44E4A7",
-  "down_niche" = "#154734",
-  "atn"        = "#A89968")
-
-net_type_col_pal <- c(
   "down_power" = "#28634D",
   "metaweb"    = "#154734",
-  "niche"      = "#A6192E",
+  "niche"      = "#EAAA00",
   "down_rand"  = "#4C8064",
   "down_link"  = "#739675",
   "down_niche" = "#A0A47A",
-  "atn"        = "#EAAA00"
+  "atn"        = "#A6192E"
 )
 
 
 net_type_col_pal_contrast <- c(
   "down_power" = minni_wheat, 
   "metaweb"    = minni_wheat, 
-  "niche"      = minni_wheat,
+  "niche"      = minni_black,
   "down_rand"  = minni_wheat,
   "down_link"  = minni_wheat,
   "down_niche" = minni_black,
-  "atn"        = minni_black)
+  "atn"        = minni_wheat)
 
 # ---- Pretty network names ----
 
