@@ -134,11 +134,11 @@ function run_topological_extinctions(N, body_mass)
 
     scenarios = Dict(
         "degree_high" => extinction(N, "degree", true),
-        "degree_low"    => extinction(N, "degree", false),
-        "vul_high"      => extinction(N, "vulnerability", true),
-        "vul_low"       => extinction(N, "vulnerability", false),
-        "gen_high"      => extinction(N, "generality", true),
-        "gen_low"       => extinction(N, "generality", false),
+        "degree_low" => extinction(N, "degree", false),
+        "vul_high" => extinction(N, "vulnerability", true),
+        "vul_low" => extinction(N, "vulnerability", false),
+        "gen_high" => extinction(N, "generality", true),
+        "gen_low" => extinction(N, "generality", false),
         "bm_high" => extinction(N, Symbol.(sortperm(body_mass, rev=true))),
         "bm_low" => extinction(N, Symbol.(sortperm(body_mass, rev=false))),
         "rand_basal" => extinction(N; protect=:consumer),
@@ -228,7 +228,11 @@ function dynamic_extinction_adaptive(params, B0;
 
     # --- store networks ---
     Nseq = SpeciesInteractionNetwork[]
-    push!(Nseq, build_network(Matrix(A)))  # include initial state
+    push!(Nseq, build_network(Matrix(A)))
+
+    # Original species indices retained at each extinction step
+    survivor_seq = Vector{Vector{Int}}()
+    push!(survivor_seq, collect(1:S0))
 
     primary_counts = Int[0]
 
@@ -360,6 +364,7 @@ function dynamic_extinction_adaptive(params, B0;
 
         A_valid = A[survivors, survivors]
         push!(Nseq, build_network(A_valid))
+        push!(survivor_seq, copy(survivors))
 
         if show_progress
             next!(prog)
@@ -372,7 +377,8 @@ function dynamic_extinction_adaptive(params, B0;
 
     return (
         networks=Nseq,
-        primary=primary_counts
+        primary=primary_counts,
+        survivors=survivor_seq
     )
 end
 
@@ -398,11 +404,11 @@ function run_dynamic_extinctions(params, B; t=5000, show_progress=true)
 
     scenarios = [
         ("degree_high", :degree, true),
-        ("degree_low",    :degree, false),
-        ("vul_high",      :vulnerability, true),
-        ("vul_low",       :vulnerability, false),
-        ("gen_high",      :generality, true),
-        ("gen_low",       :generality, false),
+        ("degree_low", :degree, false),
+        ("vul_high", :vulnerability, true),
+        ("vul_low", :vulnerability, false),
+        ("gen_high", :generality, true),
+        ("gen_low", :generality, false),
         ("bm_high", :bodymass, true),
         ("bm_low", :bodymass, false),
         ("rand_basal", :random_basal, true),
@@ -698,7 +704,7 @@ function realise_network(
         t;
         show_degenerated=false,
         callback=CallbackSet(
-            extinction_callback(params, survival_threshold),
+            extinction_callback(params, threshold),
             TerminateSteadyState(1e-14, 1e-12, DiffEqCallbacks.allDerivPass),
         )
     )
@@ -797,24 +803,95 @@ Helper to find best threshold value that returns an lmatrix network matching
 the target connectance
 """
 function atn_build_range(df, prods;
-                         thresholds=0.01:0.01:0.12)
+    thresholds=0.01:0.01:0.12)
 
     results = NamedTuple[]
 
     for thresh in thresholds
         adj = lmatrix(df.species, df.bodymass, prods;
-                      threshold=thresh)
+            threshold=thresh)
 
         S = size(adj, 1)
         L = sum(adj)
         Co = L / S^2
 
         push!(results, (
-            threshold = thresh,
-            connectance = Co,
-            adjacency = adj
+            threshold=thresh,
+            connectance=Co,
+            adjacency=adj
         ))
     end
 
     return results
+end
+
+"""
+TSS(N_real::SpeciesInteractionNetwork{<:Partiteness,<:Binary}, 
+        N_sim::SpeciesInteractionNetwork{<:Partiteness,<:Binary}, 
+        N_original::SpeciesInteractionNetwork{<:Partiteness,<:Binary})
+
+    Calculates the true test skill statistic of the networks generated 
+    via simulated extinctions and those constructed from the known post
+    extinction community.
+
+    Note that this assumes that the post extinction community is a 
+    subset of the pre extinction community.
+
+    #### References
+
+    Gupta, A., Furrer, R., & Petchey, O. L. (2022). Simultaneously 
+    estimating food web connectance and21 structure with uncertainty. 
+    Ecology and Evolution, 12(3), e8643. https://doi.org/10.1002/ece3.8643215
+
+"""
+function TSS(
+    N_real::SpeciesInteractionNetwork{<:Partiteness,<:Binary},
+    N_sim::SpeciesInteractionNetwork{<:Partiteness,<:Binary},
+    N_original::SpeciesInteractionNetwork{<:Partiteness,<:Binary};
+)
+
+    # get pairwise interactions
+    sim = SpeciesInteractionNetworks.species(N_sim)
+    real = SpeciesInteractionNetworks.species(N_real)
+    original = SpeciesInteractionNetworks.species(N_original)
+
+    # NODE tss
+
+    # what is in left not in right
+    # spp that were in original and not in sim && then not in real
+    # spp that should go extinct
+    extinct = setdiff(original, real)
+    # make sure those spp are not in sim
+    tn = length(setdiff(extinct, sim))
+    # spp in simulated not in real (species that should've been removed)
+    fp = length(setdiff(sim, real))
+    # species in real not in simulated (ie the 'wrong' species removed)
+    fn = length(setdiff(real, sim))
+    # what is shared between real and simulated
+    tp = length(intersect(sim, real))
+
+    # eq. to get tss score
+    tss_node = (tp/(tp+fn)) + (tn/(tn+fp)) - 1
+
+    # LINK tss
+
+    # first we need to subset the networks to only include spp that are shared (to not punish for spp turnover)
+    shared = intersect(sim, real)
+    # both pre and post extinction
+    sim_mat = Matrix(subgraph(N_sim, shared).edges.edges)
+    real_mat = Matrix(subgraph(N_real, shared).edges.edges)
+
+    # what is in left not in right
+    # spp that were in original and not in sim && then not in real
+    # spp that should go extinct
+    tp = sum((sim_mat .== 1) .& (real_mat .== 1))
+    tn = sum((sim_mat .== 0) .& (real_mat .== 0))
+    fp = sum((sim_mat .== 1) .& (real_mat .== 0))
+    fn = sum((sim_mat .== 0) .& (real_mat .== 1))
+
+    # eq. to get tss score
+    tss_link = (tp/(tp+fn)) + (tn/(tn+fp)) - 1
+
+
+    return (tss_link, tss_node)
 end
