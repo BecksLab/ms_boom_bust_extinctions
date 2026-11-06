@@ -1,81 +1,55 @@
-
-# --- 1. General Set-up ---
+################################################################################
+# EXPORT NETWORK AND SPECIES-LEVEL TOPOLOGY
+#
+# Species IDs in every row follow the adjacency matrix ordering.
+################################################################################
 
 using CSV
 using DataFrames
-using Extinctions
-using FoodWebTools
 using JLD2
-using pfim
-using ProgressMeter
 using SpeciesInteractionNetworks
-using Statistics
 
 include("libs/topology.jl")
 include("libs/internals.jl")
 
-import Random
-Random.seed!(66)
+networks = JLD2.load_object("outputs/pre/adjacency_matrices.jld2")
 
-# import adjacency matrices
+topology_rows = Dict[]
+degree_rows = DataFrame(
+    spp_id=String[],
+    gen=Int[],
+    vul=Int[],
+    net_id=Int[],
+    net_type=String[],
+    community=String[],
+    stage=String[]
+)
 
-networks = load_object("outputs/adjacency_matrices.jld2")
+for row in eachrow(networks)
+    species_ids = String.(row.species)
+    network = build_network(Matrix(row.adjacency), species_ids)
 
-# data frame
+    summary = _network_summary(network)
+    merge!(summary, Dict(
+        :net_id => row.net_id,
+        :net_type => row.net_type,
+        :community => row.community,
+        :stage => row.stage
+    ))
+    push!(topology_rows, summary)
 
-rows = Dict[]
-
-for i in 1:nrow(networks)
-    
-    N = build_network(Matrix(networks.adjacency[i]))
-
-    # push network summary
-    d = _network_summary(N)
-    d[:net_id] = networks.net_id[i]
-    d[:net_type] = networks.net_type[i]
-    d[:community] = networks.community[i]
-    d[:stage] = networks.stage[i]
-
-    # send to df
-    push!(rows, d)
-
+    generality = SpeciesInteractionNetworks.generality(network)
+    vulnerability = SpeciesInteractionNetworks.vulnerability(network)
+    append!(degree_rows, DataFrame(
+        spp_id=species_ids,
+        gen=[generality[Symbol(id)] for id in species_ids],
+        vul=[vulnerability[Symbol(id)] for id in species_ids],
+        net_id=fill(row.net_id, length(species_ids)),
+        net_type=fill(row.net_type, length(species_ids)),
+        community=fill(row.community, length(species_ids)),
+        stage=fill(row.stage, length(species_ids))
+    ))
 end
 
-topology_df = DataFrame(rows)
-
-CSV.write("outputs/paleo_topology.csv", topology_df)
-
-# get gen and vul of each species from each network
-
-deg_rows = DataFrame(
-        spp_id = Any[],
-        gen = Any[],
-        vul = Any[],
-        net_id = Any[],
-        net_type = Any[],
-        community = Any[],
-        stage = Any[])
-
-for i in 1:nrow(networks)
-    
-    N = build_network(Matrix(networks.adjacency[i]))
-
-    gen = SpeciesInteractionNetworks.generality(N)
-    vul = SpeciesInteractionNetworks.vulnerability(N)
-
-    d = DataFrame(
-        spp_id = collect(keys(gen)),
-        gen = collect(values(gen)),
-        vul = collect(values(vul)),
-        net_id = fill(networks.net_id[i], length(gen)),
-        net_type = fill(networks.net_type[i], length(gen)),
-        stage = fill(networks.stage[i], length(gen)),
-        community = fill(networks.community[i], length(gen))
-    )
-
-    # send to df
-    append!(deg_rows, d)
-
-end
-
-CSV.write("outputs/paleo_spp_degrees.csv", deg_rows)
+CSV.write("outputs/paleo_topology.csv", DataFrame(topology_rows))
+CSV.write("outputs/paleo_spp_degrees.csv", degree_rows)
