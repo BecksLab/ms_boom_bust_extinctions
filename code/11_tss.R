@@ -14,14 +14,16 @@ tss <- read_csv("outputs/tss_results.csv") %>%
                names_to = "tss_cat",
                values_to = "tss_score") %>%
   lowkey(label = net_name) %>%
-  left_join(col_df)
+  left_join(col_df)%>%
+  glow_up(label = factor(label, levels = net_levs),
+          net_type_lab = assign_net_name(label)) 
 
 ggplot(tss) +
   geom_hline(yintercept = c(0.5, -0.5),
              linetype = "dashed",
-             colour = minni_silver) +
+             colour = minni_wheat) +
   geom_hline(yintercept = 0,
-             colour = minni_silver) +
+             colour = minni_tan) +
   geom_boxplot(aes(x = label,
                    y = tss_score,
                    colour = col)) +
@@ -36,7 +38,7 @@ ggplot(tss) +
 ggsave(
   "../figures/tss.png",
   width = 6000,
-  height = 4000,
+  height = 5000,
   units = "px",
   dpi = 500
 )
