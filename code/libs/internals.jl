@@ -1,35 +1,43 @@
+using Random
+
 """
-    build_network(adj_mat::Matrix{Bool})
+    build_network(adj_mat::Matrix{Bool}, species_ids)
 
 Construct a `SpeciesInteractionNetwork` from a Boolean adjacency matrix.
 
-Converts a square adjacency matrix into a unipartite, binary food web where
-species are assigned generic symbolic identifiers (`:1`, `:2`, ..., `:S`).
+Converts a square adjacency matrix into a unipartite, binary food web. When
+`species_ids` are omitted, nodes are labelled `:1`, ..., `:S`; otherwise the
+supplied identifiers are kept in matrix order.
 
 # Arguments
 - `adj_mat::Matrix{Bool}`: Square adjacency matrix (S × S), where:
     - `adj_mat[i, j] = true` indicates a trophic interaction (i consumes j)
     - Rows and columns refer to the same ordered species set
+- `species_ids`: Optional identifiers in row/column order
 
 # Returns
 - `SpeciesInteractionNetwork{Unipartite{Symbol}, Binary{Bool}}`
 
 # Notes
-- Species identities are not preserved (relabelled as `:1`, ..., `:S`)
+- Species identifiers must be unique and match matrix dimensions
 - Interaction direction is preserved
 - Assumes adjacency matrix is already ecologically valid
 
 # Errors
 - Throws `ArgumentError` if the matrix is not square
 """
-function build_network(adj_mat::Matrix{Bool})
+function build_network(adj_mat::Matrix{Bool}, species_ids=Symbol.(1:size(adj_mat, 1)))
 
     if size(adj_mat, 1) != size(adj_mat, 2)
         throw(ArgumentError("Adjacency matrix must be square"))
     end
 
     spp_rich = size(adj_mat, 1)
-    spp_list = Symbol.(1:spp_rich)
+    length(species_ids) == spp_rich ||
+        throw(ArgumentError("Species identifiers must match adjacency matrix dimensions"))
+    spp_list = Symbol.(string.(species_ids))
+    length(unique(spp_list)) == spp_rich ||
+        throw(ArgumentError("Species identifiers must be unique"))
 
     edges = Binary(.!iszero.(adj_mat))
     nodes = Unipartite(spp_list)
@@ -129,6 +137,8 @@ secondary extinctions occur via trophic disconnection (cascade mechanism).
 - Fully comparable to classical topological robustness studies
 """
 function run_topological_extinctions(N, body_mass)
+    length(body_mass) == SpeciesInteractionNetworks.richness(N) ||
+        throw(ArgumentError("Body masses must match network richness"))
 
     results = Dict()
 
@@ -139,8 +149,8 @@ function run_topological_extinctions(N, body_mass)
         "vul_low" => extinction(N, "vulnerability", false),
         "gen_high" => extinction(N, "generality", true),
         "gen_low" => extinction(N, "generality", false),
-        "bm_high" => extinction(N, Symbol.(sortperm(body_mass, rev=true))),
-        "bm_low" => extinction(N, Symbol.(sortperm(body_mass, rev=false))),
+        "bm_high" => extinction(N, species(N)[sortperm(body_mass, rev=true)]),
+        "bm_low" => extinction(N, species(N)[sortperm(body_mass, rev=false)]),
         "rand_basal" => extinction(N; protect=:consumer),
         "rand_consumer" => extinction(N; protect=:basal)
     )
@@ -211,10 +221,15 @@ function dynamic_extinction_adaptive(params, B0;
     t=5000,
     survival_threshold=1e-12,
     show_progress=true,
-    debug=false
+    debug=false,
+    species_ids=Symbol.(1:length(B0))
 )
 
     S0 = length(B0)
+    length(species_ids) == S0 ||
+        throw(ArgumentError("Species identifiers must match initial biomass dimensions"))
+    length(unique(species_ids)) == S0 ||
+        throw(ArgumentError("Species identifiers must be unique"))
 
     A = params.A
     B = copy(B0)
@@ -228,7 +243,7 @@ function dynamic_extinction_adaptive(params, B0;
 
     # --- store networks ---
     Nseq = SpeciesInteractionNetwork[]
-    push!(Nseq, build_network(Matrix(A)))
+    push!(Nseq, build_network(Matrix(A), species_ids))
 
     # Original species indices retained at each extinction step
     survivor_seq = Vector{Vector{Int}}()
@@ -267,9 +282,13 @@ function dynamic_extinction_adaptive(params, B0;
         # --- SELECT SPECIES ---
         if criterion == :random_basal
             candidates = filter(i -> alive[i] && basal0[i], eachindex(alive))
+            isempty(candidates) && break
+            sp = rand(candidates)
 
         elseif criterion == :random_consumer
             candidates = filter(i -> alive[i] && consumer0[i], eachindex(alive))
+            isempty(candidates) && break
+            sp = rand(candidates)
 
         else
             # trait-based → consumers only
@@ -310,7 +329,6 @@ function dynamic_extinction_adaptive(params, B0;
         end
 
         isempty(candidates) && break
-        sp = rand(candidates)
 
         # --- primary extinction ---
         alive[sp] = false
@@ -363,7 +381,7 @@ function dynamic_extinction_adaptive(params, B0;
         isempty(survivors) && break
 
         A_valid = A[survivors, survivors]
-        push!(Nseq, build_network(A_valid))
+        push!(Nseq, build_network(A_valid, species_ids[survivors]))
         push!(survivor_seq, copy(survivors))
 
         if show_progress
@@ -398,9 +416,17 @@ Run all adaptive dynamic extinction scenarios.
 # Returns
 - `Dict{String, Vector}`: Mapping scenario name → network sequence
 """
-function run_dynamic_extinctions(params, B; t=5000, show_progress=true)
+function run_dynamic_extinctions(
+    params, B;
+    t=5000,
+    show_progress=true,
+    species_ids=Symbol.(1:length(B)),
+    seed=66
+)
 
-    results = Dict()
+    # EcologicalNetworksDynamics lazily caches model property accessors.
+    # Initialize them before worker threads first access the shared model.
+    _ = (params.A, params.M, params.body_mass, params.h)
 
     scenarios = [
         ("degree_high", :degree, true),
@@ -416,23 +442,32 @@ function run_dynamic_extinctions(params, B; t=5000, show_progress=true)
     ]
 
     prog = show_progress ? Progress(length(scenarios), "Dynamic scenarios") : nothing
+    progress_lock = ReentrantLock()
+    results = Vector{Any}(undef, length(scenarios))
 
-    for (name, crit, desc) in scenarios
+    Threads.@threads for i in eachindex(scenarios)
+        name, criterion, descending = scenarios[i]
+        Random.seed!(seed + i)
 
-        results[name] = dynamic_extinction_adaptive(
-            params, B;
-            criterion=crit,
-            descending=desc,
-            t=t,
-            show_progress=show_progress
-        )
-
-        if show_progress
-            next!(prog)
+        try
+            results[i] = dynamic_extinction_adaptive(
+                params, B;
+                criterion=criterion,
+                descending=descending,
+                t=t,
+                show_progress=false,
+                species_ids=species_ids
+            )
+        finally
+            if show_progress
+                lock(progress_lock) do
+                    next!(prog)
+                end
+            end
         end
     end
 
-    return results
+    return Dict(scenarios[i][1] => results[i] for i in eachindex(scenarios))
 end
 
 """
@@ -763,9 +798,15 @@ end
 Helper to extract, package, and append species level metadata (TL & TC) 
 at different lifecycle stages.
 """
-function record_species_stage!(store, run_id, net_name, stage, A, bodysizes, params=nothing, survivors=nothing, biomasses=nothing)
+function record_species_stage!(
+    store, run_id, net_name, stage, A, bodysizes,
+    params=nothing, survivors=nothing, biomasses=nothing;
+    species_ids=1:size(A, 1)
+)
     S = size(A, 1)
     indices = something(survivors, 1:S)
+    length(species_ids) >= maximum(indices; init=0) ||
+        throw(ArgumentError("Species identifiers do not cover the recorded indices"))
 
     # Safely get Trophic Levels if parameters are available
     TL = (params !== nothing && hasproperty(params, :trophic)) ? params.trophic.levels[indices] : trophic_level(Matrix(A))
@@ -789,6 +830,7 @@ function record_species_stage!(store, run_id, net_name, stage, A, bodysizes, par
         stage=fill(stage, length(indices)),
         species_id=1:length(indices),
         original_id=indices,
+        species=String.(species_ids[indices]),
         trophic_level=TL,
         trophic_class=TC,
         biomass=BM,
@@ -823,75 +865,4 @@ function atn_build_range(df, prods;
     end
 
     return results
-end
-
-"""
-TSS(N_real::SpeciesInteractionNetwork{<:Partiteness,<:Binary}, 
-        N_sim::SpeciesInteractionNetwork{<:Partiteness,<:Binary}, 
-        N_original::SpeciesInteractionNetwork{<:Partiteness,<:Binary})
-
-    Calculates the true test skill statistic of the networks generated 
-    via simulated extinctions and those constructed from the known post
-    extinction community.
-
-    Note that this assumes that the post extinction community is a 
-    subset of the pre extinction community.
-
-    #### References
-
-    Gupta, A., Furrer, R., & Petchey, O. L. (2022). Simultaneously 
-    estimating food web connectance and21 structure with uncertainty. 
-    Ecology and Evolution, 12(3), e8643. https://doi.org/10.1002/ece3.8643215
-
-"""
-function TSS(
-    N_real::SpeciesInteractionNetwork{<:Partiteness,<:Binary},
-    N_sim::SpeciesInteractionNetwork{<:Partiteness,<:Binary},
-    N_original::SpeciesInteractionNetwork{<:Partiteness,<:Binary};
-)
-
-    # get pairwise interactions
-    sim = SpeciesInteractionNetworks.species(N_sim)
-    real = SpeciesInteractionNetworks.species(N_real)
-    original = SpeciesInteractionNetworks.species(N_original)
-
-    # NODE tss
-
-    # what is in left not in right
-    # spp that were in original and not in sim && then not in real
-    # spp that should go extinct
-    extinct = setdiff(original, real)
-    # make sure those spp are not in sim
-    tn = length(setdiff(extinct, sim))
-    # spp in simulated not in real (species that should've been removed)
-    fp = length(setdiff(sim, real))
-    # species in real not in simulated (ie the 'wrong' species removed)
-    fn = length(setdiff(real, sim))
-    # what is shared between real and simulated
-    tp = length(intersect(sim, real))
-
-    # eq. to get tss score
-    tss_node = (tp/(tp+fn)) + (tn/(tn+fp)) - 1
-
-    # LINK tss
-
-    # first we need to subset the networks to only include spp that are shared (to not punish for spp turnover)
-    shared = intersect(sim, real)
-    # both pre and post extinction
-    sim_mat = Matrix(subgraph(N_sim, shared).edges.edges)
-    real_mat = Matrix(subgraph(N_real, shared).edges.edges)
-
-    # what is in left not in right
-    # spp that were in original and not in sim && then not in real
-    # spp that should go extinct
-    tp = sum((sim_mat .== 1) .& (real_mat .== 1))
-    tn = sum((sim_mat .== 0) .& (real_mat .== 0))
-    fp = sum((sim_mat .== 1) .& (real_mat .== 0))
-    fn = sum((sim_mat .== 0) .& (real_mat .== 1))
-
-    # eq. to get tss score
-    tss_link = (tp/(tp+fn)) + (tn/(tn+fp)) - 1
-
-
-    return (tss_link, tss_node)
 end

@@ -13,9 +13,13 @@
 # -------
 # outputs/pre/realised_network_archive.jld2
 # outputs/post/realised_network_archive.jld2
+# outputs/{pre,post}/network_summary.csv
+# outputs/{pre,post}/species_metadata.csv
+# outputs/{pre,post}/adjacency_matrices.jld2
 #
 # Each archive contains realised networks, creation networks, species
-# metadata, adjacency matrices, generation parameters and summaries.
+# metadata, adjacency matrices, generation parameters and summaries. Every
+# adjacency row stores species IDs in the same order as its matrix.
 
 # --- 1. General Set-up ---
 
@@ -35,6 +39,18 @@ using Statistics
 include("libs/internals.jl")
 
 import Random
+
+function load_community_data(name)
+    data = Dict(
+        state => CSV.read("data/$state/$(name)_community.csv", DataFrame)
+        for state in ("pre", "post")
+    )
+    data["plankton"] = CSV.read(
+        "data/plankton/$(name)_plankton.csv",
+        DataFrame
+    )
+    return data
+end
 
 function main()
     Random.seed!(66)
@@ -56,6 +72,7 @@ function main()
         stage=String[],
         S=Int[],
         C=Float64[],
+        species=Any[],
         adjacency=Any[]
     )
 
@@ -64,35 +81,10 @@ function main()
     # --- Data ---
 
     communities = Dict(
-        "dolomites" => Dict(
-            "pre" => CSV.read("data/pre/dolomites_community.csv", DataFrame),
-            "post" => CSV.read("data/post/dolomites_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/dolomites_plankton.csv", DataFrame)
-        ),
-        "greenland" => Dict(
-            "pre" => CSV.read("data/pre/greenland_community.csv", DataFrame),
-            "post" => CSV.read("data/post/greenland_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/greenland_plankton.csv", DataFrame)
-        ),
-        "tibet" => Dict(
-            "pre" => CSV.read("data/pre/tibet_community.csv", DataFrame),
-            "post" => CSV.read("data/post/tibet_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/tibet_plankton.csv", DataFrame)
-        ),
-        "turkiye" => Dict(
-            "pre" => CSV.read("data/pre/turkiye_community.csv", DataFrame),
-            "post" => CSV.read("data/post/turkiye_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/turkiye_plankton.csv", DataFrame)
-        ),
-        "meishan" => Dict(
-            "pre" => CSV.read("data/pre/meishan_community.csv", DataFrame),
-            "post" => CSV.read("data/post/meishan_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/meishan_plankton.csv", DataFrame)
-        ),
-        "kashmir" => Dict(
-            "pre" => CSV.read("data/pre/kashmir_community.csv", DataFrame),
-            "post" => CSV.read("data/post/kashmir_community.csv", DataFrame),
-            "plankton" => CSV.read("data/plankton/kashmir_plankton.csv", DataFrame)
+        name => load_community_data(name)
+        for name in (
+            "dolomites", "greenland", "tibet",
+            "turkiye", "meishan", "kashmir"
         )
     )
 
@@ -179,6 +171,7 @@ function main()
                 # Sample initial biomasses once, then match by species.
                 # This ensures shared species (including plankton) start identically.
                 @assert length(unique(String.(pre_df.species))) == nrow(pre_df) "Species identifiers must be unique in the combined pre community and plankton data for $community_name."
+                @assert length(unique(String.(post_df.species))) == nrow(post_df) "Species identifiers must be unique in the combined post community and plankton data for $community_name."
 
                 B_init_pre = rand(nrow(pre_df))
                 B0_lookup = Dict(zip(String.(pre_df.species), B_init_pre))
@@ -201,8 +194,6 @@ function main()
                     println("    >>> Building $state networks")
 
                     # --- 1. Base network generation ---
-
-                    mass_rule = (res, con) -> con >= 0.5 * res ? 1 : 0
 
                     pfim_meta = PFIM(df, feeding_rules; return_type=:matrix)
 
@@ -259,7 +250,8 @@ function main()
 
                         record_species_stage!(
                             temp_metadata, i, net_name, "creation",
-                            fw.A, params.M, params, nothing, B_init
+                            fw.A, params.M, params, nothing, B_init;
+                            species_ids=String.(df.species)
                         )
 
                         temp_metadata[!, :t_val] .= t
@@ -277,6 +269,7 @@ function main()
                             stage="creation",
                             S=S_init,
                             C=C_init,
+                            species=String.(df.species),
                             adjacency=copy(fw.A)
                         ))
                     end
@@ -325,6 +318,7 @@ function main()
                             stage="burnin",
                             S=S_realised,
                             C=C_realised,
+                            species=String.(df.species[survivors]),
                             adjacency=copy(A_realised)
                         ))
 
@@ -339,7 +333,8 @@ function main()
                             params.M,
                             params,
                             survivors,
-                            final_biomasses
+                            final_biomasses;
+                            species_ids=String.(df.species)
                         )
 
                         temp_metadata[!, :t_val] .= t
@@ -440,6 +435,11 @@ function main()
             state_species_metadata
         )
 
+        CSV.write(
+            joinpath(output_dir, "network_summary.csv"),
+            DataFrame(state_summary_rows)
+        )
+
         JLD2.save_object(
             joinpath(output_dir, "adjacency_matrices.jld2"),
             state_adjacency_store
@@ -470,4 +470,6 @@ function main()
 
 end # main
 
-main()
+if abspath(PROGRAM_FILE) == abspath(@__FILE__)
+    main()
+end
