@@ -27,8 +27,12 @@ realised_network_archive.jld2
 
 Outputs
 -------
-extinction_summary.csv
-extinction_curves.csv
+outputs/extinction_summary.csv       # one row per network, wide robustness metrics
+outputs/extinction_curves.csv        # one row per extinction step
+outputs/tss_networks/species.csv     # species identity and matrix position
+
+For threaded dynamic scenarios, start Julia with JULIA_NUM_THREADS set, e.g.
+JULIA_NUM_THREADS=auto julia --project=. 02_extinctionSims.jl
 
 
 ################################################################################
@@ -82,7 +86,6 @@ dyn_curve_store = DataFrame()
 
 # Extracted networks for TSS analyses
 tss_pre_networks = Dict()
-tss_post_networks = Dict()
 
 extinction_times = [5000]
 
@@ -121,7 +124,6 @@ function add_curve_metadata!(
     net_name,
     extinction_t
 )
-
     df[!, :community] = fill(community, nrow(df))
     df[!, :net_name] = fill(net_name, nrow(df))
     df[!, :extinction_t] = fill(extinction_t, nrow(df))
@@ -166,7 +168,10 @@ function extract_scenario_networks!(
             "actual_S" => extracted.richness,
             "richness_difference" => extracted.richness_difference,
             "step" => extracted.step,
-            "network" => extracted.network
+            "species" => String.(
+                SpeciesInteractionNetworks.species(extracted.network)
+            ),
+            "A" => Matrix(extracted.network.edges.edges)
         )
     end
 end
@@ -176,9 +181,16 @@ end
 # 4. EXTINCTION SIMULATIONS
 # ============================================================
 
-for extinction_t in extinction_times
+network_keys = sort!(collect(keys(pre_networks)))
+println("Dynamic scenarios will use $(Threads.nthreads()) Julia thread(s).")
 
-    for ((community, net_id, net_name), network) in pre_networks
+for (time_index, extinction_t) in enumerate(extinction_times)
+
+    for (network_index, key) in enumerate(network_keys)
+        community, net_id, net_name = key
+        network = pre_networks[key]
+        network_seed = 66 + (time_index - 1) * length(network_keys) + network_index
+        Random.seed!(network_seed)
 
         # ----------------------------------------------------
         # Match corresponding POST network
@@ -197,25 +209,14 @@ for extinction_t in extinction_times
 
         target_S = post_network["realised"]["S"]
 
-
-        # ----------------------------------------------------
-        # Store POST realised network
-        # ----------------------------------------------------
-
-        tss_post_networks[key] = Dict(
-            "target_S" => target_S,
-            "A" => copy(post_network["realised"]["A"]),
-            "network" => build_network(
-                Matrix(post_network["realised"]["A"])
-            )
-        )
-
         # ----------------------------------------------------
         # Extract PRE network information
         # ----------------------------------------------------
 
         creation = network["creation"]
         realised = network["realised"]
+        generation_species = String.(network["generation"]["species"])
+        realised_species = generation_species[realised["survivors"]]
 
         params = realised["params"]
         biomasses = realised["biomasses"]
@@ -227,7 +228,7 @@ for extinction_t in extinction_times
 
         A_creation = Matrix(creation["A"])
 
-        N_creation = build_network(A_creation)
+        N_creation = build_network(A_creation, generation_species)
 
         topo_creation_results = run_topological_extinctions(
             N_creation,
@@ -269,11 +270,11 @@ for extinction_t in extinction_times
 
         A_realised = Matrix(realised["A"])
 
-        N_realised = build_network(A_realised)
+        N_realised = build_network(A_realised, realised_species)
 
         topo_realised_results = run_topological_extinctions(
             N_realised,
-            params.body_mass
+            params.M[realised["survivors"]]
         )
 
         topo_realised_robustness = compute_robustness(
@@ -325,10 +326,18 @@ for extinction_t in extinction_times
         # 4C. DYNAMIC EXTINCTIONS
         # ====================================================
 
+        realised_params = default_model(
+            Foodweb(A_realised),
+            BodyMass(params.M[realised["survivors"]]),
+            ClassicResponse(; h=params.h)
+        )
+
         dyn_results = run_dynamic_extinctions(
-            params,
-            biomasses;
-            t=extinction_t
+            realised_params,
+            biomasses[realised["survivors"]];
+            t=extinction_t,
+            species_ids=realised_species,
+            seed=network_seed * 10
         )
 
         dyn_robustness = compute_robustness(
@@ -380,19 +389,29 @@ for extinction_t in extinction_times
         # 4D. STORE SUMMARY
         # ====================================================
 
-        push!(
-            summary_rows,
-            Dict(
-                "community" => community,
-                "net_id" => net_id,
-                "net_name" => net_name,
-                "extinction_t" => extinction_t,
-                "post_target_S" => target_S,
-                "topological_creation_robustness" => topo_creation_robustness,
-                "topological_realised_robustness" => topo_realised_robustness,
-                "dynamic_robustness" => dyn_robustness
-            )
+        summary = Dict{Symbol, Any}(
+            :community => community,
+            :net_id => net_id,
+            :net_type => net_name,
+            :extinction_time => extinction_t,
+            :C_target => network["generation"]["C_target"],
+            :S_post_target => target_S,
+            :S_creation => creation["S"],
+            :C_creation => creation["C"],
+            :S_realised => realised["S"],
+            :C_realised => realised["C"]
         )
+
+        for (scenario, value) in topo_creation_robustness
+            summary[Symbol("topo_creation_", scenario)] = value
+        end
+        for (scenario, value) in topo_realised_robustness
+            summary[Symbol("topo_realised_", scenario)] = value
+        end
+        for (scenario, value) in dyn_robustness
+            summary[Symbol("dyn_realised_", scenario)] = value
+        end
+        push!(summary_rows, summary)
 
     end
 end
@@ -402,8 +421,6 @@ end
 # 5. EXPORT EXTINCTION RESULTS
 # ============================================================
 
-summary_df = DataFrame(summary_rows)
-
 curve_df = vcat(
     topo_curve_store,
     dyn_curve_store;
@@ -412,7 +429,7 @@ curve_df = vcat(
 
 CSV.write(
     "outputs/extinction_summary.csv",
-    summary_df
+    DataFrame(summary_rows)
 )
 
 CSV.write(
@@ -430,7 +447,25 @@ JLD2.save_object(
     tss_pre_networks
 )
 
-JLD2.save_object(
-    "outputs/tss_networks/post_realised.jld2",
-    tss_post_networks
+species_rows = Dict[]
+for (key, network) in tss_pre_networks
+    community, net_id, net_name, extinction_time, extinction_type, scenario = key
+    for (position, species) in enumerate(network["species"])
+        push!(species_rows, Dict(
+            :community => community,
+            :net_id => net_id,
+            :net_name => net_name,
+            :extinction_time => extinction_time,
+            :extinction_type => extinction_type,
+            :scenario => scenario,
+            :network_role => "simulated_pre",
+            :position => position,
+            :species_id => species
+        ))
+    end
+end
+
+CSV.write(
+    "outputs/tss_networks/species.csv",
+    DataFrame(species_rows)
 )
