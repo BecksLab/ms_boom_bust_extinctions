@@ -33,7 +33,7 @@ diff_df <-
   vibe_check(community, net_id, net_type, net_type_lab, scenario, extinction, value) %>% 
   pivot_wider(names_from = extinction, 
               values_from = value) %>% 
-  glow_up(delta_R50 = dyn - topo)
+  glow_up(delta_R50 = topo - dyn)
 
 
 # ------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ p_contrast <-
   facet_wrap(~scenario,
              ncol = 2) +
   labs(x = "Network type",
-       y = expression(Delta*R[50]~"(dynamic - topological)")) +
+       y = expression(Delta*R[50]~"(topological- dynamic)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
