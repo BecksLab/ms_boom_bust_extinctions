@@ -616,6 +616,14 @@ function export_curves(curves_dict, type_label, net_id)
     return rows
 end
 
+function add_curve_metadata!(df, community, net_name, extinction_t)
+    df[!, :community] = fill(community, nrow(df))
+    df[!, :net_name] = fill(net_name, nrow(df))
+    df[!, :extinction_t] = fill(extinction_t, nrow(df))
+
+    return df
+end
+
 """
     robustness_integral(network_sequence)
 
