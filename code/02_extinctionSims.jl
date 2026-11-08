@@ -73,6 +73,7 @@ pre_networks = pre_archive["networks"]
 post_networks = post_archive["networks"]
 
 survival_threshold = pre_archive["metadata"]["survival_threshold"]
+mkpath("outputs/tss_networks")
 
 
 # ============================================================
@@ -113,22 +114,6 @@ function extract_at_richness(result, target_S)
         richness_difference=richness_values[idx] - target_S,
         step=idx
     )
-end
-
-
-# Add network metadata to exported extinction curves.
-
-function add_curve_metadata!(
-    df,
-    community,
-    net_name,
-    extinction_t
-)
-    df[!, :community] = fill(community, nrow(df))
-    df[!, :net_name] = fill(net_name, nrow(df))
-    df[!, :extinction_t] = fill(extinction_t, nrow(df))
-
-    return df
 end
 
 
