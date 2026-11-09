@@ -16,6 +16,7 @@ implemented in R.
 | `code/10_S1Bodysize.jl` | Separate, PRE-only body-size sensitivity analysis |
 | `code/libs/` | Shared Julia and R helpers |
 | `code/outputs/` | Intermediate and final tabular/network outputs |
+| `code/test/` | Extinction unit tests and workflow-integrity audits |
 | `code/*.R` | Statistical analyses and figure-generation scripts |
 | `figures/`, `tables/` | Figures and tables used by the manuscript |
 | `index.qmd`, `supplement/` | Quarto manuscript and supplement |
@@ -146,3 +147,36 @@ including `network_archive.jld2`, `species_metadata.csv`,
 `network_summary.csv`, `adjacency_matrices.jld2`, `topology.csv`,
 `spp_degrees.csv`, and `motif_breakdown.csv`. The R script uses those outputs
 to create the body-size sensitivity figures under `figures/bodysize/`.
+
+## Testing
+
+Run the function-level tests from `code/`; they use small in-memory food webs
+and do not require generated project outputs:
+
+```sh
+julia --project=. test/topological_extinction.jl
+julia --project=. test/dynamic_extinction.jl
+julia --project=. test/dynamic_extinction_reproducibility.jl
+julia --project=. test/dynamic_extinction_metadata.jl
+julia --project=. test/species_identity_tss.jl
+```
+
+Together, these tests check that topological and dynamic extinctions follow
+their intended removal rules, preserve species identities, and distinguish
+primary removals from secondary extinctions. The dynamic tests also exercise
+consumers starving after prey loss, and check that extinction results retain
+the expected scenario and network metadata. A separate TSS test follows species
+identity from network creation through TSS calculation. The reproducibility
+test compares seeded random-scenario results across repeated runs and one- vs
+two-thread execution.
+
+After running `01_buildNetworks.jl` and `02_extinctionSims.jl`, run the
+generated-output pairing audit:
+
+```sh
+julia --project=. test/extinction_pairing.jl
+```
+
+This audit checks that network archives, extinction summaries and curves, and
+the species records passed to TSS remain consistently paired by network and
+scenario identity.
