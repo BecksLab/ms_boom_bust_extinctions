@@ -107,7 +107,7 @@ secondary extinctions occur via trophic disconnection (cascade mechanism).
 
 # Arguments
 - `N`: `SpeciesInteractionNetwork`
-- `params`: Model parameters (used for body mass ordering)
+- `body_mass`: Body mass values in network species order
 
 # Returns
 - `Dict{String, NamedTuple}`:
@@ -128,9 +128,8 @@ secondary extinctions occur via trophic disconnection (cascade mechanism).
 - Random removal respects initial trophic roles (fixed classification)
 
 # Important Implementation Detail
-- `remove_disconnected = false`:
-    - Disconnected species are NOT removed unless they lose all prey
-    - This prevents artificial inflation of secondary extinctions
+- Disconnected species are removed after each primary extinction.
+- Consumers that lose all prey are removed through the cascade mechanism.
 
 # Notes
 - No population dynamics are simulated
@@ -143,16 +142,38 @@ function run_topological_extinctions(N, body_mass)
     results = Dict()
 
     scenarios = Dict(
-        "degree_high" => extinction(N, "degree", true),
-        "degree_low" => extinction(N, "degree", false),
-        "vul_high" => extinction(N, "vulnerability", true),
-        "vul_low" => extinction(N, "vulnerability", false),
-        "gen_high" => extinction(N, "generality", true),
-        "gen_low" => extinction(N, "generality", false),
-        "bm_high" => extinction(N, species(N)[sortperm(body_mass, rev=true)]),
-        "bm_low" => extinction(N, species(N)[sortperm(body_mass, rev=false)]),
-        "rand_basal" => extinction(N; protect=:consumer),
-        "rand_consumer" => extinction(N; protect=:basal)
+        "degree_high" => extinction(
+            N, "degree", true; remove_disconnected=true
+        ),
+        "degree_low" => extinction(
+            N, "degree", false; remove_disconnected=true
+        ),
+        "vul_high" => extinction(
+            N, "vulnerability", true; remove_disconnected=true
+        ),
+        "vul_low" => extinction(
+            N, "vulnerability", false; remove_disconnected=true
+        ),
+        "gen_high" => extinction(
+            N, "generality", true; remove_disconnected=true
+        ),
+        "gen_low" => extinction(
+            N, "generality", false; remove_disconnected=true
+        ),
+        "bm_high" => extinction(
+            N, species(N)[sortperm(body_mass, rev=true)];
+            remove_disconnected=true
+        ),
+        "bm_low" => extinction(
+            N, species(N)[sortperm(body_mass, rev=false)];
+            remove_disconnected=true
+        ),
+        "rand_basal" => extinction(
+            N; protect=:consumer, remove_disconnected=true
+        ),
+        "rand_consumer" => extinction(
+            N; protect=:basal, remove_disconnected=true
+        )
     )
 
     for (name, Ns) in scenarios
@@ -199,6 +220,9 @@ At each step:
 - NamedTuple:
     - `networks`: sequence of surviving subnetworks
     - `primary`: cumulative number of primary deletions
+    - `primary_removed`: species IDs removed as primary targets, in order
+    - `secondary_removed`: species IDs falling below threshold after each
+      primary deletion, grouped by removal step
 
 # Ecological Interpretation
 - Combines press perturbations with relaxation dynamics
@@ -230,6 +254,8 @@ function dynamic_extinction_adaptive(params, B0;
         throw(ArgumentError("Species identifiers must match initial biomass dimensions"))
     length(unique(species_ids)) == S0 ||
         throw(ArgumentError("Species identifiers must be unique"))
+    isfinite(survival_threshold) && survival_threshold > 0 ||
+        throw(ArgumentError("survival_threshold must be a finite positive number"))
 
     A = params.A
     B = copy(B0)
@@ -250,6 +276,8 @@ function dynamic_extinction_adaptive(params, B0;
     push!(survivor_seq, collect(1:S0))
 
     primary_counts = Int[0]
+    primary_removed = eltype(species_ids)[]
+    secondary_removed = Vector{Vector{eltype(species_ids)}}()
 
     prog = show_progress ? Progress(S0, "Dynamic extinctions") : nothing
     step = 0
@@ -332,6 +360,8 @@ function dynamic_extinction_adaptive(params, B0;
 
         # --- primary extinction ---
         alive[sp] = false
+        push!(primary_removed, species_ids[sp])
+        push!(secondary_removed, eltype(species_ids)[])
         push!(primary_counts, primary_counts[end] + 1)
 
         # --- simulate ALL remaining species ---
@@ -352,10 +382,17 @@ function dynamic_extinction_adaptive(params, B0;
                 #c = params.intraspecific_interference[1],
             ),
         )
+        disable_producer_growth_for_former_consumers!(
+            params_sim,
+            params,
+            alive_idx,
+            basal0
+        )
 
         try
             sol = simulate(params_sim, B_sim, t;
                 show_degenerated=false,
+                abstol=min(1e-12, survival_threshold / 10),
                 callback=CallbackSet(
                     extinction_callback(params_sim, survival_threshold)
                 )
@@ -372,9 +409,13 @@ function dynamic_extinction_adaptive(params, B0;
         B[alive_idx] = B_sim
 
         # --- apply extinction threshold ---
-        extinct_now = findall(x -> x < survival_threshold, B)
-        alive[extinct_now] .= false
-        B[extinct_now] .= 0.0
+        secondary_indices = findall(
+            i -> alive[i] && B[i] < survival_threshold,
+            eachindex(alive)
+        )
+        secondary_removed[end] = species_ids[secondary_indices]
+        alive[secondary_indices] .= false
+        B[secondary_indices] .= 0.0
 
         # --- record network ---
         survivors = findall(alive)
@@ -396,8 +437,25 @@ function dynamic_extinction_adaptive(params, B0;
     return (
         networks=Nseq,
         primary=primary_counts,
-        survivors=survivor_seq
+        survivors=survivor_seq,
+        primary_removed=primary_removed,
+        secondary_removed=secondary_removed
     )
+end
+
+function disable_producer_growth_for_former_consumers!(
+    submodel,
+    original_model,
+    original_indices,
+    originally_producers
+)
+    for local_index in submodel.producers.indices
+        original_index = original_indices[local_index]
+        if !originally_producers[original_index]
+            submodel.growth_rate[local_index] = 0.0
+            submodel.metabolism[local_index] = original_model.metabolism[original_index]
+        end
+    end
 end
 
 """
@@ -414,7 +472,8 @@ Run all adaptive dynamic extinction scenarios.
 - `show_progress::Bool`
 
 # Returns
-- `Dict{String, Vector}`: Mapping scenario name → network sequence
+- `Dict{String, NamedTuple}`: Mapping scenario name to its extinction result,
+  including the network trajectory and removal traces
 """
 function run_dynamic_extinctions(
     params, B;
