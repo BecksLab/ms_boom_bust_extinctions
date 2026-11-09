@@ -25,8 +25,6 @@ include("libs/bodysize.jl")
 import Random
 Random.seed!(66)
 
-mkpath("outputs/S1_bodysize")
-
 # --- storage ---
 
 network_archive = Dict()
@@ -50,15 +48,15 @@ summary_rows = Dict[]
 # --- data ---
 communities = Dict("turkiye" => Dict(
     "traits" => CSV.read(
-        joinpath(CODE_DIR, "data", "pre", "turkiye_community.csv"),
+        "data/pre/turkiye_community.csv",
         DataFrame
     ),
     "plankton" => CSV.read(
-        joinpath(CODE_DIR, "data", "plankton", "turkiye_plankton.csv"),
+        "data/plankton/turkiye_plankton.csv",
         DataFrame
     )
 ))
-feeding_rules = CSV.read(joinpath(CODE_DIR, "data", "feeding_rules.csv"), DataFrame)
+feeding_rules = CSV.read("data/feeding_rules.csv", DataFrame)
 
 # --- global params ---
 n_networks = 30  # number of runs per network
