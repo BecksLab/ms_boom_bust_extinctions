@@ -201,7 +201,7 @@ p_contrast <-
   facet_wrap(~scenario,
              ncol = 2) +
   labs(x = "Network type",
-       y = expression(Delta*R[50]~"(topological- dynamic)")) +
+       y = expression(Delta*R[50]~"(topological - dynamic)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
@@ -220,7 +220,7 @@ p_lollipop <-
              colour = extincion_point)) +
   geom_boxplot() +
   scale_colour_manual(values = extinction_pal,
-                      labels = c("Dynamic", "Topological")) +
+                      labels = c("Topological", "Dynamic")) +
   scale_shape_manual(values = net_shapes,
                      guide = "none") +
   scale_x_discrete(labels = net_type_dict) +
