@@ -118,7 +118,8 @@ secondary extinctions occur via trophic disconnection (cascade mechanism).
 - `"degree_high"` / `"degree_low"`: connectivity-based removal
 - `"vul_high"` / `"vul_low"`: vulnerability (in-degree)
 - `"gen_high"` / `"gen_low"`: generality (out-degree)
-- `"bm_high"` / `"bm_low"`: body mass ordering
+- `"bm_high"` / `"bm_low"`: body-mass ordering among consumers; basal species
+  are protected from primary removal
 - `"rand_basal"`: random removal of basal species only
 - `"rand_consumer"`: random removal of consumers only
 
@@ -162,10 +163,12 @@ function run_topological_extinctions(N, body_mass)
         ),
         "bm_high" => extinction(
             N, species(N)[sortperm(body_mass, rev=true)];
+            protect=:basal,
             remove_disconnected=true
         ),
         "bm_low" => extinction(
             N, species(N)[sortperm(body_mass, rev=false)];
+            protect=:basal,
             remove_disconnected=true
         ),
         "rand_basal" => extinction(
