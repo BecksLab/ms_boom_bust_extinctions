@@ -102,7 +102,7 @@ end
 
 A, species_ids = ranked_fixture()
 consumer_ids = species_ids[4:7]
-body_masses = collect(1.0:7.0)
+body_masses = [100.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 network = build_network(A, species_ids)
 Random.seed!(12)
 results = run_topological_extinctions(network, body_masses)
@@ -134,27 +134,34 @@ results = run_topological_extinctions(network, body_masses)
     @test initial_order[1:2] == ["consumer_a", "consumer_b"]
     @test high_degree_order[1:2] == ["consumer_a", "consumer_c"]
 
+    basal_ids = species_ids[1:3]
     for descending in (true, false)
         result = results[descending ? "bm_high" : "bm_low"]
         current_ids = species_ids
-        ranked_ids = sort(species_ids; by=id -> body_masses[findfirst(==(id), species_ids)],
-            rev=descending)
+        ranked_consumers = sort(
+            consumer_ids;
+            by=id -> body_masses[findfirst(==(id), species_ids)],
+            rev=descending
+        )
         for after in result.networks[2:end]
             after_ids = web_species(after)
             lost = setdiff(Set(current_ids), Set(after_ids))
-            expected_primary = first(id for id in ranked_ids if id in current_ids)
+            expected_primary = first(
+                id for id in ranked_consumers if id in current_ids
+            )
             @test expected_primary in lost
             current_ids = after_ids
         end
+        @test issubset(Set(basal_ids), Set(web_species(result.networks[2])))
     end
 
     @test consumer_removal_order(results["bm_high"], consumer_ids) ==
           ["consumer_d", "consumer_c", "consumer_b", "consumer_a"]
     @test [web_species(web) for web in results["bm_low"].networks] == [
         species_ids,
-        ["basal_q", "basal_r", "consumer_a", "consumer_b", "consumer_c"],
-        ["basal_r", "consumer_a", "consumer_b", "consumer_c"],
-        ["consumer_a", "consumer_b"],
+        ["basal_p", "basal_q", "basal_r", "consumer_b", "consumer_c", "consumer_d"],
+        ["basal_p", "basal_q", "basal_r", "consumer_c", "consumer_d"],
+        ["basal_p", "consumer_d"],
         String[]
     ]
 end
