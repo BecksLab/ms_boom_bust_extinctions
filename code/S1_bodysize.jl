@@ -1,11 +1,8 @@
-#=
 ################################################################################
-Effect of bodysize specification rules
+# PRE-only body-size specification sensitivity analysis (Turkiye + plankton).
+# Inputs: data/pre/turkiye_community.csv and data/plankton/turkiye_plankton.csv
+# Outputs: outputs/S1_bodysize/
 ################################################################################
-
-
-################################################################################
-=#
 
 # --- 1. General Set-up ---
 
@@ -42,6 +39,7 @@ adjacency_store = DataFrame(
     stage=String[],
     S=Int[],
     C=Float64[],
+    species=Any[],
     adjacency=Any[]
 )
 
@@ -49,8 +47,14 @@ summary_rows = Dict[]
 
 # --- data ---
 communities = Dict("turkiye" => Dict(
-    "traits" => CSV.read("data/turkiye_community.csv", DataFrame),
-    "plankton" => CSV.read("data/turkiye_plankton.csv", DataFrame)
+    "traits" => CSV.read(
+        "data/pre/turkiye_community.csv",
+        DataFrame
+    ),
+    "plankton" => CSV.read(
+        "data/plankton/turkiye_plankton.csv",
+        DataFrame
+    )
 ))
 feeding_rules = CSV.read("data/feeding_rules.csv", DataFrame)
 
@@ -107,7 +111,12 @@ for t in t_values
                 
             traits.bodymass = bodysize
             traits.biomass = fill(missing, nrow(traits))
-            df = vcat(traits, plankton)
+            df = vcat(traits, plankton; cols=:union)
+            species_ids = String.(df.species)
+            @assert length(unique(species_ids)) == length(species_ids) (
+                "Species IDs must be unique in the combined Turkiye PRE " *
+                "and plankton data."
+            )
 
             # --- 2. Biomass estimates ---
             # create initial biomass from uniform rand dist
@@ -164,7 +173,11 @@ for t in t_values
                 # we can set default params
                 params = default_model(fw)
 
-                record_species_stage!(temp_metadata, i, net_name, "creation", fw.A, params.M, params, nothing, B_init)
+                record_species_stage!(
+                    temp_metadata, i, net_name, "creation",
+                    fw.A, params.M, params, nothing, B_init;
+                    species_ids=species_ids
+                )
 
                 # Inject the current t-value into the temporary DataFrame
                 temp_metadata[!, :t_val] .= t
@@ -182,6 +195,7 @@ for t in t_values
                     stage="creation",
                     S=size(fw.A, 1),
                     C=sum(fw.A) / size(fw.A, 1)^2,
+                    species=species_ids,
                     adjacency=copy(fw.A)
                 ))
 
@@ -263,6 +277,7 @@ for t in t_values
                     stage="burnin",
                     S=S_realised,
                     C=C_realised,
+                    species=species_ids[survivors],
                     adjacency=copy(A_realised)
                 ))
 
@@ -279,7 +294,8 @@ for t in t_values
                     params.M,
                     params,
                     survivors,
-                    final_biomasses
+                    final_biomasses;
+                    species_ids=species_ids
                 )
 
                 temp_metadata.t_val .= t
@@ -308,8 +324,9 @@ for t in t_values
                         "community" => community_name,
                         "burnin_time" => t,
                         "C_target" => C_targ,
-                        "bodymass" => copy(df.bodymass),
-                        "B0" => copy(B_init)
+                        "bodymass" => copy(params.M),
+                        "B0" => copy(B_init),
+                        "species" => species_ids
                     ), "creation" => Dict(
                         "A" => copy(initial_networks[net_name].A),
                         "S" => creation_metrics[net_name].S,
@@ -354,17 +371,26 @@ JLD2.save_object(
     archive
 )
 
-CSV.write("outputs/S1_bodysize/species_metadata.csv", archive["species_metadata"])
-JLD2.save_object("outputs/S1_bodysize/adjacency_matrices.jld2", archive["adjacency_store"])
+CSV.write(
+    "outputs/S1_bodysize/species_metadata.csv",
+    archive["species_metadata"]
+)
+CSV.write(
+    "outputs/S1_bodysize/network_summary.csv",
+    archive["summary"]
+)
+JLD2.save_object(
+    "outputs/S1_bodysize/adjacency_matrices.jld2",
+    archive["adjacency_store"]
+)
 
 # get topology
 
 include("libs/topology.jl")
-include("libs/internals.jl")
 
 # import adjacency matrices
 
-networks = load_object("outputs/S1_bodysize/adjacency_matrices.jld2")
+networks = JLD2.load_object("outputs/S1_bodysize/adjacency_matrices.jld2")
 
 # data frame
 
@@ -372,7 +398,8 @@ rows = Dict[]
 
 for i in 1:nrow(networks)
 
-    N = build_network(Matrix(networks.adjacency[i]))
+    species_ids = String.(networks.species[i])
+    N = build_network(Matrix(networks.adjacency[i]), species_ids)
 
     # push network summary
     d = _network_summary(N)
@@ -400,6 +427,7 @@ deg_rows = DataFrame(
     net_id=Any[],
     net_type=Any[],
     community=Any[],
+    species=String[],
     stage=Any[],
     S4_consumer=Any[],
     S4_resource=Any[],
@@ -408,7 +436,8 @@ deg_rows = DataFrame(
 
 for i in 1:nrow(networks)
 
-    N = build_network(Matrix(networks.adjacency[i]))
+    species_ids = String.(networks.species[i])
+    N = build_network(Matrix(networks.adjacency[i]), species_ids)
 
     gen = SpeciesInteractionNetworks.generality(N)
     vul = SpeciesInteractionNetworks.vulnerability(N)
@@ -425,10 +454,12 @@ for i in 1:nrow(networks)
     S5_counts = [count(t -> t[i] == s, S5)
               for s in spp, i in 1:3]
 
+    species_positions = Dict(s => i for (i, s) in enumerate(spp))
     d = DataFrame(
-        spp_id=collect(keys(gen)),
-        gen=collect(values(gen)),
-        vul=collect(values(vul)),
+        spp_id=collect(eachindex(species_ids)),
+        species=species_ids,
+        gen=[gen[Symbol(id)] for id in species_ids],
+        vul=[vul[Symbol(id)] for id in species_ids],
         can=string.(diag(Matrix(N.edges.edges))),
         net_id=fill(networks.net_id[i], length(gen)),
         net_type=fill(networks.net_type[i], length(gen)),
@@ -458,20 +489,22 @@ motif_breakdown = DataFrame(
 
 for i in 1:nrow(networks)
 
-    N = build_network(Matrix(networks.adjacency[i]))
+    species_ids = String.(networks.species[i])
+    N = build_network(Matrix(networks.adjacency[i]), species_ids)
 
 
     # also get motif membership
     spp = SpeciesInteractionNetworks.species(N)
     S4 = findmotif(motifs(Unipartite, 3)[4], N)
+    species_positions = Dict(s => i for (i, s) in enumerate(spp))
 
     d = DataFrame(
         net_id=fill(networks.net_id[i], length(S4)),
         net_type=fill(networks.net_type[i], length(S4)),
         stage=fill(networks.stage[i], length(S4)),
-        S4_C1=[t[1] for t in S4],
-        S4_R1=[t[2] for t in S4],
-        S4_C2=[t[3] for t in S4]
+        S4_C1=[species_positions[t[1]] for t in S4],
+        S4_R1=[species_positions[t[2]] for t in S4],
+        S4_C2=[species_positions[t[3]] for t in S4]
     )
 
     # send to df

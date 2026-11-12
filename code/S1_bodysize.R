@@ -34,7 +34,7 @@ trait_df %>%
                          levels = c("creation", "burnin"))) %>%
   pivot_longer(-c(net_id, net_type, stage, species_id,
                   original_id, trophic_class, survived,
-                  t_val, community, bm_specification, can, bodysize)) %>%
+                  t_val, community, bm_specification, can, bodysize, species)) %>%
   ggplot() +
   geom_density_ridges(aes(x = value,
                           y = net_type,
@@ -291,6 +291,7 @@ ggsave("../figures/bodysize/propOverlap.png",
        height = 3000,
        units = "px",
        dpi = 500)
+
 
 trait_df %>%
   yeet(stage == "creation") %>%

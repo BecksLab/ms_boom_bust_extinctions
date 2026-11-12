@@ -56,3 +56,7 @@ supplement/supplement.toc
 
 /.luarc.json
 code/.RDataTmp
+code/outputs/post/realised_network_archive.jld2
+code/outputs/pre/realised_network_archive.jld2
+code/outputs/tss_networks/pre_at_post_richness.jld2
+code/outputs/tss_networks/tss_scores.jld2
