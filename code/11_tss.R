@@ -1,5 +1,6 @@
 library(tidyverse)
 library(genzplyr)
+library(emmeans)
 
 source("libs/plotting_themes.R")
 
@@ -8,7 +9,7 @@ source("libs/plotting_themes.R")
 # ------------------------------------------------------------------------------
 
 tss <- read_csv("outputs/tss_results.csv") %>%
-  vibe_check(community, net_name, extinction_type, scenario, 
+  vibe_check(community, net_id, net_name, extinction_type, scenario,
              tss_link, tss_node) %>%
   pivot_longer(cols = c(tss_link, tss_node),
                names_to = "tss_cat",
@@ -17,6 +18,55 @@ tss <- read_csv("outputs/tss_results.csv") %>%
   left_join(col_df)%>%
   glow_up(label = factor(label, levels = net_levs),
           net_type_lab = assign_net_name(label)) 
+
+# ------------------------------------------------------------------------------
+# Network-type tests
+# ------------------------------------------------------------------------------
+
+tss_models <- tss %>%
+  yeet(is.finite(tss_score)) %>%
+  glow_up(community = factor(community),
+          net_id = factor(net_id),
+          block_id = interaction(community, 
+                                 net_id, drop = TRUE)) %>%
+  squad_up(tss_cat, 
+           extinction_type, scenario) %>%
+  nest() %>%
+  glow_up(model = map(data,
+                      ~ lm(tss_score ~ label + block_id, data = .x)
+  ),
+  omnibus = map(model, ~ {
+    joint_tests(.x) %>%
+      as.data.frame() %>%
+      yeet(`model term` == "label") %>%
+      transmute(
+        numerator_df = df1,
+        denominator_df = df2,
+        F_statistic = F.ratio,
+        p_value = p.value
+      )
+  }),
+  contrasts = map(model,
+                  ~ pairs(emmeans(.x, ~ label), adjust = "tukey") %>%
+                    as.data.frame()
+  )
+  )
+
+network_type_tests <- 
+  tss_models %>%
+  vibe_check(tss_cat, extinction_type, scenario, omnibus) %>%
+  unnest(omnibus) %>%
+  glow_up(p_adjusted = p.adjust(p_value, method = "BH"))
+
+network_type_contrasts <- 
+  tss_models %>%
+  vibe_chaeck(tss_cat, extinction_type, scenario, contrasts) %>%
+  unnest(contrasts)
+
+write_csv(network_type_tests, 
+          "outputs/derived/tss_network_type_tests.csv")
+write_csv(network_type_contrasts,
+          "outputs/derived/tss_network_type_contrasts.csv")
 
 ggplot(tss) +
   geom_hline(yintercept = c(0.5, -0.5),
@@ -74,7 +124,7 @@ tss %>%
          max_tss = max(tss_score, na.rm = TRUE)) %>%
   squad_up(extinction_type, tss_cat, scenario) %>%
   glow_up(mean_rank = rank(mean_tss,
-                      ties = "min"),
+                           ties = "min"),
           max_rank = rank(max_tss,
                           ties = "min")) %>%
   ggplot() +
