@@ -45,8 +45,8 @@ mod_all <-
   lm(delta_R50 ~ scenario * net_type + community,
      data = diff_df)
 
-car::Anova(mod_all, type = 3)
-car::Anova(mod_all, type = 3)["scenario:net_type", ]
+overall_anova <- car::Anova(mod_all, type = 3)
+overall_anova["scenario:net_type", ]
 
 summary(mod_all)
 
@@ -88,15 +88,18 @@ cld_df <-
 
 anova_df <-
   mods %>%
-  vibe_check(scenario, anova) %>%
+  transmute(scenario,
+            df2 = map_int(model, df.residual),
+            anova) %>%
   glow_up(anova = map(anova, broom::tidy)) %>%
   unnest(anova) %>%
   yeet(term == "net_type") %>%
   transmute(
     scenario,
     df1 = df,
+    df2,
     F = statistic,
-    p = p.value
+    p_value = p.value
   )
 
 glance_df <-
@@ -115,6 +118,17 @@ pairs_df <-
   vibe_check(scenario, pairs) %>%
   glow_up(pairs = map(pairs, as.data.frame)) %>%
   unnest(pairs)
+
+dir.create("outputs/derived", recursive = TRUE, showWarnings = FALSE)
+write_csv(
+  as.data.frame(overall_anova) %>% rownames_to_column("term"),
+  "outputs/derived/robustness_delta_r50_overall.csv"
+)
+write_csv(anova_df, "outputs/derived/robustness_delta_r50_by_scenario.csv")
+write_csv(
+  pairs_df,
+  "outputs/derived/robustness_delta_r50_pairwise.csv"
+)
 
 cld_df
 anova_df

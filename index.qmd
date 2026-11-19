@@ -56,6 +56,78 @@ bibliography: references.bib
 number-sections: true
 ---
 
+```{r}
+#| include: false
+rda_report <- readr::read_csv(
+  "code/outputs/derived/rda_reported_results.csv",
+  show_col_types = FALSE
+)[1, ]
+displacement_report <- readr::read_csv(
+  "code/outputs/derived/burnin_displacement_results.csv",
+  show_col_types = FALSE
+)[1, ]
+robustness_tests <- readr::read_csv(
+  "code/outputs/derived/robustness_delta_r50_overall.csv",
+  show_col_types = FALSE
+)
+
+format_p <- function(p) {
+  if (p < 0.001) "< 0.001" else sprintf("= %.3f", p)
+}
+
+format_f_test <- function(df1, df2, statistic, p) {
+  sprintf(
+    "$F_{%d, %d}$ = %.1f, $p$ %s",
+    as.integer(df1),
+    as.integer(df2),
+    statistic,
+    format_p(p)
+  )
+}
+
+rda_overall_text <- sprintf(
+  "(%d permutations; %s)",
+  rda_report$permutations,
+  format_f_test(
+    rda_report$overall_df1,
+    rda_report$overall_df2,
+    rda_report$overall_F,
+    rda_report$overall_p
+  )
+)
+rda_interaction_text <- format_f_test(
+  rda_report$interaction_df1,
+  rda_report$interaction_df2,
+  rda_report$interaction_F,
+  rda_report$interaction_p
+)
+displacement_text <- format_f_test(
+  displacement_report$numerator_df,
+  displacement_report$denominator_df,
+  displacement_report$F_statistic,
+  displacement_report$p_value
+)
+
+get_anova_term <- function(term) {
+  robustness_tests[robustness_tests$term == term, , drop = FALSE]
+}
+robustness_residual <- get_anova_term("Residuals")
+robustness_type <- get_anova_term("net_type")
+robustness_interaction <- get_anova_term("scenario:net_type")
+robustness_type_text <- format_f_test(
+  robustness_type$Df,
+  robustness_residual$Df,
+  robustness_type$`F value`,
+  robustness_type$`Pr(>F)`
+)
+robustness_interaction_text <- format_f_test(
+  robustness_interaction$Df,
+  robustness_residual$Df,
+  robustness_interaction$`F value`,
+  robustness_interaction$`Pr(>F)`
+)
+```
+
 # Introduction
 
 Understanding how species loss propagates through ecological communities is a central challenge in ecology. The extinction of a species can have consequences that extend beyond the direct loss of that species, triggering cascading extinction events as the species dependent on it through ecological interactions may also decline or disappear. These secondary extinctions can generate cascading losses of biodiversity, alter community composition, and disrupt ecosystem functioning. Predicting the consequences of species loss therefore requires understanding not only which species are initially threatened, but also how their removal affects the persistence of other species within the community. Food web models provide a framework for investigating these processes by representing feeding relationships among species and simulating the consequences of species removal. In this context, extinction robustness describes the capacity of a community to withstand species loss before substantial secondary extinctions occur [@curtsdotterRobustnessSecondaryExtinctions2011].
@@ -234,17 +306,17 @@ Network construction and extinction simulations were run in Julia v1.12.6 [@beza
 
 # Downsampling and burn-in alter network topology in method-dependent ways
 
-Redundancy analysis (RDA), using permutation-based significance testing while accounting for community-level variation, revealed that downsampling approach significantly affected network topology, but that this effect depended on the magnitude of connectance reduction required to reach the target connectance (999 permutations; $F_{7, 707}$ = 112.8, $p$ = 0.001; @fig-downsample, panel A). The type of network (*i.e.,* downsampling approach) explained 31.8% of total topology variation (adjusted $R^2$ = 0.318), with community identity accounting for an additional 39.7% of variation. The significant interaction between downsampling approach and connectance change (marginal test; $F_{3, 707}$ = 18.90, $p$ = 0.001) demonstrated that topology trajectories differed among downsampling methods depending on the degree of downsampling required. Thus, the extent to which network structure diverged from the original topology depended on both the severity of downsampling and the mechanism by which interactions were removed.
+Partial redundancy analysis (RDA), with community conditioned out, showed that network type, connectance change, and their interaction affected topology `r rda_overall_text`; @fig-downsample, panel A). The constrained network and connectance terms had an adjusted partial $R^2$ of `r sprintf("%.3f", rda_report$partial_adjusted_r2)`. In a reciprocal partial RDA, community identity had an adjusted partial $R^2$ of `r sprintf("%.3f", rda_report$community_partial_adjusted_r2)`. The marginal interaction between downsampling approach and connectance change was significant (`r rda_interaction_text`), indicating that topology trajectories differed among downsampling methods depending on the degree of downsampling required.
 
 ![**Downsampling approach influences both network topology and subsequent structural reorganisation during burn-in.** (A) Redundancy analysis (RDA) ordination showing differences in network topology among downsampling approaches across the downsamping ($\Delta Co$) gradient after accounting for community-level variation. (B) Principal component trajectories illustrating structural change between network creation and burn-in for each downsampling approach. (C) Loadings of the top ten contributing structure metrics.](figures/downsamplingEffect.png){#fig-downsample}
 
-We next asked whether these structurally distinct networks responded differently during the burn-in phase (@fig-downsample, panel B). Structural reorganisation was quantified as the Euclidean displacement between network positions before and after burn-in in the first three principal component dimensions, with location included as a random effect to account for the substantial variation among location. Burn-in displacement differed significantly among network types ($F$ = 62.0, $p$ < 0.001). Metawebs underwent the greatest structural reorganisation, whereas ATN networks exhibited the smallest displacement. Among the downsampled networks, all but the randomly downsampled networks had a displacement similar to that of the Niche model (Figure S2), while all downsampled networks showed displacement distinct from the original metaweb. When looking at the loadings of the first two PC axes (@fig-downsample, panel C), the primary changes in structure were related to node-level measures and, unsurprisingly, the number of links. This is to be expected since there is no rewiring of links permitted in this system, and as such any changes should be driven by the loss of nodes rather than a major reorganisation of network structure.
+We next asked whether these structurally distinct networks responded differently during the burn-in phase (@fig-downsample, panel B). Structural reorganisation was quantified as the Euclidean displacement between network positions before and after burn-in in the first three principal component dimensions, with community included as a random effect. Burn-in displacement differed significantly among network types (`r displacement_text`). Metawebs underwent the greatest structural reorganisation, whereas ATN networks exhibited the smallest displacement. Among the downsampled networks, all but the randomly downsampled networks had a displacement similar to that of the Niche model (Figure S2), while all downsampled networks showed displacement distinct from the original metaweb. When looking at the loadings of the first two PC axes (@fig-downsample, panel C), the primary changes in structure were related to node-level measures and, unsurprisingly, the number of links. This is to be expected since there is no rewiring of links permitted in this system, and as such any changes should be driven by the loss of nodes rather than a major reorganisation of network structure.
 
 Together, these analyses demonstrate that downsampling approach influences network topology both during the initial downsampling step and during the subsequent burn-in phase. Differences among downsampling methods become increasingly pronounced as greater proportions of interactions are removed, consistent with the expectation that the ecological assumptions underlying each removal strategy would become more embedded as more links are removed. Importantly, despite generating distinct initial topologies, the different downsampling approaches underwent remarkably similar structural reorganisation during burn-in, changing in ways more similar to the niche model than the original metaweb. This suggests that ecologically informed downsampling of metawebs allows us to produce networks whose subsequent structure more closely resembles that of realised networks, while also suggesting that the burn-in phase is, in and of itself, an additional network realisation step. Notably, the two realised models (Niche and ATN) do not behave similarly and still end up at different 'end points' following burn-in compared with the empirical webs, highlighting that the choice of network reconstruction approach will still have a strong effect on the structure and behaviour of the system [@strydomAreWeMapping2026].
 
 # Differences in inferred robustness of topological and dynamic extinctions are unaffected by network type
 
-To determine whether the qualitative differences between topological and dynamic extinction simulations previously demonstrated by @curtsdotterRobustnessSecondaryExtinctions2011 generalise across alternative network reconstructions, we compared the difference in robustness ($\Delta R_{50}$) among network types for each extinction scenario while accounting for community-level variation. Network type significantly affected $\Delta R_{50}$ across extinction scenarios (model summaries in Table S2), indicating that the magnitude of the difference between topological and dynamic robustness depended on network reconstruction.
+To determine whether the qualitative differences between topological and dynamic extinction simulations previously demonstrated by @curtsdotterRobustnessSecondaryExtinctions2011 generalise across alternative network reconstructions, we compared the difference in robustness ($\Delta R_{50}$) among network types for each extinction scenario while accounting for community-level variation. Network type affected $\Delta R_{50}$ (`r robustness_type_text`), and its effect varied among extinction scenarios (`r robustness_interaction_text`; model summaries in Table S2), indicating that the magnitude of the difference between topological and dynamic robustness depended on network reconstruction.
 
 Despite these quantitative differences, the qualitative pattern identified by @curtsdotterRobustnessSecondaryExtinctions2011 was largely maintained. Under all but random basal removal, topological extinction inferred greater robustness than dynamic extinction for every network type, although the magnitude of this discrepancy varied among reconstruction methods (@fig-TopoVDynamic). Random basal extinction represented the only notable departure from this general pattern (Figure S3). Here, the discrepancy between topological and dynamic robustness was substantially reduced, with power-law and degree-product downsampled networks exhibiting a slightly higher $\Delta R_{50}$ and random downsampled networks showing little difference between the two approaches. Thus, the conclusion that topological analyses provide more conservative estimates of robustness, although not universal, remains remarkably robust across reconstruction methods and extinction scenarios.
 
