@@ -60,7 +60,7 @@ network_type_tests <-
 
 network_type_contrasts <- 
   tss_models %>%
-  vibe_chaeck(tss_cat, extinction_type, scenario, contrasts) %>%
+  vibe_check(tss_cat, extinction_type, scenario, contrasts) %>%
   unnest(contrasts)
 
 write_csv(network_type_tests, 
