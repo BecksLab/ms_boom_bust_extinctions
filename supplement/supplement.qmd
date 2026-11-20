@@ -37,7 +37,7 @@ Metrics in bold are those that show strong correlations with the PCA axis identi
 | Intermediate | Proportion of taxa with both consumers and resources. | Captures the proportion of species participating in both upward and downward energy transfer. |  |
 | Richness (S) | Number of taxa (nodes) in the network. | Describes network size. |  |
 | **Links (L)** | Total number of trophic interactions (edges). | Describes interaction density independent of network size. |  |
-| **Connectance** | $L/S^2$, where $S$ is the number of species and $L$ the number of links | Measures the proportion of realised interactions relative to all possible interactions. | Dunne et al. 2002 |
+| **Connectance** | $L/S^2$, where $S$ is the number of species and $L$ the number of links | Measures the proportion of realised interactions relative to all possible interactions. | |
 | L/S | Mean number of links per species. | Captures average interaction density per taxon. |  |
 | **Cannibal** | Proportion of taxa with self-loops. | Quantifies the prevalence of cannibalistic interactions. |  |
 | Herbivore | Proportion of taxa feeding exclusively on basal species. | Describes the representation of primary consumers. |  |

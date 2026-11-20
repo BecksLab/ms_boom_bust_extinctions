@@ -187,7 +187,7 @@ p_realisation <-
              linetype = "dashed",
              colour = minni_silver) +
   geom_point(size=3) +
-  geom_line(aes(group = interaction(reference,net_type)))+
+  geom_line(aes(group = interaction(reference,net_type))) +
   scale_colour_manual(values = net_type_col_pal) +
   facet_grid(scenario~net_type) +
   labs(

@@ -1,0 +1,11 @@
+species,size,motility,feeding,tiering
+Gastropoda_1,medium,slow_moving,carnivore,epifaunal
+Bivalvia_1,medium,facultative,herbivore,shallow_infaunal
+Bivalvia_2,small,facultative,herbivore,shallow_infaunal
+Bivalvia_3,medium,nonmotile_attached,herbivore,epifaunal
+Rhynchonelliformea_1,medium,nonmotile_attached,herbivore,epifaunal
+Bivalvia_4,small,nonmotile_attached,herbivore,epifaunal
+Rhynchonelliformea_2,small,nonmotile_attached,herbivore,epifaunal
+Bivalvia_5,medium,nonmotile_attached,herbivore,semi_infaunal
+Foraminifera_1,tiny,nonmotile_unattached,herbivore,epifaunal
+Conodonta_1,small,fast_moving,microcarnivore,nektopelagic

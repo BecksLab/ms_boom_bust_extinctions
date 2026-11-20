@@ -5,10 +5,11 @@ library(patchwork)
 library(RColorBrewer) 
 
 # for accents
-minni_silver <- "#687982"
-minni_black <-  "#292726"
+minni_silver <- "#9DAFBD"
+minni_black <-  "#010202"
 minni_wheat <-  "#F2E4C7"
 minni_tan   <-  "#5E4735"
+minni_white <- "#D1D1D1"
 
 # ---- General Figure Theme ----
 

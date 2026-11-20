@@ -33,7 +33,7 @@ diff_df <-
   vibe_check(community, net_id, net_type, net_type_lab, scenario, extinction, value) %>% 
   pivot_wider(names_from = extinction, 
               values_from = value) %>% 
-  glow_up(delta_R50 = dyn - topo)
+  glow_up(delta_R50 = topo - dyn)
 
 
 # ------------------------------------------------------------------------------
@@ -45,8 +45,8 @@ mod_all <-
   lm(delta_R50 ~ scenario * net_type + community,
      data = diff_df)
 
-car::Anova(mod_all, type = 3)
-car::Anova(mod_all, type = 3)["scenario:net_type", ]
+overall_anova <- car::Anova(mod_all, type = 3)
+overall_anova["scenario:net_type", ]
 
 summary(mod_all)
 
@@ -88,15 +88,18 @@ cld_df <-
 
 anova_df <-
   mods %>%
-  vibe_check(scenario, anova) %>%
+  transmute(scenario,
+            df2 = map_int(model, df.residual),
+            anova) %>%
   glow_up(anova = map(anova, broom::tidy)) %>%
   unnest(anova) %>%
   yeet(term == "net_type") %>%
   transmute(
     scenario,
     df1 = df,
+    df2,
     F = statistic,
-    p = p.value
+    p_value = p.value
   )
 
 glance_df <-
@@ -115,6 +118,17 @@ pairs_df <-
   vibe_check(scenario, pairs) %>%
   glow_up(pairs = map(pairs, as.data.frame)) %>%
   unnest(pairs)
+
+dir.create("outputs/derived", recursive = TRUE, showWarnings = FALSE)
+write_csv(
+  as.data.frame(overall_anova) %>% rownames_to_column("term"),
+  "outputs/derived/robustness_delta_r50_overall.csv"
+)
+write_csv(anova_df, "outputs/derived/robustness_delta_r50_by_scenario.csv")
+write_csv(
+  pairs_df,
+  "outputs/derived/robustness_delta_r50_pairwise.csv"
+)
 
 cld_df
 anova_df
@@ -189,10 +203,10 @@ p_contrast <-
   geom_hline(
     yintercept = 0,
     colour = minni_black) +
-  geom_text(aes(label = .group),
+  geom_text(aes(label = .group,
+                y = upper.CL + 0.025),
             fontface = "bold",
-            vjust = 1,
-            nudge_y = -0.025) +
+            vjust = 1) +
   scale_x_discrete(labels = net_type_dict) +
   scale_fill_identity() +
   scale_colour_identity() +
@@ -201,7 +215,7 @@ p_contrast <-
   facet_wrap(~scenario,
              ncol = 2) +
   labs(x = "Network type",
-       y = expression(Delta*R[50]~"(dynamic - topological)")) +
+       y = expression(Delta*R[50]~"(topological - dynamic)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
@@ -220,15 +234,15 @@ p_lollipop <-
              colour = extincion_point)) +
   geom_boxplot() +
   scale_colour_manual(values = extinction_pal,
-                      labels = c("Dynamic", "Topological")) +
+                      labels = c("Topological", "Dynamic")) +
   scale_shape_manual(values = net_shapes,
                      guide = "none") +
   scale_x_discrete(labels = net_type_dict) +
   facet_wrap(~scenario,
              ncol = 2) +
   labs(x = "Network type",
-       y = expression(R[50]),
-       colour = NULL) +
+       y = expression(Robustness~(R[50])),
+       colour = "Extinction scenario") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
@@ -246,8 +260,8 @@ p_final <-
 ggsave(
   "../figures/robustnessTopoVDynamic_allScenario.png",
   p_final,
-  width = 10000,
-  height = 10000,
+  width = 9500,
+  height = 8000,
   units = "px",
   dpi = 500
 )

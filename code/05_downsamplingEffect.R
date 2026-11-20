@@ -2,6 +2,7 @@ library(tidyverse)
 library(FactoMineR)
 library(vegan)
 library(lme4)
+library(lmerTest)
 library(emmeans)
 library(multcomp)
 library(readr)
@@ -205,9 +206,31 @@ burnin_traj <- scores %>%
 m_disp <- lmer(log(displacement + 0.01) ~ net_type + (1|community),
                data = burnin_traj)
 
-anova(m_disp)
-
+disp_anova <- anova(m_disp)
 disp_emm <- emmeans(m_disp, ~ net_type)
+disp_pairwise <- pairs(disp_emm, adjust = "sidak")
+
+burnin_displacement_results <- tibble(
+  effect = rownames(disp_anova),
+  numerator_df = disp_anova$NumDF,
+  denominator_df = disp_anova$DenDF,
+  F_statistic = disp_anova$`F value`,
+  p_value = disp_anova$`Pr(>F)`
+)
+
+dir.create("outputs/derived", recursive = TRUE, showWarnings = FALSE)
+write_csv(
+  burnin_displacement_results,
+  "outputs/derived/burnin_displacement_results.csv"
+)
+write_csv(
+  as.data.frame(disp_emm),
+  "outputs/derived/burnin_displacement_estimates.csv"
+)
+write_csv(
+  as.data.frame(disp_pairwise),
+  "outputs/derived/burnin_displacement_pairwise.csv"
+)
 
 cld_disp <- cld(disp_emm,
                 Letters = letters,
@@ -339,16 +362,58 @@ rda_model <-
         Condition(community),
       data = rda_dat)
 
-# Overall test
-anova(rda_model)
+# Overall, term-wise, marginal, and canonical-axis permutation tests
+n_permutations <- 999L
+set.seed(66)
+rda_overall_test <- anova(rda_model, permutations = n_permutations)
+rda_term_test <- anova(rda_model, by = "term", permutations = n_permutations)
+rda_marginal_test <- anova(rda_model, by = "margin",
+                           permutations = n_permutations)
+rda_axis_test <- anova(rda_model, by = "axis", permutations = n_permutations)
 
-# Marginal effects
-anova(rda_model, by = "term")
+rda_community_model <-
+  rda(topology_scaled ~ community + Condition(net_type * delta_co),
+      data = rda_dat)
 
-anova(rda_model, by = "margin")
+rda_overall_row <- as.data.frame(rda_overall_test)[1, ]
+rda_interaction_row <- as.data.frame(rda_marginal_test)[1, ]
+rda_reported_results <- tibble(
+  permutations = n_permutations,
+  overall_df1 = rda_overall_row$Df,
+  overall_df2 = as.data.frame(rda_overall_test)$Df[2],
+  overall_F = rda_overall_row$F,
+  overall_p = rda_overall_row[["Pr(>F)"]],
+  partial_adjusted_r2 = RsquareAdj(rda_model)$adj.r.squared,
+  community_partial_adjusted_r2 =
+    RsquareAdj(rda_community_model)$adj.r.squared,
+  interaction_df1 = rda_interaction_row$Df,
+  interaction_df2 = as.data.frame(rda_marginal_test)$Df[2],
+  interaction_F = rda_interaction_row$F,
+  interaction_p = rda_interaction_row[["Pr(>F)"]]
+)
 
-# Canonical axes
-anova(rda_model, by = "axis")
+rda_test_results <- bind_rows(
+  as.data.frame(rda_overall_test) %>%
+    rownames_to_column("term") %>%
+    mutate(test = "overall"),
+  as.data.frame(rda_term_test) %>%
+    rownames_to_column("term") %>%
+    mutate(test = "by_term"),
+  as.data.frame(rda_marginal_test) %>%
+    rownames_to_column("term") %>%
+    mutate(test = "marginal"),
+  as.data.frame(rda_axis_test) %>%
+    rownames_to_column("term") %>%
+    mutate(test = "by_axis")
+) %>%
+  select(test, term, everything()) %>%
+  mutate(permutations = n_permutations)
+
+write_csv(
+  rda_reported_results,
+  "outputs/derived/rda_reported_results.csv"
+)
+write_csv(rda_test_results, "outputs/derived/rda_permutation_tests.csv")
 
 rda_sites <-
   scores(rda_model,
